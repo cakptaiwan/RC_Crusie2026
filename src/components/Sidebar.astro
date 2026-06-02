@@ -1,0 +1,117 @@
+---
+const recentPosts = [
+  { image: 'https://images.pexels.com/photos/1654698/pexels-photo-1654698.jpeg?auto=compress&cs=tinysrgb&w=200', category: '郵輪心得', title: '皇家加勒比海洋交響號：史上最大郵輪初登艦', date: '2024-03-15', url: '/post/mock-1' },
+  { image: 'https://images.pexels.com/photos/2662116/pexels-photo-2662116.jpeg?auto=compress&cs=tinysrgb&w=200', category: '岸上行程', title: '北歐峽灣岸上行程全紀錄：布道台健行挑戰', date: '2024-02-28', url: '/post/mock-4' },
+  { image: 'https://images.pexels.com/photos/2044434/pexels-photo-2044434.jpeg?auto=compress&cs=tinysrgb&w=200', category: '艙房介紹', title: '豪華套房 vs 陽台艙：花多少錢才值得升等？', date: '2024-02-20', url: '/post/mock-5' },
+  { image: 'https://images.pexels.com/photos/1285625/pexels-photo-1285625.jpeg?auto=compress&cs=tinysrgb&w=200', category: '行程攻略', title: '郵輪旅遊完全攻略：從訂房到上船的15個必知技巧', date: '2024-03-10', url: '/post/mock-2' },
+];
+
+const popularPosts = [
+  { image: 'https://images.pexels.com/photos/1285625/pexels-photo-1285625.jpeg?auto=compress&cs=tinysrgb&w=200', category: '行程攻略', title: '如何選擇郵輪船房', date: '2024-03-10' },
+  { image: 'https://images.pexels.com/photos/1430676/pexels-photo-1430676.jpeg?auto=compress&cs=tinysrgb&w=200', category: '郵輪心得', title: '加勒比海郵輪攻略', date: '2024-03-05' },
+  { image: 'https://images.pexels.com/photos/2662116/pexels-photo-2662116.jpeg?auto=compress&cs=tinysrgb&w=200', category: '岸上行程', title: '北歐峽灣岸上體驗', date: '2024-02-28' },
+];
+
+const categories = [
+  { name: '航線選擇', count: 6,  href: '/beginners-guide' },
+  { name: '聰明花錢', count: 4,  href: '/pricing' },
+  { name: '聰明選艙', count: 5,  href: '/cabin-guide' },
+  { name: '常見問題', count: 8,  href: '/faq' },
+  { name: '娛樂設施', count: 7,  href: '/entertainment' },
+  { name: '餐廳美食', count: 9,  href: '/dining' },
+  { name: '岸上行程', count: 11, href: '/shore-excursions' },
+];
+---
+
+<aside class="w-full space-y-6">
+
+  <!-- 近期文章 -->
+  <div class="sidebar-widget">
+    <div class="sidebar-section-header">
+      <span class="sidebar-section-title">近期文章</span>
+    </div>
+    <div class="space-y-4">
+      {recentPosts.map((p) => (
+        <a href={p.url} class="group flex gap-3">
+          <img
+            src={p.image}
+            alt={p.title}
+            loading="lazy"
+            class="h-[60px] w-[80px] shrink-0 rounded-card object-cover transition-transform duration-300 group-hover:scale-105"
+          />
+          <div class="min-w-0 flex-1">
+            <span class="category-badge mb-1 inline-block !px-2 !py-0.5 !text-[10px]">{p.category}</span>
+            <h5 class="line-clamp-2 text-sm font-normal leading-snug text-ink transition-colors group-hover:text-blue-accent">
+              {p.title}
+            </h5>
+            <p class="mt-0.5 text-[12px] text-ink-soft">{p.date}</p>
+          </div>
+        </a>
+      ))}
+    </div>
+  </div>
+
+  <!-- 關於我 -->
+  <div class="sidebar-widget">
+    <div class="sidebar-section-header">
+      <span class="sidebar-section-title">關於我</span>
+    </div>
+    <div class="text-center">
+      <img
+        src="/logo.png"
+        alt="Loyal to Royal 皇家旅人"
+        width="80"
+        height="80"
+        loading="lazy"
+        class="mx-auto mb-3 h-20 w-20 rounded-md object-contain"
+      />
+      <p class="text-left text-[14px] leading-relaxed text-ink-soft">
+        我是郵輪旅遊的熱愛者，已經搭過多次郵輪。走訪地中海、加勒比海、北歐峽灣等地，分享真實旅行經驗...
+        <a href="/about-rc" class="ml-1 font-semibold text-blue-accent hover:underline">了解更多</a>
+      </p>
+    </div>
+  </div>
+
+  <!-- 文章分類 -->
+  <div class="sidebar-widget">
+    <div class="sidebar-section-header">
+      <span class="sidebar-section-title">文章分類</span>
+    </div>
+    <ul class="space-y-0.5">
+      {categories.map(({ name, count, href }) => (
+        <li>
+          <a
+            href={href}
+            class="group flex items-center justify-between border-b border-canvas-ceramic py-2 text-[14px] font-medium text-ink-soft transition-colors hover:text-blue-accent"
+          >
+            <span>{name}</span>
+            <span class="flex h-5 w-5 items-center justify-center rounded-full bg-blue-light text-[10px] font-bold text-blue-brand transition-colors group-hover:bg-blue-accent group-hover:text-onDark">
+              {count}
+            </span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+
+  <!-- 熱門推薦 -->
+  <div class="sidebar-widget">
+    <div class="sidebar-section-header">
+      <span class="sidebar-section-title">熱門推薦</span>
+    </div>
+    <div class="space-y-3">
+      {popularPosts.map((p) => (
+        <a href="#" class="group flex gap-3">
+          <img src={p.image} alt={p.title} loading="lazy" class="h-14 w-14 shrink-0 rounded-card object-cover" />
+          <div class="min-w-0 flex-1">
+            <span class="category-badge mb-1 inline-block !px-2 !py-0.5 !text-[10px]">{p.category}</span>
+            <h5 class="line-clamp-2 text-sm font-normal leading-snug text-ink transition-colors group-hover:text-blue-accent">
+              {p.title}
+            </h5>
+          </div>
+        </a>
+      ))}
+    </div>
+  </div>
+
+</aside>

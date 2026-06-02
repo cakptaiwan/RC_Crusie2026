@@ -1,0 +1,378 @@
+---
+import { socialLinks, navSocialLinkClass, navSocialGroupClass } from '../data/social-links';
+
+interface Props {
+  /** Fixed transparent bar over hero — homepage only */
+  overlay?: boolean;
+}
+
+const { overlay = false } = Astro.props;
+const currentPath = Astro.url.pathname;
+
+interface NavChild {
+  label: string;
+  href: string;
+}
+interface NavItem {
+  label: string;
+  href?: string;
+  children?: NavChild[];
+}
+
+const navItems: NavItem[] = [
+  { label: '關於皇家旅人', href: '/about-rc' },
+  {
+    label: '新手出發',
+    children: [
+      { label: '航線選擇', href: '/beginners-guide' },
+      { label: '聰明花錢', href: '/pricing' },
+      { label: '聰明選艙', href: '/cabin-guide' },
+      { label: '常見問題', href: '/faq' },
+    ],
+  },
+  {
+    label: '玩轉郵輪',
+    children: [
+      { label: '娛樂設施', href: '/entertainment' },
+      { label: '餐廳美食', href: '/dining' },
+      { label: '岸上行程', href: '/shore-excursions' },
+    ],
+  },
+  {
+    label: '航線資訊',
+    children: [
+      { label: '地中海', href: '/mediterranean' },
+      { label: '加勒比海', href: '/caribbean' },
+      { label: '亞洲航線', href: '/asia-routes' },
+    ],
+  },
+  {
+    label: '讀者社群',
+    children: [
+      { label: '留言板', href: '/discussion' },
+      { label: '讀者投稿', href: '/reader-submit' },
+      { label: '聯絡我們', href: '/discussion' },
+    ],
+  },
+];
+
+const isItemActive = (item: NavItem) =>
+  item.href
+    ? currentPath === item.href
+    : (item.children?.some((c) => currentPath.startsWith(c.href)) ?? false);
+
+const NAV_H = '72px';
+---
+
+{overlay ? (
+  <nav
+    id="nav-strip"
+    class="nav-strip nav-strip--hero nav-strip--overlay fixed inset-x-0 top-0 z-50 font-sans"
+    aria-label="主要導覽"
+    style={`height: ${NAV_H};`}
+    data-enter="fade"
+    data-enter-delay="0"
+  >
+    <div class="mx-auto flex h-full max-w-content items-center justify-end gap-6 px-gutter-sm md:px-gutter-md lg:px-gutter-lg">
+      <!-- Desktop menu -->
+      <div class="hidden h-full flex-1 items-center justify-end gap-0.5 lg:flex">
+        {navItems.map((item) => {
+          const active = isItemActive(item);
+          const hasChildren = !!item.children?.length;
+          return (
+            <div class="group relative flex h-full items-center">
+              {item.href && !hasChildren ? (
+                <a
+                  href={item.href}
+                  class:list={[
+                    'nav-link flex items-center gap-1 px-5 py-2.5 font-sans text-[15px] tracking-wide whitespace-nowrap',
+                    active ? 'nav-link--active font-medium text-white' : 'font-normal text-white/70 hover:text-white',
+                  ]}
+                >
+                  {item.label}
+                </a>
+              ) : (
+                <button
+                  type="button"
+                  class:list={[
+                    'nav-link flex items-center gap-1 px-5 py-2.5 font-sans text-[15px] tracking-wide whitespace-nowrap',
+                    active ? 'nav-link--active font-medium text-white' : 'font-normal text-white/70 hover:text-white group-hover:text-white',
+                  ]}
+                  aria-haspopup="true"
+                >
+                  {item.label}
+                  <svg class="mt-px h-3 w-3 opacity-50 transition-transform duration-300 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+              )}
+              {hasChildren && (
+                <div class="pointer-events-none absolute top-full left-1/2 -translate-x-1/2 pt-2 opacity-0 transition-all duration-300 group-hover:pointer-events-auto group-hover:opacity-100">
+                  <div
+                    class="min-w-[152px] overflow-hidden rounded-b-xl py-1.5"
+                    style="background: rgba(6,21,86,0.98); border-top: 2px solid rgba(254,189,17,0.55); box-shadow: 0 16px 40px rgba(6,21,86,0.45);"
+                    role="menu"
+                  >
+                    {item.children!.map((child) => (
+                      <a
+                        href={child.href}
+                        role="menuitem"
+                        class:list={[
+                          'block whitespace-nowrap px-5 py-2.5 font-sans text-[14px] transition-colors duration-200',
+                          currentPath.startsWith(child.href)
+                            ? 'bg-white/8 font-medium text-white'
+                            : 'font-normal text-white/65 hover:bg-white/6 hover:text-white',
+                        ]}
+                      >
+                        {child.label}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        })}
+        <div class:list={['ml-4 h-full', navSocialGroupClass]} aria-label="社群媒體">
+          {socialLinks.map(({ label, href, navSvg }) => (
+            <a href={href} aria-label={label} class={navSocialLinkClass}>
+              <Fragment set:html={navSvg} />
+            </a>
+          ))}
+        </div>
+      </div>
+
+      <!-- Mobile toggle -->
+      <button
+        id="mobile-nav-toggle"
+        type="button"
+        aria-expanded="false"
+        aria-controls="mobile-nav-panel"
+        aria-label="開啟選單"
+        class="flex h-10 w-10 items-center justify-center rounded-lg text-white/75 transition-colors hover:bg-white/10 hover:text-white lg:hidden"
+      >
+        <svg id="hamburger-open" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 7h16M4 12h16M4 17h16" />
+        </svg>
+        <svg id="hamburger-close" class="hidden h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+    <div
+      class="pointer-events-none absolute inset-x-0 bottom-0 h-px"
+      style="background: linear-gradient(to right, transparent 0%, rgba(254,189,17,0.5) 25%, rgba(254,189,17,0.5) 75%, transparent 100%);"
+      aria-hidden="true"
+    />
+  </nav>
+) : (
+  <div
+    id="nav-strip-wrapper"
+    style={`position: relative; height: ${NAV_H}; z-index: 50;`}
+    data-enter="fade"
+    data-enter-delay="0"
+  >
+    <nav
+      id="nav-strip"
+      class="nav-strip font-sans"
+      aria-label="主要導覽"
+      style={`
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: ${NAV_H};
+        background: rgba(6,21,86,0.97);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+      `}
+    >
+      <div class="mx-auto flex h-full max-w-content items-center justify-end gap-6 px-gutter-sm md:px-gutter-md lg:px-gutter-lg">
+        <div class="hidden h-full flex-1 items-center justify-end gap-0.5 lg:flex">
+          {navItems.map((item) => {
+            const active = isItemActive(item);
+            const hasChildren = !!item.children?.length;
+            return (
+              <div class="group relative flex h-full items-center">
+                {item.href && !hasChildren ? (
+                  <a
+                    href={item.href}
+                    class:list={[
+                      'nav-link flex items-center gap-1 px-5 py-2.5 font-sans text-[15px] tracking-wide whitespace-nowrap',
+                      active ? 'nav-link--active font-medium text-white' : 'font-normal text-white/70 hover:text-white',
+                    ]}
+                  >
+                    {item.label}
+                  </a>
+                ) : (
+                  <button
+                    type="button"
+                    class:list={[
+                      'nav-link flex items-center gap-1 px-5 py-2.5 font-sans text-[15px] tracking-wide whitespace-nowrap',
+                      active ? 'nav-link--active font-medium text-white' : 'font-normal text-white/70 hover:text-white group-hover:text-white',
+                    ]}
+                    aria-haspopup="true"
+                  >
+                    {item.label}
+                    <svg class="mt-px h-3 w-3 opacity-50 transition-transform duration-300 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                )}
+                {hasChildren && (
+                  <div class="pointer-events-none absolute top-full left-1/2 -translate-x-1/2 pt-2 opacity-0 transition-all duration-300 group-hover:pointer-events-auto group-hover:opacity-100">
+                    <div
+                      class="min-w-[152px] overflow-hidden rounded-b-xl py-1.5"
+                      style="background: rgba(6,21,86,0.98); border-top: 2px solid rgba(254,189,17,0.55); box-shadow: 0 16px 40px rgba(6,21,86,0.45);"
+                      role="menu"
+                    >
+                      {item.children!.map((child) => (
+                        <a
+                          href={child.href}
+                          role="menuitem"
+                          class:list={[
+                            'block whitespace-nowrap px-5 py-2.5 font-sans text-[14px] transition-colors duration-200',
+                            currentPath.startsWith(child.href)
+                              ? 'bg-white/8 font-medium text-white'
+                              : 'font-normal text-white/65 hover:bg-white/6 hover:text-white',
+                          ]}
+                        >
+                          {child.label}
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+          <div class:list={['ml-4 h-full', navSocialGroupClass]} aria-label="社群媒體">
+            {socialLinks.map(({ label, href, navSvg }) => (
+              <a href={href} aria-label={label} class={navSocialLinkClass}>
+                <Fragment set:html={navSvg} />
+              </a>
+            ))}
+          </div>
+        </div>
+        <button
+          id="mobile-nav-toggle"
+          type="button"
+          aria-expanded="false"
+          aria-controls="mobile-nav-panel"
+          aria-label="開啟選單"
+          class="flex h-10 w-10 items-center justify-center rounded-lg text-white/75 transition-colors hover:bg-white/10 hover:text-white lg:hidden"
+        >
+          <svg id="hamburger-open" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 7h16M4 12h16M4 17h16" />
+          </svg>
+          <svg id="hamburger-close" class="hidden h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <div
+        class="pointer-events-none absolute inset-x-0 bottom-0 h-px"
+        style="background: linear-gradient(to right, transparent 0%, rgba(254,189,17,0.5) 25%, rgba(254,189,17,0.5) 75%, transparent 100%);"
+        aria-hidden="true"
+      />
+    </nav>
+  </div>
+)}
+
+<!-- Mobile dropdown -->
+<div
+  id="mobile-nav-panel"
+  class="hidden lg:hidden"
+  style={`position: fixed; left: 0; right: 0; top: ${NAV_H}; z-index: 49; background: rgba(6,21,86,0.99); backdrop-filter: blur(16px); max-height: calc(100vh - ${NAV_H}); overflow-y: auto; box-shadow: 0 16px 40px rgba(6,21,86,0.5);`}
+>
+  <nav class="mx-auto max-w-content px-gutter-sm py-5 md:px-gutter-md" aria-label="行動裝置導覽">
+    {navItems.map((item) => (
+      <div class="border-b border-white/8 last:border-0">
+        {item.href && !item.children ? (
+          <a href={item.href} class="block py-4 font-sans text-[16px] tracking-wide text-white/70 hover:text-white">
+            {item.label}
+          </a>
+        ) : (
+          <details class="group/detail">
+            <summary class="flex cursor-pointer list-none items-center justify-between py-4 font-sans text-[16px] tracking-wide text-white/70 hover:text-white">
+              {item.label}
+              <svg class="h-4 w-4 opacity-50 transition-transform group-open/detail:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </summary>
+            <div class="pb-3 pl-4">
+              {item.children?.map((child) => (
+                <a href={child.href} class="block py-2.5 font-sans text-[15px] text-white/55 hover:text-white">
+                  {child.label}
+                </a>
+              ))}
+            </div>
+          </details>
+        )}
+      </div>
+    ))}
+  </nav>
+  <div class="border-t border-white/8 px-gutter-sm py-6">
+    <div class="mx-auto flex max-w-content items-center justify-center gap-5">
+      {socialLinks.map(({ label, href, navSvg }) => (
+        <a href={href} aria-label={label} class={navSocialLinkClass}>
+          <Fragment set:html={navSvg} />
+        </a>
+      ))}
+    </div>
+    <p class="mt-4 text-center font-sans text-[11px] uppercase tracking-[0.15em] text-white/20">
+      Loyal to Royal · 皇家旅人
+    </p>
+  </div>
+</div>
+
+<script define:vars={{ overlay }}>
+  (() => {
+    const nav = document.getElementById('nav-strip');
+    const wrapper = document.getElementById('nav-strip-wrapper');
+
+    if (!overlay && wrapper && nav) {
+      const rect = wrapper.getBoundingClientRect();
+      const threshold = rect.bottom + window.scrollY;
+      let fixed = false;
+      const syncSticky = () => {
+        if (window.scrollY >= threshold && !fixed) {
+          fixed = true;
+          nav.style.position = 'fixed';
+          nav.style.top = '0';
+          nav.style.left = '0';
+          nav.style.right = '0';
+          nav.style.width = '100%';
+        } else if (window.scrollY < threshold && fixed) {
+          fixed = false;
+          nav.style.position = 'absolute';
+          nav.style.top = '0';
+          nav.style.left = '0';
+          nav.style.right = '0';
+          nav.style.width = '';
+        }
+      };
+      window.addEventListener('scroll', syncSticky, { passive: true });
+      syncSticky();
+    }
+
+    const toggle = document.getElementById('mobile-nav-toggle');
+    const panel = document.getElementById('mobile-nav-panel');
+    const iconOpen = document.getElementById('hamburger-open');
+    const iconClose = document.getElementById('hamburger-close');
+    if (toggle && panel) {
+      toggle.addEventListener('click', () => {
+        const isHidden = panel.classList.toggle('hidden');
+        toggle.setAttribute('aria-expanded', isHidden ? 'false' : 'true');
+        iconOpen?.classList.toggle('hidden', !isHidden);
+        iconClose?.classList.toggle('hidden', isHidden);
+      });
+      panel.querySelectorAll('a').forEach((a) =>
+        a.addEventListener('click', () => {
+          panel.classList.add('hidden');
+          toggle.setAttribute('aria-expanded', 'false');
+          iconOpen?.classList.remove('hidden');
+          iconClose?.classList.add('hidden');
+        })
+      );
+    }
+  })();
+</script>

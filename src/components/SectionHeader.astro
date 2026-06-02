@@ -1,0 +1,100 @@
+---
+/**
+ * SectionHeader — reusable magazine-style 3-layer section heading.
+ *
+ * Layout:
+ *   EYEBROW LABEL          ← 10px uppercase tracking, accent color
+ *   Section Title  全部 →  ← Playfair 20px navy + right-aligned micro link
+ *   ━━━━━░░░░              ← accent-colored gradient rule
+ */
+
+interface Props {
+  /** Small decorative English label, e.g. "Editor's Selection" */
+  eyebrow: string;
+  /** Primary Chinese section title, e.g. "精選推薦" */
+  title: string;
+  /** "查看全部 →" link href */
+  href: string;
+  /** Optional supporting line under the title */
+  lead?: string;
+  /** Link label — defaults to "查看全部 →" */
+  linkLabel?: string;
+  /** Color accent variant — controls eyebrow, rule, and link hover */
+  accent?: 'gold' | 'blue' | 'navy';
+  /** Page-load entrance delay (ms). Omit to use scroll reveal instead. */
+  enterDelay?: string;
+}
+
+const {
+  eyebrow,
+  title,
+  href,
+  lead,
+  linkLabel = '查看全部 →',
+  accent = 'gold',
+  enterDelay,
+} = Astro.props;
+
+/* Single source of truth for accent-specific tokens */
+const T = {
+  gold: {
+    eyebrow: '#0073BB',
+    rule:    'rgba(0,115,187,0.45)',
+    hover:   'hover:text-[#0073BB]',
+  },
+  blue: {
+    eyebrow: '#0073BB',
+    rule:    'rgba(0,115,187,0.35)',
+    hover:   'hover:text-[#0073BB]',
+  },
+  navy: {
+    eyebrow: 'rgba(6,21,86,0.5)',
+    rule:    'rgba(6,21,86,0.18)',
+    hover:   'hover:text-[#061556]',
+  },
+} as const;
+
+const t = T[accent];
+---
+
+<header
+  class="mb-6 md:mb-8"
+  {...enterDelay
+    ? { 'data-enter': 'up', 'data-enter-delay': enterDelay }
+    : { 'data-reveal': 'fade' }}
+>
+  <div data-parallax-y="0.12">
+    <!-- Eyebrow label -->
+    <p
+      class="section-eyebrow mb-2"
+      style={`color: ${t.eyebrow}`}
+    >
+      {eyebrow}
+    </p>
+
+    <!-- Title + "See All" link -->
+    <div class="flex flex-wrap items-end justify-between gap-x-4 gap-y-2">
+      <h2 class="section-title">{title}</h2>
+      <a
+        href={href}
+        class:list={[
+          'shrink-0 font-sans text-[13px] font-medium text-ink-soft transition-all duration-[400ms] ease-out',
+          t.hover,
+        ]}
+      >
+        {linkLabel}
+      </a>
+    </div>
+
+    {lead && (
+      <p class="section-lead mt-3">{lead}</p>
+    )}
+
+    <!-- Accent rule -->
+    <div
+      class="mt-4 h-px max-w-[12rem]"
+      style={`background: linear-gradient(to right, ${t.rule}, transparent);`}
+      aria-hidden="true"
+    />
+  </div>
+</header>

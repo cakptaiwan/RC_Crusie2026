@@ -1,0 +1,185 @@
+---
+const currentPath = Astro.url.pathname;
+
+const navLinks = [
+  { href: '/about-rc', label: '關於旅人' },
+  { href: '/about-royal', label: '關於皇家' },
+  { href: '/beginners-guide', label: '新手指南' },
+  { href: '/cabin-guide', label: '船艙攻略' },
+  { href: '/pricing', label: '費用解析' },
+  { href: '/routes', label: '航線情報' },
+  { href: '/discussion', label: '留言討論' },
+];
+---
+
+<header class="sticky top-0 z-40 w-full">
+  <!-- Main nav bar: dark navy background matching logo -->
+  <div
+    class="relative"
+    style="background: rgba(6,21,86,0.97); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);"
+  >
+    <div
+      class="mx-auto flex max-w-content items-center justify-between gap-10 px-gutter-sm md:px-gutter-md lg:px-gutter-lg"
+      style="height: 92px;"
+    >
+
+      <!-- Brand logo -->
+      <a href="/" class="group shrink-0">
+        <img
+          src="/logo.png"
+          alt="Loyal to Royal 皇家旅人"
+          width="56"
+          height="56"
+          class="h-12 w-12 rounded-md object-contain transition-opacity duration-300 group-hover:opacity-80 md:h-14 md:w-14"
+          loading="eager"
+        />
+      </a>
+
+      <!-- Desktop nav links -->
+      <nav class="hidden flex-1 items-center justify-center gap-2 lg:flex" aria-label="主要導覽">
+        {navLinks.map(({ href, label }) => {
+          const isActive = currentPath === href || (href !== '/' && currentPath.startsWith(href));
+          return (
+            <a
+              href={href}
+              class:list={[
+                'relative px-5 py-3 text-[15px] tracking-[0.06em] transition-all duration-200',
+                'hover:text-white',
+                isActive
+                  ? 'font-medium text-white'
+                  : 'font-normal text-white/65',
+              ]}
+              style={{
+                fontFamily: "'Noto Sans TC', 'Inter', sans-serif",
+                ...(isActive
+                  ? { boxShadow: 'inset 0 -2px 0 #FEBD11' }
+                  : {}),
+              }}
+            >
+              {label}
+            </a>
+          );
+        })}
+      </nav>
+
+      <!-- Right: CTA + mobile toggle -->
+      <div class="flex shrink-0 items-center gap-3">
+        <!-- 聯絡我們 CTA button -->
+        <a
+          href="/discussion"
+          class="hidden items-center rounded-full px-6 py-2.5 text-[14px] font-medium text-white transition-all duration-200 hover:opacity-90 md:flex"
+          style="background: #0073BB; font-family: 'Noto Sans TC', sans-serif; letter-spacing: 0.06em;"
+        >
+          聯絡我們
+        </a>
+
+        <!-- Mobile hamburger -->
+        <button
+          id="mobile-nav-toggle"
+          type="button"
+          class="flex h-11 w-11 items-center justify-center rounded-full transition-colors duration-200 hover:bg-white/10 lg:hidden"
+          aria-expanded="false"
+          aria-controls="mobile-nav-menu"
+          aria-label="開啟選單"
+        >
+          <!-- Hamburger icon -->
+          <svg id="nav-icon-open" class="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 7h16M4 12h16M4 17h16" />
+          </svg>
+          <!-- Close icon (hidden by default) -->
+          <svg id="nav-icon-close" class="hidden h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Bottom accent line: thin gold hairline for luxury feel -->
+    <div
+      class="absolute bottom-0 left-0 right-0 h-px"
+      style="background: linear-gradient(to right, transparent 0%, rgba(254,189,17,0.6) 30%, rgba(254,189,17,0.6) 70%, transparent 100%);"
+      aria-hidden="true"
+    ></div>
+  </div>
+
+  <!-- Mobile menu: dark navy panel with generous spacing -->
+  <div
+    id="mobile-nav-menu"
+    class="hidden lg:hidden"
+    style="background: rgba(6,21,86,0.99); backdrop-filter: blur(16px);"
+  >
+    <nav
+      class="flex flex-col px-gutter-sm py-4"
+      aria-label="行動裝置導覽"
+    >
+      {navLinks.map(({ href, label }) => {
+        const isActive = currentPath === href || (href !== '/' && currentPath.startsWith(href));
+        return (
+          <a
+            href={href}
+            class:list={[
+              'flex items-center border-b py-5 text-[16px] tracking-[0.06em] transition-colors duration-200',
+              'border-white/8',
+              isActive
+                ? 'font-semibold text-white'
+                : 'font-normal text-white/65 hover:text-white',
+            ]}
+            style={{
+              fontFamily: "'Noto Sans TC', 'Inter', sans-serif",
+              ...(isActive ? { borderLeft: '3px solid #FEBD11', paddingLeft: '16px' } : { paddingLeft: '0px' }),
+            }}
+          >
+            {label}
+          </a>
+        );
+      })}
+
+      <!-- Mobile CTA -->
+      <div class="pt-6 pb-2">
+        <a
+          href="/discussion"
+          class="flex w-full items-center justify-center rounded-full py-4 text-[16px] font-medium text-white transition-opacity hover:opacity-90"
+          style="background: #0073BB; font-family: 'Noto Sans TC', sans-serif; letter-spacing: 0.05em;"
+        >
+          聯絡我們
+        </a>
+      </div>
+    </nav>
+
+    <!-- Bottom wave decoration for mobile menu -->
+    <div class="px-gutter-sm pb-4 text-center">
+      <p class="text-[11px] tracking-[0.15em] text-white/25 uppercase" style="font-family: 'Inter', sans-serif;">
+        Loyal to Royal · 皇家旅人
+      </p>
+    </div>
+  </div>
+</header>
+
+<script>
+  const toggle = document.getElementById('mobile-nav-toggle') as HTMLButtonElement | null;
+  const menu = document.getElementById('mobile-nav-menu') as HTMLElement | null;
+  const iconOpen = document.getElementById('nav-icon-open') as HTMLElement | null;
+  const iconClose = document.getElementById('nav-icon-close') as HTMLElement | null;
+
+  toggle?.addEventListener('click', () => {
+    const isHidden = menu?.classList.toggle('hidden');
+    toggle.setAttribute('aria-expanded', isHidden ? 'false' : 'true');
+    if (isHidden) {
+      iconOpen?.classList.remove('hidden');
+      iconClose?.classList.add('hidden');
+    } else {
+      iconOpen?.classList.add('hidden');
+      iconClose?.classList.remove('hidden');
+    }
+  });
+
+  // Close menu when any link is clicked
+  menu?.querySelectorAll('a').forEach((link) => {
+    link.addEventListener('click', () => {
+      menu.classList.add('hidden');
+      toggle?.setAttribute('aria-expanded', 'false');
+      iconOpen?.classList.remove('hidden');
+      iconClose?.classList.add('hidden');
+    });
+  });
+</script>

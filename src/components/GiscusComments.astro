@@ -1,0 +1,32 @@
+---
+export interface Props {
+  postTitle?: string;
+  postSlug?: string;
+}
+const { postSlug = '' } = Astro.props;
+const repo = import.meta.env.GISCUS_REPO ?? '';
+const repoId = import.meta.env.GISCUS_REPO_ID ?? '';
+const category = import.meta.env.GISCUS_CATEGORY ?? 'Comments';
+const categoryId = import.meta.env.GISCUS_CATEGORY_ID ?? '';
+const isConfigured = !!(repo && repoId && categoryId);
+---
+<section class="giscus-section mt-12 border-t-2 border-canvas-ceramic pt-8">
+  <div class="mb-6 flex items-center justify-between">
+    <h3 class="text-micro font-semibold tracking-brand text-ink">讀者討論</h3>
+    <a href={isConfigured ? `https://github.com/${repo}/discussions` : 'https://github.com/apps/giscus'} target="_blank" rel="noopener noreferrer" class="text-micro text-ink-soft hover:text-blue-accent">{isConfigured ? 'GitHub Discussions' : '設定 Giscus'}</a>
+  </div>
+  {isConfigured ? (
+    <>
+      <div id="giscus-container" class="min-h-[200px]"></div>
+      <script is:inline define:vars={{ repo, repoId, category, categoryId, postSlug }}>
+        (function(){const s=document.createElement('script');s.src='https://giscus.app/client.js';s.setAttribute('data-repo',repo);s.setAttribute('data-repo-id',repoId);s.setAttribute('data-category',category);s.setAttribute('data-category-id',categoryId);s.setAttribute('data-mapping',postSlug?'specific':'pathname');if(postSlug)s.setAttribute('data-term',postSlug);s.setAttribute('data-theme','light');s.setAttribute('data-lang','zh-TW');s.crossOrigin='anonymous';s.async=true;document.getElementById('giscus-container')?.appendChild(s);})();
+      </script>
+    </>
+  ) : (
+    <div class="ds-card-pad text-center text-body text-ink-soft">
+      <p class="mb-2 font-semibold text-ink">Giscus 留言板</p>
+      <p class="mb-4">完成 .env 中的 GISCUS_* 設定後，討論區將自動顯示。</p>
+      <a href="https://giscus.app/" class="btn-primary !text-micro" target="_blank" rel="noopener noreferrer">前往 giscus.app</a>
+    </div>
+  )}
+</section>

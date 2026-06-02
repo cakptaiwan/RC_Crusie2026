@@ -1,0 +1,463 @@
+﻿---
+/**
+ * index.astro — Royal Traveler 首頁
+ */
+import { Image } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PostCard from '../components/PostCard.astro';
+import ContentLayout from '../components/ContentLayout.astro';
+import SectionHeader from '../components/SectionHeader.astro';
+import HeroHeader from '../components/HeroHeader.astro';
+import { getPosts, getFeaturedPosts } from '../lib/notion';
+import type { Post } from '../lib/notion';
+
+const FALLBACK_HERO =
+  'https://images.pexels.com/photos/1654698/pexels-photo-1654698.jpeg?auto=compress&cs=tinysrgb&w=1200';
+
+/** Fixed accent images — bottom-right of trending grid (stacked) */
+const TRENDING_ACCENT_IMAGE =
+  'https://images.pexels.com/photos/1430676/pexels-photo-1430676.jpeg?auto=compress&cs=tinysrgb&w=800';
+
+const TRENDING_ACCENT_PANELS = [
+  { eyebrow: 'Royal Caribbean', caption: '啟航，向著下一個港口' },
+  { eyebrow: 'Royal Caribbean', caption: '啟航，向著下一個港口' },
+] as const;
+
+const FALLBACK_POST: Post = {
+  id:       'fallback',
+  category: '精選',
+  title:    '探索郵輪旅遊的精彩世界',
+  excerpt:  '郵輪旅遊是一種獨特而全面的旅行方式，讓旅客在一趟行程中探索多個目的地。',
+  image:    FALLBACK_HERO,
+  date:     '2024-03-15',
+  author:   '皇家旅人',
+  comments: 0,
+  likes:    0,
+  url:      '#',
+  featured: true,
+  status:   '已發布',
+  page:     'HOME',
+};
+
+const [featured, homePosts] = await Promise.all([
+  getFeaturedPosts(),
+  getPosts('HOME'),
+]);
+
+const heroPost: Post = featured[0] ?? FALLBACK_POST;
+
+const featuredGrid = homePosts.slice(0, 4);
+const trending     = homePosts.slice(2, 6);
+const latestPosts  = homePosts.slice(0, 4);
+---
+
+<BaseLayout
+  title="首頁"
+  description="Royal Traveler 皇家旅人 — 個人郵輪旅遊心得與資訊分享部落格。分享地中海、加勒比海、北歐峽灣等世界頂尖郵輪旅遊的真實體驗。"
+>
+  <HeroHeader post={heroPost} />
+
+  <ContentLayout showNavStrip={false}>
+
+    <!-- FEATURED CRUISES — Full-bleed light blue block, L-shape grid -->
+    <section class="relative mb-12 mt-10 md:mb-16" aria-labelledby="section-featured">
+      <div
+        class="pointer-events-none absolute inset-y-0"
+        style="left: -100vw; right: 0; background: linear-gradient(135deg, rgba(232,242,253,0.72) 0%, rgba(210,228,245,0.65) 100%); box-shadow: inset 0 1px 0 rgba(255,255,255,0.85); backdrop-filter: blur(6px);"
+        aria-hidden="true"
+      />
+      <!-- pr-5/md:pr-7 matches Latest section wrapper padding so right edges align -->
+      <div class="relative py-8 pr-5 md:py-10 md:pr-7">
+        <SectionHeader
+          eyebrow="Featured Cruises"
+          title="精選遊輪活動"
+          lead="編輯精選的航程故事與活動資訊，從地中海到加勒比，帶你感受皇家加勒比的海洋奢華。"
+          href="/about-rc"
+          accent="blue"
+          enterDelay="420"
+        />
+
+        <!--
+          L-SHAPE GRID (md+):
+          col-1 rows 1-2: CARD 1 (tall)   |  col-2 row-1: CARD 2
+                                           |  col-2 row-2: CARD 3
+          col-1 row-3: ghost quote (empty) |  col-2 row-3: CARD 4 (protrudes left)
+        -->
+        <div
+          class="grid gap-4
+                 md:grid-cols-[5fr_3fr]
+                 md:[grid-template-rows:300px_160px_190px]"
+        >
+
+          <!-- CARD 1: col-1 rows 1-2 — dominant tall left card -->
+          <a
+            href={featuredGrid[0]?.url ?? '#'}
+            class="ocean-event-card group relative overflow-hidden rounded-2xl h-72
+                   md:col-start-1 md:row-start-1 md:row-span-2 md:h-auto"
+            style="box-shadow: 0 6px 28px rgba(6,21,86,0.15), 0 1px 4px rgba(6,21,86,0.08);"
+            data-enter="up"
+            data-enter-delay="520"
+          >
+            {featuredGrid[0]?.image ? (
+              <Image
+                src={featuredGrid[0].image}
+                alt={featuredGrid[0].title}
+                width={700}
+                height={480}
+                loading="lazy"
+                class="ocean-event-card__img absolute inset-0 h-full w-full object-cover"
+              />
+            ) : (
+              <div class="absolute inset-0 bg-gradient-to-br from-[#061556] via-[#0a2a6e] to-[#0073BB]" />
+            )}
+            <div class="absolute inset-0 bg-gradient-to-t from-[#061556]/94 via-[#061556]/30 to-transparent" />
+            <div
+              class="absolute inset-y-0 left-0 w-[3px]"
+              style="background: linear-gradient(to bottom, transparent 10%, rgba(0,115,187,0.7) 50%, transparent 90%);"
+              aria-hidden="true"
+            />
+            <div class="absolute bottom-0 left-0 right-0 p-6 md:p-8">
+              <p class="section-eyebrow mb-2">Featured Story</p>
+              <span class="mb-3 inline-block rounded-full bg-[#0073BB] px-3 py-1 text-[12px] font-semibold text-white">
+                {featuredGrid[0]?.category}
+              </span>
+              <h3 class="mt-1 font-serif font-bold leading-[1.35] text-white text-xl md:text-[1.65rem]">
+                {featuredGrid[0]?.title}
+              </h3>
+              <p class="mt-3 font-sans text-[12px] text-white/50">
+                {featuredGrid[0]?.date} · {featuredGrid[0]?.author}
+              </p>
+            </div>
+          </a>
+
+          <!-- CARD 2: col-2 row-1 — tall right-top, left-aligned -->
+          <a
+            href={featuredGrid[1]?.url ?? '#'}
+            class="ocean-event-card group relative overflow-hidden rounded-2xl h-52
+                   md:col-start-2 md:row-start-1 md:h-auto"
+            style="box-shadow: 0 6px 28px rgba(6,21,86,0.15), 0 1px 4px rgba(6,21,86,0.08);"
+            data-enter="up"
+            data-enter-delay="620"
+          >
+            {featuredGrid[1]?.image ? (
+              <Image
+                src={featuredGrid[1].image}
+                alt={featuredGrid[1].title}
+                width={480}
+                height={300}
+                loading="lazy"
+                class="ocean-event-card__img absolute inset-0 h-full w-full object-cover"
+              />
+            ) : (
+              <div class="absolute inset-0 bg-gradient-to-br from-[#0073BB] via-[#0a4a8a] to-[#061556]" />
+            )}
+            <div class="absolute inset-0 bg-gradient-to-t from-[#061556]/92 via-[#061556]/20 to-transparent" />
+            <div class="absolute bottom-0 left-0 right-0 p-4 md:p-5">
+              <span class="mb-1.5 inline-block rounded-full bg-[#0073BB] px-2.5 py-1 text-[12px] font-semibold text-white">
+                {featuredGrid[1]?.category}
+              </span>
+              <h3 class="mt-1 line-clamp-2 font-serif font-semibold leading-[1.45] text-white text-sm md:text-base">
+                {featuredGrid[1]?.title}
+              </h3>
+              <p class="mt-1.5 font-sans text-[11px] text-white/45">{featuredGrid[1]?.date}</p>
+            </div>
+          </a>
+
+          <!-- CARD 3: col-2 row-2 — compact 160px, right-aligned -->
+          <a
+            href={featuredGrid[2]?.url ?? '#'}
+            class="ocean-event-card group relative overflow-hidden rounded-2xl h-44
+                   md:col-start-2 md:row-start-2 md:h-auto"
+            style="box-shadow: 0 6px 28px rgba(6,21,86,0.15), 0 1px 4px rgba(6,21,86,0.08);"
+            data-enter="up"
+            data-enter-delay="720"
+          >
+            {featuredGrid[2]?.image ? (
+              <Image
+                src={featuredGrid[2].image}
+                alt={featuredGrid[2].title}
+                width={480}
+                height={160}
+                loading="lazy"
+                class="ocean-event-card__img absolute inset-0 h-full w-full object-cover object-center"
+              />
+            ) : (
+              <div class="absolute inset-0 bg-gradient-to-tl from-[#061556] to-[#0073BB]/70" />
+            )}
+            <div class="absolute inset-0 bg-gradient-to-t from-[#061556]/93 via-[#061556]/30 to-transparent" />
+            <div class="absolute bottom-0 left-0 right-0 p-4 md:p-5 text-right">
+              <span class="mb-1.5 inline-block rounded-full bg-[#0073BB] px-2.5 py-1 text-[12px] font-semibold text-white">
+                {featuredGrid[2]?.category}
+              </span>
+              <h3 class="mt-1 line-clamp-2 font-serif font-semibold leading-[1.45] text-white text-sm">
+                {featuredGrid[2]?.title}
+              </h3>
+            </div>
+          </a>
+
+          <!-- col-1 row-3: intentional negative space with ghost quote -->
+          <div
+            class="hidden overflow-hidden md:col-start-1 md:row-start-3 md:flex md:flex-col md:justify-center md:pr-[38%]"
+            aria-hidden="true"
+          >
+            <!-- Rotating quote ticker -->
+            <div id="quote-ticker" class="select-none overflow-hidden" aria-hidden="true">
+              <p
+                id="quote-text"
+                class="break-words font-serif leading-[1.55] text-[#061556]/75"
+                style="font-size: clamp(1.05rem, 1.2vw + 0.75rem, 1.35rem); word-break: break-word;"
+              ></p>
+            </div>
+            <div class="mt-3 h-px w-10 bg-[#0073BB]/35"></div>
+
+            <script>
+              (() => {
+                const quotes = [
+                  '一次打包，世界靠岸',
+                  '海風吹過來的那一刻，什麼都不重要了',
+                  '不用搬行李、訂飯店、趕行程，只要吹海風、看表演、吃美食就好',
+                  '一覺醒來，又是不同的國家、新奇的城市',
+                  '第一次就上癮，從此回不去的旅行方式',
+                  '不是在某個城市，就是在前往下一個城市的海上，醒來不知身在何處，卻每一天都期待',
+                  '上船那刻起，就沒有行程了',
+                  '別人在機場轉機，你在地中海看日落、在加勒比海喝調酒、在甲板上數星星，同樣的出發，不一樣的過法',
+                  '有一種旅行，是你睡著的時候，悄悄靠岸另一個國家，陌生的語言，夾雜熟悉的期待',
+                ];
+
+                const el = document.getElementById('quote-text') as HTMLElement | null;
+                if (!el) return;
+
+                // Shuffle once for random order
+                const shuffled = [...quotes].sort(() => Math.random() - 0.5);
+                let idx = 0;
+
+                const show = (text: string) => {
+                  // Slide out to left
+                  el.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+                  el.style.opacity = '0';
+                  el.style.transform = 'translateX(-12px)';
+
+                  setTimeout(() => {
+                    el.textContent = text;
+                    // Reset to right, then slide in to center
+                    el.style.transition = 'none';
+                    el.style.transform = 'translateX(16px)';
+                    el.style.opacity = '0';
+
+                    requestAnimationFrame(() => {
+                      requestAnimationFrame(() => {
+                        el.style.transition = 'opacity 0.55s ease, transform 0.55s ease';
+                        el.style.opacity = '1';
+                        el.style.transform = 'translateX(0)';
+                      });
+                    });
+                  }, 420);
+                };
+
+                // Initial display
+                show(shuffled[idx]);
+
+                setInterval(() => {
+                  idx = (idx + 1) % shuffled.length;
+                  show(shuffled[idx]);
+                }, 5000);
+              })();
+            </script>
+          </div>
+
+          <!-- CARD 4: col-2 row-3 only — protrudes left by 50% -->
+          {featuredGrid[3] && (
+            <a
+              href={featuredGrid[3].url}
+              class="ocean-event-card group relative z-[1] overflow-hidden rounded-2xl h-40
+                     md:col-start-2 md:row-start-3 md:h-auto
+                     md:-ml-[50%] md:w-[150%]"
+              style="box-shadow: 0 6px 28px rgba(6,21,86,0.15), 0 1px 4px rgba(6,21,86,0.08);"
+              data-enter="up"
+              data-enter-delay="820"
+            >
+              {featuredGrid[3].image ? (
+                <Image
+                  src={featuredGrid[3].image}
+                  alt={featuredGrid[3].title}
+                  width={480}
+                  height={190}
+                  loading="lazy"
+                  class="ocean-event-card__img absolute inset-0 h-full w-full object-cover"
+                />
+              ) : (
+                <div class="absolute inset-0 bg-gradient-to-br from-[#061556] via-[#0a2a6e] to-[#0073BB]/80" />
+              )}
+              <div class="absolute inset-0 bg-gradient-to-t from-[#061556]/94 via-[#061556]/40 to-transparent" />
+              <div class="absolute inset-0 flex flex-col items-start justify-end p-5 md:p-6">
+                <span class="mb-2 inline-block rounded-full bg-[#0073BB] px-3 py-1 text-[12px] font-semibold text-white">
+                  {featuredGrid[3].category}
+                </span>
+                <div class="flex w-full items-end justify-between gap-3">
+                  <h3 class="line-clamp-2 font-serif font-semibold leading-[1.45] text-white text-sm md:text-base">
+                    {featuredGrid[3].title}
+                  </h3>
+                  <span
+                    class="shrink-0 rounded-full border border-white/50 px-3 py-1 text-[10px] font-semibold text-white transition-all duration-200 group-hover:bg-[#0073BB] group-hover:border-[#0073BB]"
+                  >閱讀</span>
+                </div>
+              </div>
+            </a>
+          )}
+
+        </div>
+      </div>
+    </section>
+
+    <!-- TRENDING — asymmetric: 1 feature + 2 offset cards -->
+    <section class="mb-12 md:mb-16" aria-labelledby="section-trending">
+      <SectionHeader
+        eyebrow="Trending Now"
+        title="熱門文章"
+        lead="旅人們最近最常閱讀的航程心得與攻略，從新手入門到進階玩法。"
+        href="/routes"
+        accent="blue"
+      />
+      <div class="flex flex-col gap-5">
+        {trending[0] && (
+          <div data-reveal="fade" data-reveal-delay="0">
+            <PostCard {...trending[0]} variant="feature" />
+          </div>
+        )}
+        <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:items-stretch">
+          {trending[1] && (
+            <div
+              data-reveal="scale"
+              data-reveal-delay="120"
+              class="sm:col-start-1 sm:row-start-1"
+            >
+              <PostCard {...trending[1]} />
+            </div>
+          )}
+
+          {trending[2] && (
+            <div
+              data-reveal="scale"
+              data-reveal-delay="240"
+              class="sm:col-start-2 sm:row-start-1 sm:mt-6"
+            >
+              <PostCard {...trending[2]} />
+            </div>
+          )}
+
+          {trending[3] && (
+            <div
+              data-reveal="scale"
+              data-reveal-delay="360"
+              class="sm:col-start-1 sm:row-start-2"
+            >
+              <PostCard {...trending[3]} />
+            </div>
+          )}
+
+          {/* Accent stack — row 2 right; flex-grow to align bottom with left card */}
+          <div
+            class="flex min-h-[240px] flex-col gap-5 sm:col-start-2 sm:row-start-2 sm:min-h-0 sm:h-full"
+            aria-hidden="true"
+          >
+            {TRENDING_ACCENT_PANELS.map(({ eyebrow, caption }, i) => (
+              <div
+                data-reveal="fade"
+                data-reveal-delay={String(480 + i * 100)}
+                class="ocean-event-card group relative min-h-[110px] flex-1 overflow-hidden rounded-2xl sm:min-h-[120px]"
+              >
+                <Image
+                  src={TRENDING_ACCENT_IMAGE}
+                  alt=""
+                  width={640}
+                  height={480}
+                  loading="lazy"
+                  class="ocean-event-card__img absolute inset-0 h-full w-full object-cover"
+                />
+                <div class="absolute inset-0 bg-gradient-to-t from-[#061556]/88 via-[#061556]/25 to-transparent" />
+                <div
+                  class="pointer-events-none absolute inset-y-0 left-0 w-[3px]"
+                  style="background: linear-gradient(to bottom, transparent 10%, rgba(0,115,187,0.7) 50%, transparent 90%);"
+                  aria-hidden="true"
+                />
+                <div class="absolute bottom-0 left-0 right-0 p-3 md:p-4">
+                  <p class="section-eyebrow mb-1 text-white/70">{eyebrow}</p>
+                  <p class="font-serif text-base font-semibold leading-snug text-white md:text-lg">
+                    {caption}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LATEST STORIES — editorial two-column list -->
+    <section class="mb-12 md:mb-16" aria-labelledby="section-latest">
+      <div
+        class="card-surface relative overflow-hidden rounded-3xl p-6 md:p-8"
+        style="background: rgba(255,255,255,0.82); box-shadow: 0 1px 3px rgba(6,21,86,0.06), 0 8px 32px rgba(6,21,86,0.07); backdrop-filter: blur(12px);"
+        data-reveal="fade"
+      >
+        <SectionHeader
+          eyebrow="Latest Stories"
+          title="最新文章"
+          lead="剛更新的旅遊筆記與航程資訊，保持你對皇家加勒比的最新了解。"
+          href="/beginners-guide"
+          accent="blue"
+        />
+        <div class="grid grid-cols-1 sm:grid-cols-2 sm:divide-x sm:divide-[#E8EEF4]">
+          <div class="divide-y divide-[#E8EEF4] sm:pr-6">
+            {latestPosts.slice(0, 2).map((post, i) => (
+              <div class="group relative py-4 first:pt-0 last:pb-0">
+                <span
+                  class="pointer-events-none absolute -left-1 top-4 hidden font-serif text-[2.5rem] font-bold leading-none text-[#061556]/[0.06] sm:block"
+                  aria-hidden="true"
+                >{String(i + 1).padStart(2, '0')}</span>
+                <PostCard {...post} variant="list" />
+              </div>
+            ))}
+          </div>
+          <div class="divide-y divide-[#E8EEF4] border-t border-[#E8EEF4] pt-4 sm:border-0 sm:pl-6 sm:pt-0">
+            {latestPosts.slice(2, 4).map((post, i) => (
+              <div class="group relative py-4 first:pt-0 last:pb-0">
+                <span
+                  class="pointer-events-none absolute -left-1 top-4 hidden font-serif text-[2.5rem] font-bold leading-none text-[#061556]/[0.06] sm:block"
+                  aria-hidden="true"
+                >{String(i + 3).padStart(2, '0')}</span>
+                <PostCard {...post} variant="list" />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGINATION -->
+    <nav
+      class="flex items-center justify-between border-t border-canvas-ceramic pt-8"
+      aria-label="分頁導覽"
+    >
+      <a
+        href="#"
+        class="flex items-center gap-1.5 font-sans text-[14px] font-medium text-ink-soft transition-colors hover:text-[#061556]"
+      >
+        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+        較早文章
+      </a>
+      <a
+        href="#"
+        class="flex items-center gap-1.5 font-sans text-[14px] font-medium text-ink-soft transition-colors hover:text-[#061556]"
+      >
+        較新文章
+        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </a>
+    </nav>
+
+  </ContentLayout>
+</BaseLayout>

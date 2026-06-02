@@ -1,0 +1,37 @@
+---
+export interface Props {
+  title: string;
+  description: string;
+  image?: string;
+  type?: 'website' | 'article';
+  jsonLd?: Record<string, unknown>;
+}
+const { title, description, image = 'https://images.pexels.com/photos/1430676/pexels-photo-1430676.jpeg?auto=compress&cs=tinysrgb&w=1200', type = 'website', jsonLd } = Astro.props;
+const siteUrl = 'https://royaltraveler.com';
+const canonicalUrl = new URL(Astro.url.pathname, siteUrl).toString();
+const baseJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'Royal Traveler 皇家旅人',
+  url: siteUrl,
+  logo: `${siteUrl}/logo.png`,
+  description: '專業郵輪旅遊心得，提供真實體驗與實用攻略',
+  contactPoint: { '@type': 'ContactPoint', contactType: 'customer service', availableLanguage: ['Chinese', 'English'] },
+};
+const mergedJsonLd = jsonLd ?? baseJsonLd;
+---
+<title>{title} | Royal Traveler 皇家旅人</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonicalUrl} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonicalUrl} />
+<meta property="og:image" content={image} />
+<meta property="og:type" content={type} />
+<meta property="og:site_name" content="Royal Traveler 皇家旅人" />
+<meta property="og:locale" content="zh_TW" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={image} />
+<script type="application/ld+json" set:html={JSON.stringify(mergedJsonLd)} />

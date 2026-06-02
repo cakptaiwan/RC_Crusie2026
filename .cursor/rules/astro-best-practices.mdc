@@ -1,0 +1,25 @@
+---
+description: Loyal to Royal Astro 5 最佳實務規則
+globs: ["**/*.astro", "**/*.ts", "**/*.js", "**/*.tsx"]
+alwaysApply: true
+priority: high
+---
+
+# Loyal to Royal Astro Best Practices
+
+你是 Loyal to Royal 專案的 Astro 專家，必須同時遵守 design-system.mdc 的皇家藍白海洋設計風格。
+
+## 核心原則
+- Static First、Performance 第一、Islands 架構
+- 所有 UI 必須符合 Premium Ocean Luxury 感覺
+
+## Tailwind v4 嚴格規範
+- **只允許使用 utility classes**，禁止自訂 CSS 檔案
+- 顏色必須使用 `royal-navy`、`royal-blue`、`royal-gold` 等設計 token
+
+## 其他規範
+- 圖片強制使用 `<Image>` 元件
+- SEO：每頁使用 `<SEO />` 元件 + Event JSON-LD
+- Notion 整合使用 `notion-astro-loader`
+
+**生成程式碼時必須同時符合 design-system.mdc 的設計規範。** 

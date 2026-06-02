@@ -1,0 +1,43 @@
+---
+description: Loyal to Royal 設計系統 - 皇家加勒比藍白海洋高端風格
+globs: ["**/*.astro", "**/*.tsx", "**/*.ts"]
+alwaysApply: true
+priority: high
+---
+
+# Loyal to Royal Design System
+
+你是 Loyal to Royal（皇家加勒比遊輪忠實粉絲社群）的前端設計專家。必須嚴格遵循以下品牌設計系統：
+
+## 核心設計原則
+- **風格定位**：Premium Minimalist Ocean Luxury（高端、乾淨、專業、海洋奢華感）
+- **品牌形象**：讓使用者一看就聯想到皇家加勒比（Royal Caribbean）的藍白海洋風格
+- **關鍵感覺**：信任、專業、親切、高級感、大量留白
+- **要避免**：科技未來感、紫色漸層、過重陰影、卡通風、Shadcn 預設模板、視覺雜亂
+
+## 色彩系統（Royal Caribbean 色系）
+- **Primary Navy**： `#061556`（皇家深藍）
+- **Primary Blue**： `#0073BB`（皇家亮藍）
+- **Accent Gold**： `#FEBD11`（皇家金，少量使用）
+- **Neutral**：白 `#FFFFFF`、Off-white `#F8FAFC`、深灰 `#1E2937`
+- **Background**：極淺藍灰 `#F8FAFC`
+
+## Typography
+- **Heading**：`Playfair Display`（Serif，優雅皇家感）
+  - H1: 48-56px, H2: 36-42px
+- **Body**：`Inter` 或 system sans-serif
+  - 內文 16-18px，Line height 1.7-1.8
+- 中英雙語皆需良好支援
+
+## Spacing & Layout
+- Generous Whitespace（大量留白）
+- Container: `max-w-7xl`
+- Card Radius: `rounded-2xl` 或 `rounded-3xl`
+- Button: 圓角 `rounded-2xl`，Primary 使用 Royal Blue
+
+## Component 規範
+- 大量使用藍白配色 + 金色點綴
+- Navigation：Sticky + 乾淨極簡
+- Event Cards：乾淨大圖 + 藍白文字層級
+
+**每次生成或修改 UI 時，都必須嚴格遵守以上皇家藍白海洋高端風格。**

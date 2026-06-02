@@ -1,0 +1,151 @@
+---
+import { socialLinks, navSocialLinkClass, navSocialGroupClass } from '../data/social-links';
+
+const currentYear = new Date().getFullYear();
+
+const linkColumns = [
+  {
+    heading: '精選遊輪',
+    links: [
+      { href: '/about-rc',    label: '皇家旅人精選' },
+      { href: '/promotions',  label: '優惠活動' },
+      { href: '/routes',      label: '航線總覽' },
+      { href: '/pricing',     label: '聰明花錢' },
+    ],
+  },
+  {
+    heading: '遊輪心得',
+    links: [
+      { href: '/beginners-guide', label: '新手出發' },
+      { href: '/cabin-guide',     label: '聰明選艙' },
+      { href: '/entertainment',   label: '娛樂設施' },
+      { href: '/dining',          label: '餐廳美食' },
+    ],
+  },
+  {
+    heading: '航線資訊',
+    links: [
+      { href: '/mediterranean',    label: '地中海' },
+      { href: '/caribbean',        label: '加勒比海' },
+      { href: '/asia-routes',      label: '亞洲航線' },
+      { href: '/shore-excursions', label: '岸上行程' },
+    ],
+  },
+  {
+    heading: '皇家社群',
+    links: [
+      { href: '/about-rc',      label: '關於我們' },
+      { href: '/discussion',    label: '留言板' },
+      { href: '/reader-submit', label: '讀者投稿' },
+      { href: '/faq',           label: '常見問題' },
+    ],
+  },
+];
+
+const legalLinks = [
+  { href: '#', label: '隱私權政策' },
+  { href: '#', label: '使用條款' },
+];
+---
+
+<footer class="relative bg-[#061556] text-white" data-enter="fade" data-enter-delay="1000">
+  <!-- Subtle ocean wave texture -->
+  <div
+    class="pointer-events-none absolute inset-0 opacity-[0.06]"
+    style="background-image: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='80' viewBox='0 0 1200 80' preserveAspectRatio='none'%3E%3Cpath fill='%230073BB' d='M0,32 C200,64 400,8 600,32 C800,56 1000,0 1200,32 L1200,80 L0,80 Z'/%3E%3C/svg%3E\"); background-repeat: repeat-x; background-size: 1200px 80px; background-position: bottom;"
+    aria-hidden="true"
+  />
+
+  <!-- Top gold hairline -->
+  <div
+    class="pointer-events-none absolute inset-x-0 top-0 h-px"
+    style="background: linear-gradient(to right, transparent, rgba(254,189,17,0.45) 30%, rgba(254,189,17,0.45) 70%, transparent);"
+    aria-hidden="true"
+  />
+
+  <div class="relative mx-auto max-w-content px-gutter-sm py-10 md:px-gutter-md md:py-12 lg:px-gutter-lg">
+    <!-- Brand + links row -->
+    <div class="mb-8 flex flex-col items-center gap-8 md:flex-row md:items-start md:justify-center md:gap-14 md:pb-0 lg:mb-10">
+      <div class="w-44 shrink-0 text-center md:text-left lg:w-52">
+        <a href="/" class="inline-block transition-opacity duration-300 hover:opacity-90" aria-label="Loyal to Royal 皇家旅人 — 首頁">
+          <img
+            src="/logo.png"
+            alt="Loyal to Royal 皇家旅人"
+            width="64"
+            height="64"
+            loading="lazy"
+            class="mx-auto h-16 w-16 rounded-md object-contain md:mx-0"
+          />
+        </a>
+        <p class="mt-4 font-serif text-lg font-semibold text-white">
+          皇家旅人
+        </p>
+        <p class="mt-1 font-sans text-[13px] text-white/55">
+          喜愛皇家加勒比遊輪的社群
+        </p>
+      </div>
+
+      <!-- Link columns — left-aligned, compact -->
+      <div class="grid grid-cols-2 gap-x-10 gap-y-5 text-left sm:grid-cols-4 sm:gap-x-14">
+        {linkColumns.map(({ heading, links }) => (
+          <div>
+            <h3 class="mb-3 border-b border-white/25 pb-2 font-serif text-lg font-semibold text-white">
+              {heading}
+            </h3>
+            <ul class="space-y-2.5">
+              {links.map(({ href, label }) => (
+                <li>
+                  <a
+                    href={href}
+                    class="group/link relative inline-block font-sans text-[14px] text-white/55 transition-colors duration-200 hover:text-[#0073BB]"
+                  >
+                    <span class="relative z-[1]">{label}</span>
+                    <span
+                      class="absolute -bottom-0.5 left-0 h-px w-0 bg-[#0073BB] transition-all duration-300 ease-out group-hover/link:w-full"
+                      aria-hidden="true"
+                    />
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- Divider -->
+    <div class="my-7 h-px bg-white/7" aria-hidden="true" />
+
+    <!-- Bottom bar -->
+    <div class="flex flex-col items-center gap-8 md:flex-row md:items-center md:justify-between md:gap-6">
+      <p class="order-2 font-sans text-[12px] tracking-wide text-white/35 md:order-1">
+        &copy; {currentYear} Loyal to Royal 皇家旅人 · All Rights Reserved
+      </p>
+
+      <nav class="order-1 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 md:order-2" aria-label="法律連結">
+        {legalLinks.map(({ href, label }) => (
+          <a
+            href={href}
+            class="font-sans text-[12px] text-white/40 transition-colors duration-300 hover:text-[#0073BB]"
+          >
+            {label}
+          </a>
+        ))}
+        <a
+          href="/discussion"
+          class="font-sans text-[12px] text-white/40 transition-colors duration-300 hover:text-[#0073BB]"
+        >
+          聯絡我們
+        </a>
+      </nav>
+
+      <div class:list={['order-3 md:ml-4', navSocialGroupClass]} aria-label="社群媒體">
+        {socialLinks.map(({ label, href, navSvg }) => (
+          <a href={href} aria-label={label} class={navSocialLinkClass}>
+            <Fragment set:html={navSvg} />
+          </a>
+        ))}
+      </div>
+    </div>
+  </div>
+</footer>

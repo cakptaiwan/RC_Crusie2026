@@ -1,0 +1,47 @@
+---
+export interface Props {
+  title: string;
+  description: string;
+  image: string;
+  url?: string;
+  badge?: string;
+  price?: string;
+}
+
+const { title, description, image, url = '#', badge, price } = Astro.props;
+---
+
+<article class="group card-surface relative overflow-hidden rounded-2xl border border-neutral-100 bg-white shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+  <a href={url} class="block">
+    <div class="relative overflow-hidden aspect-[4/3]">
+      <img
+        src={image}
+        alt={title}
+        loading="lazy"
+        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+      />
+      {badge && (
+        <span class="absolute top-4 left-4 px-3 py-1 bg-gold-500 text-navy-900 text-xs font-semibold rounded-full">
+          {badge}
+        </span>
+      )}
+    </div>
+    <div class="p-6">
+      <h3 class="font-serif text-xl font-bold text-navy-800 mb-2 group-hover:text-navy-600 transition-colors">
+        {title}
+      </h3>
+      <p class="text-neutral-600 text-sm leading-relaxed mb-4">{description}</p>
+      {price && (
+        <div class="flex items-center justify-between">
+          <span class="text-gold-600 font-bold text-lg">{price}</span>
+          <span class="text-navy-600 text-sm font-medium group-hover:text-gold-500 transition-colors">
+            ?��?詳�? ??          </span>
+        </div>
+      )}
+      {!price && (
+        <span class="text-navy-600 text-sm font-medium group-hover:text-gold-500 transition-colors">
+          了解?��? ??        </span>
+      )}
+    </div>
+  </a>
+</article>

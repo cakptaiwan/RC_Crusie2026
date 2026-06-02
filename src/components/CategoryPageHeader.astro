@@ -1,0 +1,11 @@
+---
+interface Props {
+  label: string;
+}
+
+const { label } = Astro.props;
+---
+
+<h1 class="mb-8 border-b border-canvas-ceramic pb-4 text-h1">
+  Category: <span class="text-blue-brand">{label}</span>
+</h1>

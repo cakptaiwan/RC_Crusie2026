@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://royaltraveler.com/sitemap-index.xml

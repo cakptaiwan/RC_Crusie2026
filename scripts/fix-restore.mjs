@@ -1,0 +1,10 @@
+import fs from 'fs';
+const p = new URL('./restore-all.mjs', import.meta.url);
+let s = fs.readFileSync(p, 'utf8');
+s = s.replace(/`\.replace\(\/<\\\/motion>\/g, '<\/div>'\)\.replace\(\/<div\/g, '<div'\)\);?/g, '`);');
+s = s.replace(/`\.replace\(\/<\\\/motion>\/g, '<\/motion>'\)\.replace\(\/<div\/g, '<motion'\);/g, '`;');
+s = s.replace(/`\.replace\(\/<div\/g, '<motion'\);/g, '`;');
+s = s.replace(/`\.replace\(\/<div\/g, '<motion'\);/g, '`;');
+s = s.replace(/`\.replace\(\/<\\\/motion>\/g, '<\/motion>'\)\.replace\(\/<div\/g, '<motion'\);/g, '`;');
+fs.writeFileSync(p, s, 'utf8');
+console.log('fixed');

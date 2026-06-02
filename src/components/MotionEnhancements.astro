@@ -1,0 +1,112 @@
+---
+/** Site-wide motion: scroll reveal, parallax, nav blur — vanilla JS, zero islands */
+---
+<script is:inline>
+  (() => {
+    const initMotion = () => {
+      const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const root = document.documentElement;
+
+      /* ── Page-load entrance (stagger via --enter-delay) ── */
+      const enterEls = document.querySelectorAll('[data-enter]');
+      enterEls.forEach((el) => {
+        el.style.setProperty('--enter-delay', `${el.dataset.enterDelay ?? '0'}ms`);
+      });
+
+      const triggerEnter = () => root.classList.add('is-entered');
+
+      if (prefersReduced || !enterEls.length) {
+        triggerEnter();
+      } else {
+        requestAnimationFrame(() => {
+          requestAnimationFrame(triggerEnter);
+        });
+      }
+
+      /* ── Scroll reveal (equivalent to client:visible, no hydration cost) ── */
+      const revealEls = document.querySelectorAll('[data-reveal]');
+      if (prefersReduced) {
+        revealEls.forEach((el) => el.classList.add('is-visible'));
+      } else if (revealEls.length) {
+        const markVisible = (el) => {
+          el.style.transitionDelay = `${el.dataset.revealDelay ?? '0'}ms`;
+          el.classList.add('is-visible');
+        };
+
+        const revealObserver = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (!entry.isIntersecting) return;
+              markVisible(entry.target);
+              revealObserver.unobserve(entry.target);
+            });
+          },
+          { root: null, rootMargin: '0px 0px -3% 0px', threshold: 0.08 }
+        );
+
+        revealEls.forEach((el) => {
+          const rect = el.getBoundingClientRect();
+          if (rect.top < window.innerHeight * 0.92 && rect.bottom > 0) {
+            markVisible(el);
+          } else {
+            revealObserver.observe(el);
+          }
+        });
+      }
+
+      if (prefersReduced) return;
+
+      const heroSection = document.getElementById('hero-section');
+      const heroParallax = heroSection?.querySelector('[data-parallax]');
+      const parallaxY = document.querySelectorAll('[data-parallax-y]');
+      const navStrip = document.getElementById('nav-strip');
+
+      let ticking = false;
+
+      const syncScrollMotion = () => {
+        const scrollY = window.scrollY;
+
+        /* Hero parallax — rate from data-parallax (0.3–0.5) */
+        if (heroSection && heroParallax) {
+          const rate = parseFloat(heroParallax.dataset.parallax ?? '0.4');
+          const rect = heroSection.getBoundingClientRect();
+          const scrolled = Math.max(0, -rect.top);
+          const offset = scrolled * rate;
+          heroParallax.style.transform = `translate3d(0, ${offset}px, 0)`;
+        }
+
+        /* Subtle vertical parallax for section headers */
+        parallaxY.forEach((el) => {
+          const rate = parseFloat(el.dataset.parallaxY ?? '0.12');
+          const rect = el.getBoundingClientRect();
+          const progress = (window.innerHeight - rect.top) / (window.innerHeight + rect.height);
+          const offset = (progress - 0.5) * 40 * rate;
+          el.style.transform = `translate3d(0, ${offset}px, 0)`;
+        });
+
+        /* Nav backdrop blur intensifies after scroll */
+        if (navStrip) {
+          navStrip.classList.toggle('nav-strip--scrolled', scrollY > 80);
+        }
+
+        ticking = false;
+      };
+
+      const onScroll = () => {
+        if (!ticking) {
+          ticking = true;
+          requestAnimationFrame(syncScrollMotion);
+        }
+      };
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      syncScrollMotion();
+    };
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initMotion, { once: true });
+    } else {
+      initMotion();
+    }
+  })();
+</script>

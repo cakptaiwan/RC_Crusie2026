@@ -1,0 +1,192 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import ContentLayout from '../components/ContentLayout.astro';
+import GiscusComments from '../components/GiscusComments.astro';
+
+export interface Props {
+  id: string;
+  category: string;
+  title: string;
+  excerpt: string;
+  image?: string | null;
+  date: string;
+  author: string;
+  comments?: number;
+  likes?: number;
+}
+
+const {
+  id,
+  category,
+  title,
+  excerpt,
+  image,
+  date,
+  author,
+  comments = 0,
+  likes = 0,
+} = Astro.props;
+
+const formattedDate = date
+  ? new Date(date).toLocaleDateString('zh-TW', { year: 'numeric', month: 'long', day: 'numeric' })
+  : '';
+---
+
+<BaseLayout title={title} description={excerpt} image={image ?? undefined} type="article">
+
+  <!-- Post Hero Image -->
+  {image && (
+    <div class="mx-auto max-w-content px-gutter-sm md:px-gutter-md lg:px-gutter-lg">
+      <div class="overflow-hidden rounded-card shadow-card" style="max-height: 300px;">
+        <img
+          src={image}
+          alt={title}
+          loading="eager"
+          class="h-[300px] w-full object-cover"
+        />
+      </div>
+    </div>
+  )}
+
+  <ContentLayout>
+      <article class="ds-card-pad">
+
+        <!-- Breadcrumb -->
+        <nav class="mb-5 flex items-center gap-1.5 text-micro text-ink-soft">
+          <a href="/" class="text-blue-accent transition-colors hover:text-blue-brand">Home</a>
+          <span>/</span>
+          <a href="#" class="text-blue-accent transition-colors hover:text-blue-brand">{category}</a>
+          <span>/</span>
+          <span class="line-clamp-1 text-ink">{title}</span>
+        </nav>
+
+        <span class="category-badge mb-4 inline-block">{category}</span>
+        <h1 class="mb-5 text-3xl font-semibold leading-tight tracking-brand text-blue-brand md:text-4xl">
+          {title}
+        </h1>
+
+        <div class="post-meta mb-6 border-b border-canvas-ceramic pb-6">
+          <span class="flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            {formattedDate}
+          </span>
+          <span class="flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+            by <strong class="ml-0.5 text-ink">{author}</strong>
+          </span>
+          <span class="flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 3H3c-1.1 0-2 .9-2 2v14l4-4h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z" />
+            </svg>
+            {comments} 則留言
+          </span>
+          <span class="flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+            </svg>
+            {likes} 人喜歡</span>
+        </div>
+
+        <!-- Article Body -->
+        <div class="prose-royal">
+          <!-- Lead paragraph from excerpt -->
+          <p class="mb-5 text-body-lg font-medium text-ink">{excerpt}</p>
+
+          <!-- Content slot: full Notion block content rendered here when available -->
+          <slot />
+
+          <!-- Placeholder content shown when no slot content provided -->
+          <slot name="placeholder">
+            <div class="space-y-4 text-sm text-ink-soft leading-[1.9]">
+              <p>郵輪旅遊是一種獨特而全面的旅行方式，讓旅客在一趟行程中探索多個目的地，同時享受船上豐富的娛樂設施與精緻餐飲。</p>
+              <p>以下將以真實體驗的角度分享這次郵輪之旅。從踏上碼頭那一刻起，到最後看著目的地港口漸漸消失在海平面上，每個環節都值得細細品味。</p>
+              <blockquote class="my-6 border-l-4 border-blue-accent py-1 pl-5">
+                <p class="text-sm text-ink-soft">旅行不是逃離生活，而是讓生活更加豐富。每一次郵輪之旅，都帶來新的視角與感動。</p>
+              </blockquote>
+              <p>無論你是追求奢華體驗的旅客，還是精打細算的探索者，郵輪都有適合你的方案。</p>
+              <div class="mt-8 rounded-card border border-dashed border-canvas-ceramic bg-surface-cool p-4">
+                <p class="text-center text-micro text-ink-soft">
+                  完整文章內容將透過 Notion 資料庫串接顯示。設定 <code class="rounded bg-blue-light px-1 font-mono text-ink">NOTION_TOKEN</code> 後即可自動同步。
+                </p>
+              </div>
+            </div>
+          </slot>
+        </div>
+
+        <!-- Share + Tags -->
+        <div class="mt-8 flex flex-wrap items-center justify-between gap-4 border-t border-canvas-ceramic pt-6">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="text-micro font-semibold tracking-brand text-ink-soft">Tags:</span>
+            {[category, '郵輪', '旅遊'].map((tag) => (
+              <a href="#" class="rounded-pill bg-blue-light px-2.5 py-1 text-micro font-semibold text-blue-brand transition-colors hover:bg-blue-accent hover:text-onDark">
+                {tag}
+              </a>
+            ))}
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="mr-1 text-micro font-semibold tracking-brand text-ink-soft">Share:</span>
+            {['Facebook', 'Twitter', 'LINE'].map((platform) => (
+              <a href="#" class="btn-outline-primary !px-3 !py-1 !text-micro">
+                {platform}
+              </a>
+            ))}
+          </div>
+        </div>
+
+        <div class="mt-8 flex items-start gap-4 rounded-card border border-canvas-ceramic bg-surface-cool p-5">
+          <img
+            src="https://images.pexels.com/photos/1391498/pexels-photo-1391498.jpeg?auto=compress&cs=tinysrgb&w=100"
+            alt={author}
+            loading="lazy"
+            class="w-14 h-14 rounded-full object-cover flex-shrink-0 border-2 border-white shadow-sm"
+          />
+          <div>
+            <p class="mb-0.5 text-micro font-semibold tracking-brand text-blue-brand">{author}</p>
+            <p class="mb-2 text-micro font-semibold text-blue-accent">郵輪旅遊部落格</p><p class="text-body text-ink-soft">熱愛郵輪旅遊的台灣部落客，走訪地中海、加勒比海、北歐峽灣等地。致力分享真實的郵輪旅行心得。</p>
+          </div>
+        </div>
+
+        <!-- Giscus Comments -->
+        <GiscusComments postTitle={title} postSlug={id} />
+
+      </article>
+
+  </ContentLayout>
+</BaseLayout>
+
+<style is:global>
+  .prose-royal p {
+    @apply mb-4 text-body text-ink-soft leading-[1.9];
+  }
+  .prose-royal h2 {
+    @apply mb-4 mt-8 text-h2 font-semibold text-ink;
+  }
+  .prose-royal h3 {
+    @apply mb-3 mt-6 text-lg font-semibold tracking-brand text-ink;
+  }
+  .prose-royal blockquote {
+    @apply my-6 border-l-4 border-blue-accent py-1 pl-5;
+  }
+  .prose-royal blockquote p {
+    @apply text-ink-soft;
+  }
+  .prose-royal ul {
+    @apply mb-4 list-outside list-disc space-y-1.5 pl-5 text-body text-ink-soft;
+  }
+  .prose-royal ol {
+    @apply mb-4 list-outside list-decimal space-y-1.5 pl-5 text-body text-ink-soft;
+  }
+  .prose-royal a {
+    @apply text-blue-accent underline hover:text-blue-brand;
+  }
+  .prose-royal img {
+    @apply my-6 w-full rounded-card;
+  }
+  .prose-royal hr {
+    @apply my-8 border-canvas-ceramic;
+  }
+</style>

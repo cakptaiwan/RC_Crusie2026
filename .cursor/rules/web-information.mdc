@@ -1,0 +1,117 @@
+---
+description: 網站架構快照 — NavStrip/Footer/Hero 結構、主選單連結、字體與 UI 慣例。修改導覽、首頁、頁尾或全站結構時請先讀取。
+globs: ["**/*.astro", "src/components/NavStrip.astro", "src/components/Footer.astro", "src/pages/index.astro"]
+alwaysApply: false
+---
+
+# WebInformation
+
+**專案**：Loyal to Royal 皇家旅人 — 皇家加勒比遊輪忠實粉絲社群（Astro + Tailwind v4）
+**風格**：Premium Minimalist Ocean Luxury（皇家藍白 + 金色點綴）
+**更新**：2026-05-24
+
+> 設計與 Astro 規範詳見 `design-system.mdc`、`astro-best-practices.mdc`
+
+## 架構概覽
+
+| 區塊 | 元件 / 檔案 | 備註 |
+|------|-------------|------|
+| 全站 Layout | `src/layouts/BaseLayout.astro` | 已移除舊 `Header.astro` |
+| 導覽列 | `src/components/NavStrip.astro` | 取代 Header；非全站固定，由頁面決定是否渲染 |
+| 內容包裝 | `src/components/ContentLayout.astro` | `showNavStrip`（預設 true）、`showSidebar` |
+| 首頁 | `src/pages/index.astro` | Hero 後緊接 `<NavStrip />`；`ContentLayout showNavStrip={false}` |
+| 頁尾 | `src/components/Footer.astro` | 深藍 `#061556`、置中緊湊版 |
+| 側欄 | `src/components/Sidebar.astro` | About Me 用 `/logo.png` 方形 LOGO |
+
+## 主選單（NavStrip — 5 項 + 下拉）
+
+```
+關於皇家旅人          → /about-rc
+新手出發
+  ├ 航線選擇          → /beginners-guide
+  ├ 聰明花錢          → /pricing
+  ├ 聰明選艙          → /cabin-guide
+  └ 常見問題          → /faq
+玩轉郵輪
+  ├ 娛樂設施          → /entertainment
+  ├ 餐廳美食          → /dining
+  └ 岸上行程          → /shore-excursions
+航線與故事
+  ├ 地中海            → /mediterranean
+  ├ 加勒比海          → /caribbean
+  └ 亞洲航線          → /asia-routes
+讀者社群
+  ├ 留言板            → /discussion
+  ├ 讀者投稿          → /reader-submit
+  └ 聯絡我們          → /discussion
+```
+
+- 桌面：`group-hover` 下拉；手機：漢堡選單 + `<details>/<summary>`
+- 字級 `text-[16px]`；active 狀態：白字 + **白色底線**（`box-shadow: inset 0 -2px 0 rgba(255,255,255,0.85)`）
+- Sticky：JS 切換 `absolute` ↔ `fixed`（因父層 `overflow-x-hidden` 無法用 CSS sticky）
+- 觸發點：捲動超過 NavStrip 底部邊緣；wrapper 高度 56px 防 CLS
+
+## 首頁 Hero
+
+- 高度 **464px**（原 520px 減去 NavStrip 56px）；**直角**（`rounded-none`）；緊鄰 NavStrip（`mb-0`）
+- 毛玻璃卡片：置中放大 LOGO、分類「**旅人介紹**」、標題「**愛好旅行、喜歡遊輪、我只選擇皇家加勒比遊輪**」
+- 標題行高 `line-height: 2`（避免壅擠）
+- 精選區 ghost quote：9 句輪播 ticker（左滑入）；色 `#061556/70`；無引號；`break-words` + `md:pr-[38%]` 防與卡片重疊
+
+## Footer
+
+- 布局：LOGO + 社群圖示（左）｜三欄連結（右），整體置中；高度約原 50%
+- 欄位標題：`text-[14px]` + 白色底線；連結同字級
+- 社群：IG / FB / YouTube / **Threads**（33px；`gap-[11px]`；寬度對齊 LOGO `w-36 lg:w-44`）
+- Threads SVG：`viewBox="0 0 192 192"`（非 24×24）；其餘 icon 預設 `0 0 24 24`
+- 已刪：slogan 文案、LOGO 下金色底線、底部社群列（已移至 LOGO 下）
+
+### Footer 連結欄
+
+| 欄位 | 連結 |
+|------|------|
+| 新手出發 | 第一次搭郵輪、聰明花錢、聰明選艙、常見問題 |
+| 航線與玩轉 | 地中海、加勒比海、亞洲航線、岸上行程 |
+| 讀者社群 | 關於皇家旅人、留言板、讀者投稿、聯絡我們 |
+
+## 字體（全站統一）
+
+```
+PingFang TC → PingFang SC → Noto Sans TC → Inter → system sans
+```
+
+- 設定處：`tailwind.config.mjs`（fontFamily.sans）、`src/styles/global.css`（body）、NavStrip/Footer inline style
+- macOS/iOS 優先蘋方；Windows/其他 fallback Noto Sans TC（Google Fonts）
+
+## 色彩 token
+
+| Token | 色碼 | 用途 |
+|-------|------|------|
+| Royal Navy | `#061556` | 主色、Footer、Hero overlay |
+| Royal Blue | `#0073BB` | 按鈕、badge、連結強調 |
+| Royal Gold | `#FEBD11` | 少量點綴（NavStrip 底線等） |
+| Background | `#F8FAFC` | 頁面底色 |
+
+## UI 慣例（本輪已定型）
+
+- Section eyebrow / accent：橘黃改 **Royal Blue**
+- 區塊分隔線：淡藍實線（取消漸淡）
+- 分類 badge（藍底白字）：加大至约 `px-3.5 py-1 text-[13px]`
+- 「閱讀 →」連結文字：已從 Hero 卡片移除
+- 熱門文章 / Latest Stories：header 樣式與 Trending Now 一致
+- 最新文章：4 則，2×2 排列
+
+## 新增佔位頁
+
+`entertainment.astro` · `dining.astro` · `shore-excursions.astro` · `mediterranean.astro` · `caribbean.astro` · `asia-routes.astro` · `faq.astro` · `reader-submit.astro`
+
+## 技術備註
+
+- NavStrip `<script>` 必須包 IIFE，避免 top-level `return` 建置錯誤
+- PowerShell 建置：`npm run build 2>&1 | Select-Object -Last 15`（勿用 `&&` / `tail`）
+- 社群 icon 資料結構支援可選 `viewBox`：`viewBox={viewBox ?? '0 0 24 24'}`
+
+## 待辦 / 未決
+
+- 社群連結 href 仍為 `#`（待填入真實 URL）
+- Footer「第一次搭郵輪」vs Nav「航線選擇」文案不一致（Footer 未同步更名）

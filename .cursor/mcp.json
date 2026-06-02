@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "open-design": {
+      "command": "D:\\Programs\\OpenDesign\\Open Design release-stable-win\\Open Design.exe",
+      "args": [
+        "D:\\Programs\\OpenDesign\\Open Design release-stable-win\\resources\\app\\node_modules\\@open-design\\daemon\\dist\\cli.js",
+        "mcp"
+      ],
+      "env": {
+        "OD_DATA_DIR": "C:\\Users\\chuny\\AppData\\Roaming\\Open Design\\namespaces\\release-stable-win\\data",
+        "OD_SIDECAR_NAMESPACE": "release-stable-win",
+        "ELECTRON_RUN_AS_NODE": "1"
+      }
+    }
+  }
+}

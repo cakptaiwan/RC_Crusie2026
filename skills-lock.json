@@ -1,0 +1,47 @@
+{
+  "version": 1,
+  "skills": {
+    "astro-framework": {
+      "source": "delineas/astro-framework-agents",
+      "sourceType": "github",
+      "skillPath": "skills/astro-framework/SKILL.md",
+      "computedHash": "5df5da162f22dd6be7390a759aad8d01e52c23418e6f6e6322f9b4c8ebec0283"
+    },
+    "design-taste-frontend": {
+      "source": "Leonxlnx/taste-skill",
+      "sourceType": "github",
+      "skillPath": "skills/taste-skill/SKILL.md",
+      "computedHash": "899b84384f74f540ea5284d9b2e9234e050998b42eacc805410b518d4226c0b3"
+    },
+    "grill-with-docs": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "skillPath": "skills/engineering/grill-with-docs/SKILL.md",
+      "computedHash": "59849672f8fce76b73055f6c9270236212e444c9aa63d02481bdf3cf788edb9f"
+    },
+    "impeccable": {
+      "source": "pbakaus/impeccable",
+      "sourceType": "github",
+      "skillPath": "skill/SKILL.md",
+      "computedHash": "e08cc9be673b6b5e66eb55cf77eb50a940fc603245b2f75d8370a2043aa926aa"
+    },
+    "improve-codebase-architecture": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "skillPath": "skills/engineering/improve-codebase-architecture/SKILL.md",
+      "computedHash": "5d9444ffe5c240f2d20081c42c547112e1b8c372375a14e4c98df4d94bde11e1"
+    },
+    "learning-astro": {
+      "source": "delineas/astro-framework-agents",
+      "sourceType": "github",
+      "skillPath": "skills/learning-astro/SKILL.md",
+      "computedHash": "f78c2f7d05dbd69f2a45a703c54ab8531c39f9e413293dfcfc42ee69f4ac7e96"
+    },
+    "tailwind-4-docs": {
+      "source": "Lombiq/Tailwind-Agent-Skills",
+      "sourceType": "github",
+      "skillPath": "skills/tailwind-4-docs/SKILL.md",
+      "computedHash": "4900f575f24641b1af459cda37cbb8438ecf3f8f1a63148384197cb730895093"
+    }
+  }
+}

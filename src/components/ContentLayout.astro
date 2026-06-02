@@ -1,0 +1,33 @@
+---
+import Sidebar from './Sidebar.astro';
+import NavStrip from './NavStrip.astro';
+
+interface Props {
+  showSidebar?: boolean;
+  showNavStrip?: boolean;
+  class?: string;
+}
+
+const { showSidebar = true, showNavStrip = true, class: className = '' } = Astro.props;
+---
+
+{showNavStrip && <NavStrip />}
+
+<div class:list={['mx-auto max-w-content px-gutter-sm py-8 md:px-gutter-md lg:px-gutter-lg', className]}>
+  {
+    showSidebar ? (
+      <div class="grid grid-cols-1 items-start gap-8 lg:grid-cols-[minmax(0,1fr)_18rem] xl:grid-cols-[minmax(0,1fr)_20rem]">
+        <div class="min-w-0">
+          <slot />
+        </div>
+        <aside class="w-full lg:max-w-[18rem] xl:max-w-[20rem]">
+          <Sidebar />
+        </aside>
+      </div>
+    ) : (
+      <div class="mx-auto min-w-0 max-w-column">
+        <slot />
+      </div>
+    )
+  }
+</div>
