@@ -55,25 +55,25 @@ const PLACEHOLDER_BG = 'bg-blue-light';
             loading="lazy"
             class="ocean-event-card__img absolute inset-0 h-full w-full object-cover"
           />
-          <div class="absolute inset-0 bg-gradient-to-r from-[#061556]/20 via-transparent to-[#061556]/55 md:bg-gradient-to-l md:from-transparent md:via-[#061556]/25 md:to-[#061556]/88" />
+          <div class="absolute inset-0 bg-gradient-to-r from-[#061556]/20 via-transparent to-white/80 md:bg-gradient-to-l md:from-transparent md:via-white/40 md:to-white" />
         </div>
       ) : (
         <div class="min-h-[180px] bg-gradient-to-br from-[#061556] via-[#0a2a6e] to-[#0073BB] md:min-h-0" />
       )}
-      <div class="relative flex flex-col justify-end bg-[#061556]/92 p-6 md:bg-[#061556]/78 md:p-8">
+      <div class="relative flex flex-col justify-end bg-white p-6 md:p-8">
         <p class="section-eyebrow mb-2">Trending</p>
         <span class="mb-3 inline-block w-fit rounded-full bg-[#0073BB] px-3 py-1 text-[12px] font-semibold text-white">
           {category}
         </span>
-        <h3 class="font-serif text-xl font-bold leading-snug text-white md:text-2xl">
+        <h3 class="mb-2 font-serif text-xl font-semibold leading-[1.45] text-[#061556] transition-colors group-hover:text-[#0073BB] md:text-2xl">
           {title}
         </h3>
-        <p class="mt-3 line-clamp-2 font-sans text-[14px] leading-[1.75] text-white/55">
+        <p class="mt-1 line-clamp-2 font-sans text-[14px] leading-[1.75] text-ink-soft">
           {excerpt}
         </p>
-        <div class="mt-4 flex items-center justify-between border-t border-white/10 pt-4">
-          <span class="font-sans text-[12px] text-white/45">{date}</span>
-          <span class="font-sans text-[12px] font-semibold text-[#FEBD11] transition-colors group-hover:text-white">
+        <div class="mt-4 flex items-center justify-between border-t border-canvas-ceramic pt-4">
+          <span class="font-sans text-[12px] text-ink-soft">{date}</span>
+          <span class="font-sans text-[12px] font-semibold text-[#0073BB] transition-colors group-hover:text-[#061556]">
             閱讀全文 →
           </span>
         </div>

@@ -14,15 +14,6 @@ import type { Post } from '../lib/notion';
 const FALLBACK_HERO =
   'https://images.pexels.com/photos/1654698/pexels-photo-1654698.jpeg?auto=compress&cs=tinysrgb&w=1200';
 
-/** Fixed accent images — bottom-right of trending grid (stacked) */
-const TRENDING_ACCENT_IMAGE =
-  'https://images.pexels.com/photos/1430676/pexels-photo-1430676.jpeg?auto=compress&cs=tinysrgb&w=800';
-
-const TRENDING_ACCENT_PANELS = [
-  { eyebrow: 'Royal Caribbean', caption: '啟航，向著下一個港口' },
-  { eyebrow: 'Royal Caribbean', caption: '啟航，向著下一個港口' },
-] as const;
-
 const FALLBACK_POST: Post = {
   id:       'fallback',
   category: '精選',
@@ -47,7 +38,8 @@ const [featured, homePosts] = await Promise.all([
 const heroPost: Post = featured[0] ?? FALLBACK_POST;
 
 const featuredGrid = homePosts.slice(0, 4);
-const trending     = homePosts.slice(2, 6);
+/** Main trending grid (4) + one side post (former accent slot) */
+const trending     = [...homePosts.slice(2, 6), ...homePosts.slice(0, 1)];
 const latestPosts  = homePosts.slice(0, 4);
 ---
 
@@ -355,39 +347,13 @@ const latestPosts  = homePosts.slice(0, 4);
             </div>
           )}
 
-          {/* Accent stack — row 2 right; flex-grow to align bottom with left card */}
-          <div
-            class="flex min-h-[240px] flex-col gap-5 sm:col-start-2 sm:row-start-2 sm:min-h-0 sm:h-full"
-            aria-hidden="true"
-          >
-            {TRENDING_ACCENT_PANELS.map(({ eyebrow, caption }, i) => (
-              <div
-                data-reveal="fade"
-                data-reveal-delay={String(480 + i * 100)}
-                class="ocean-event-card group relative min-h-[110px] flex-1 overflow-hidden rounded-2xl sm:min-h-[120px]"
-              >
-                <Image
-                  src={TRENDING_ACCENT_IMAGE}
-                  alt=""
-                  width={640}
-                  height={480}
-                  loading="lazy"
-                  class="ocean-event-card__img absolute inset-0 h-full w-full object-cover"
-                />
-                <div class="absolute inset-0 bg-gradient-to-t from-[#061556]/88 via-[#061556]/25 to-transparent" />
-                <div
-                  class="pointer-events-none absolute inset-y-0 left-0 w-[3px]"
-                  style="background: linear-gradient(to bottom, transparent 10%, rgba(0,115,187,0.7) 50%, transparent 90%);"
-                  aria-hidden="true"
-                />
-                <div class="absolute bottom-0 left-0 right-0 p-3 md:p-4">
-                  <p class="section-eyebrow mb-1 text-white/70">{eyebrow}</p>
-                  <p class="font-serif text-base font-semibold leading-snug text-white md:text-lg">
-                    {caption}
-                  </p>
-                </div>
+          {/* Side post — row 2 right; offset down to mirror left/right stagger */}
+          <div class="sm:col-start-2 sm:row-start-2 sm:mt-6">
+            {trending[4] && (
+              <div data-reveal="scale" data-reveal-delay="480">
+                <PostCard {...trending[4]} />
               </div>
-            ))}
+            )}
           </div>
         </div>
       </div>
