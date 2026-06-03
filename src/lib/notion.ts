@@ -49,6 +49,7 @@ export interface Post {
   featured: boolean;
   status: string;
   page: string;
+  body: string;
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -79,6 +80,14 @@ function parsePost(notionPage: PageObjectResponse): Post {
   const status = props['Status']?.select?.name ?? '';
   const pg = props['Page']?.select?.name ?? 'HOME';
 
+  const body1 = props['Body1']?.rich_text
+    ? richTextToString(props['Body1'].rich_text)
+    : '';
+  const body2 = props['Body2']?.rich_text
+    ? richTextToString(props['Body2'].rich_text)
+    : '';
+  const body = body1 + body2;
+
   return {
     id: notionPage.id,
     category,
@@ -93,6 +102,7 @@ function parsePost(notionPage: PageObjectResponse): Post {
     featured,
     status,
     page: pg,
+    body,
   };
 }
 
@@ -116,6 +126,7 @@ export function getMockPosts(pageFilter?: string): Post[] {
       featured: true,
       status: '已發布',
       page: 'HOME',
+      body: '',
     },
     {
       id: 'mock-2',
@@ -132,6 +143,7 @@ export function getMockPosts(pageFilter?: string): Post[] {
       featured: false,
       status: '已發布',
       page: 'HOME',
+      body: '',
     },
     {
       id: 'mock-3',
@@ -148,6 +160,7 @@ export function getMockPosts(pageFilter?: string): Post[] {
       featured: false,
       status: '已發布',
       page: 'HOME',
+      body: '',
     },
     {
       id: 'mock-4',
@@ -165,6 +178,7 @@ export function getMockPosts(pageFilter?: string): Post[] {
       featured: false,
       status: '已發布',
       page: 'HOME',
+      body: '',
     },
     {
       id: 'mock-5',
@@ -181,6 +195,7 @@ export function getMockPosts(pageFilter?: string): Post[] {
       featured: false,
       status: '已發布',
       page: 'HOME',
+      body: '',
     },
     {
       id: 'mock-6',
@@ -198,6 +213,7 @@ export function getMockPosts(pageFilter?: string): Post[] {
       featured: false,
       status: '已發布',
       page: 'HOME',
+      body: '',
     },
   ];
 

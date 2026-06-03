@@ -13,6 +13,7 @@ export interface Props {
   author: string;
   comments?: number;
   likes?: number;
+  body?: string;
 }
 
 const {
@@ -25,6 +26,7 @@ const {
   author,
   comments = 0,
   likes = 0,
+  body = '',
 } = Astro.props;
 
 const formattedDate = date
@@ -95,6 +97,9 @@ const formattedDate = date
         <div class="prose-royal">
           <!-- Lead paragraph from excerpt -->
           <p class="mb-5 text-body-lg font-medium text-ink">{excerpt}</p>
+
+          <!-- Notion body content (Body1 + Body2) -->
+          {body && <div set:html={body} />}
 
           <!-- Content slot: full Notion block content rendered here when available -->
           <slot />
