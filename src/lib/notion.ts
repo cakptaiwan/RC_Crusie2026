@@ -32,8 +32,13 @@
 import { Client } from '@notionhq/client';
 import type {
   PageObjectResponse,
+  QueryDataSourceParameters,
   RichTextItemResponse,
 } from '@notionhq/client/build/src/api-endpoints';
+
+type NotionClient = Client;
+type DataSourceFilter = QueryDataSourceParameters['filter'];
+type DataSourceSort = QueryDataSourceParameters['sorts'];
 
 export interface Post {
   id: string;
@@ -56,6 +61,96 @@ export interface Post {
 
 function richTextToString(rt: RichTextItemResponse[]): string {
   return rt.map((t) => t.plain_text).join('');
+}
+
+function logNotionFetchError(context: string, err: unknown): void {
+  const message = err instanceof Error ? err.message : String(err);
+  if (
+    message.includes('object_not_found') ||
+    message.includes('Could not find database')
+  ) {
+    console.error(
+      `[notion] ${context}：找不到 Database。請確認 DATABASE_ID 正確，並在 Crusie2026 資料庫 → ⋯ → 連線 → 加入「notion-module」Integration。`
+    );
+  } else if (
+    message.includes('API token is invalid') ||
+    message.includes('unauthorized')
+  ) {
+    console.error(
+      `[notion] ${context}：NOTION_TOKEN 無效。請到 https://www.notion.so/my-integrations 複製「Internal Integration Secret」（通常以 ntn_ 開頭、約 50 字元以上），寫入 .env 後重啟 dev server。`
+    );
+  } else if (
+    message.includes('restricted') ||
+    message.includes('forbidden')
+  ) {
+    console.error(
+      `[notion] ${context}：Integration 無權限讀取此 Database。請在 Notion 開啟 Crusie2026 → ⋯ → 連線 → 加入你的 Integration。`
+    );
+  }
+  console.error(`[notion] ${context} 詳情：`, err);
+}
+
+/** SDK v5：以 database_id 解析第一個 data_source_id（API 2025-09-03） */
+let cachedDataSourceId: string | null = null;
+
+async function resolveDataSourceId(
+  notion: NotionClient,
+  databaseId: string
+): Promise<string> {
+  const fromEnv = import.meta.env.NOTION_DATA_SOURCE_ID;
+  if (fromEnv && fromEnv !== 'your_data_source_id_here') {
+    return fromEnv;
+  }
+
+  if (cachedDataSourceId) return cachedDataSourceId;
+
+  const database = await notion.databases.retrieve({ database_id: databaseId });
+  const dataSourceId = database.data_sources?.[0]?.id;
+  if (!dataSourceId) {
+    throw new Error('Database 沒有可查詢的 data source，請確認 Crusie2026 為完整資料庫頁面。');
+  }
+
+  cachedDataSourceId = dataSourceId;
+  return dataSourceId;
+}
+
+async function queryDatabasePages(
+  notion: NotionClient,
+  databaseId: string,
+  options?: {
+    pageFilter?: string;
+    featuredOnly?: boolean;
+    pageSize?: number;
+  }
+): Promise<PageObjectResponse[]> {
+  const dataSourceId = await resolveDataSourceId(notion, databaseId);
+
+  const filters: DataSourceFilter[] = [
+    { property: 'Status', select: { equals: '已發布' } },
+  ];
+  if (options?.pageFilter) {
+    filters.push({ property: 'Page', select: { equals: options.pageFilter } });
+  }
+  if (options?.featuredOnly) {
+    filters.push({ property: 'Featured', checkbox: { equals: true } });
+  }
+
+  const filter: DataSourceFilter =
+    filters.length === 1 ? filters[0]! : { and: filters };
+
+  const sorts: DataSourceSort = [{ property: 'Date', direction: 'descending' }];
+
+  const response = await notion.dataSources.query({
+    data_source_id: dataSourceId,
+    filter,
+    sorts,
+    ...(options?.pageSize ? { page_size: options.pageSize } : {}),
+  });
+
+  return response.results.filter(
+    (item): item is PageObjectResponse =>
+      item.object === 'page' && 'properties' in item
+  );
 }
 
 function parsePost(notionPage: PageObjectResponse): Post {
@@ -247,22 +342,12 @@ export async function getPosts(pageFilter?: string): Promise<Post[]> {
 
   try {
     const notion = new Client({ auth: token });
-
-    const filters: any[] = [{ property: 'Status', select: { equals: '已發布' } }];
-    if (pageFilter) {
-      filters.push({ property: 'Page', select: { equals: pageFilter } });
-    }
-
-    const response = await notion.databases.query({
-      database_id: databaseId,
-      filter: filters.length === 1 ? filters[0] : { and: filters },
-      sorts: [{ property: 'Date', direction: 'descending' }],
-    });
-
-    const posts = (response.results as PageObjectResponse[]).map(parsePost);
+    const pages = await queryDatabasePages(notion, databaseId, { pageFilter });
+    const posts = pages.map(parsePost);
     return posts.length > 0 ? posts : getMockPosts(pageFilter);
   } catch (err) {
-    console.error('[notion] 資料擷取失敗，使用 mock 資料：', err);
+    logNotionFetchError('getPosts', err);
+    console.warn('[notion] 已改為使用 mock 資料（網頁不會顯示 Notion 最新內容）。');
     return getMockPosts(pageFilter);
   }
 }
@@ -285,15 +370,12 @@ export async function getAllPosts(): Promise<Post[]> {
 
   try {
     const notion = new Client({ auth: token });
-    const response = await notion.databases.query({
-      database_id: databaseId,
-      filter: { property: 'Status', select: { equals: '已發布' } },
-      sorts: [{ property: 'Date', direction: 'descending' }],
-    });
-    const posts = (response.results as PageObjectResponse[]).map(parsePost);
+    const pages = await queryDatabasePages(notion, databaseId);
+    const posts = pages.map(parsePost);
     return posts.length > 0 ? posts : getMockPosts();
   } catch (err) {
-    console.error('[notion] getAllPosts 失敗：', err);
+    logNotionFetchError('getAllPosts', err);
+    console.warn('[notion] 已改為使用 mock 資料。');
     return getMockPosts();
   }
 }
@@ -319,7 +401,7 @@ export async function getPostById(id: string): Promise<Post | undefined> {
     const page = (await notion.pages.retrieve({ page_id: id })) as PageObjectResponse;
     return parsePost(page);
   } catch (err) {
-    console.error('[notion] getPostById 失敗：', err);
+    logNotionFetchError('getPostById', err);
     return getMockPostById(id);
   }
 }
@@ -344,23 +426,17 @@ export async function getFeaturedPosts(): Promise<Post[]> {
 
   try {
     const notion = new Client({ auth: token });
-    const response = await notion.databases.query({
-      database_id: databaseId,
-      filter: {
-        and: [
-          { property: 'Status', select: { equals: '已發布' } },
-          { property: 'Featured', checkbox: { equals: true } },
-        ],
-      },
-      sorts: [{ property: 'Date', direction: 'descending' }],
-      page_size: 3,
+    const pages = await queryDatabasePages(notion, databaseId, {
+      featuredOnly: true,
+      pageSize: 3,
     });
-    const posts = (response.results as PageObjectResponse[]).map(parsePost);
+    const posts = pages.map(parsePost);
     return posts.length > 0
       ? posts
       : getMockPosts('HOME').filter((p) => p.featured).slice(0, 3);
   } catch (err) {
-    console.error('[notion] getFeaturedPosts 失敗：', err);
+    logNotionFetchError('getFeaturedPosts', err);
+    console.warn('[notion] 已改為使用 mock 資料。');
     return getMockPosts('HOME').filter((p) => p.featured).slice(0, 3);
   }
 }
