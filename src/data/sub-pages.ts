@@ -1,0 +1,20 @@
+/** 主選單子頁 — 名稱須與 Notion Subpage 欄位完全一致 */
+export const subPages = [
+  { name: '遊輪是什麼', href: '/what-is-cruise' },
+  { name: '遊輪品牌', href: '/about-royal' },
+  { name: '聰明花費', href: '/pricing' },
+  { name: '選艙須知', href: '/cabin-guide' },
+  { name: '新手 FAQ', href: '/faq' },
+  { name: '行李打包', href: '/packing' },
+  { name: '娛樂設施', href: '/entertainment' },
+  { name: '餐廳美食', href: '/dining' },
+  { name: '小費怎麼給', href: '/tipping' },
+  { name: '岸上行程', href: '/shore-excursions' },
+  { name: '東南亞航線', href: '/southeast-asia' },
+  { name: '東北亞航線', href: '/northeast-asia' },
+  { name: '美洲航線', href: '/americas' },
+  { name: '歐洲航線', href: '/europe' },
+  { name: '品牌故事', href: '/about-rc' },
+  { name: '最新資訊', href: '/latest-news' },
+  { name: '資源推薦', href: '/resources' },
+] as const;

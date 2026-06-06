@@ -1,5 +1,18 @@
 ---
 import { siteAuthor } from '../data/site-author';
+import { subPages } from '../data/sub-pages';
+import { getAllPosts } from '../lib/notion';
+
+const allPosts = await getAllPosts();
+const hiddenCategories = new Set(['資源推薦', '聯絡我們']);
+
+const categories = subPages
+  .filter(({ name }) => !hiddenCategories.has(name))
+  .map(({ name, href }) => ({
+    name,
+    href,
+    count: allPosts.filter((p) => p.subPage === name).length,
+  }));
 
 const recentPosts = [
   { image: 'https://images.pexels.com/photos/1654698/pexels-photo-1654698.jpeg?auto=compress&cs=tinysrgb&w=200', category: '郵輪心得', title: '皇家加勒比海洋交響號：史上最大郵輪初登艦', date: '2024-03-15', url: '/post/mock-1' },
@@ -14,15 +27,6 @@ const popularPosts = [
   { image: 'https://images.pexels.com/photos/2662116/pexels-photo-2662116.jpeg?auto=compress&cs=tinysrgb&w=200', category: '岸上行程', title: '北歐峽灣岸上體驗', date: '2024-02-28' },
 ];
 
-const categories = [
-  { name: '航線選擇', count: 6,  href: '/beginners-guide' },
-  { name: '聰明花錢', count: 4,  href: '/pricing' },
-  { name: '聰明選艙', count: 5,  href: '/cabin-guide' },
-  { name: '常見問題', count: 8,  href: '/faq' },
-  { name: '娛樂設施', count: 7,  href: '/entertainment' },
-  { name: '餐廳美食', count: 9,  href: '/dining' },
-  { name: '岸上行程', count: 11, href: '/shore-excursions' },
-];
 ---
 
 <aside class="w-full space-y-6">
