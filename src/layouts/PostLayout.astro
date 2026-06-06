@@ -2,6 +2,7 @@
 import BaseLayout from './BaseLayout.astro';
 import ContentLayout from '../components/ContentLayout.astro';
 import GiscusComments from '../components/GiscusComments.astro';
+import { siteAuthor } from '../data/site-author';
 
 export interface Props {
   id: string;
@@ -144,14 +145,17 @@ const formattedDate = date
 
         <div class="mt-8 flex items-start gap-4 rounded-card border border-canvas-ceramic bg-surface-cool p-5">
           <img
-            src="https://images.pexels.com/photos/1391498/pexels-photo-1391498.jpeg?auto=compress&cs=tinysrgb&w=100"
-            alt={author}
+            src={siteAuthor.avatar}
+            alt={`Loyal to Royal ${siteAuthor.name}`}
+            width="56"
+            height="56"
             loading="lazy"
-            class="w-14 h-14 rounded-full object-cover flex-shrink-0 border-2 border-white shadow-sm"
+            class="h-14 w-14 shrink-0 rounded-md border-2 border-white object-contain shadow-sm"
           />
           <div>
-            <p class="mb-0.5 text-micro font-semibold tracking-brand text-blue-brand">{author}</p>
-            <p class="mb-2 text-micro font-semibold text-blue-accent">郵輪旅遊部落格</p><p class="text-body text-ink-soft">熱愛郵輪旅遊的台灣部落客，走訪地中海、加勒比海、北歐峽灣等地。致力分享真實的郵輪旅行心得。</p>
+            <p class="mb-0.5 text-micro font-semibold tracking-brand text-blue-brand">{siteAuthor.name}</p>
+            <p class="mb-2 text-micro font-semibold text-blue-accent">{siteAuthor.tagline}</p>
+            <p class="text-body text-ink-soft">{siteAuthor.bio}</p>
           </div>
         </div>
 

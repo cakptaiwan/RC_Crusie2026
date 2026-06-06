@@ -1,4 +1,6 @@
 ---
+import { siteAuthor } from '../data/site-author';
+
 const recentPosts = [
   { image: 'https://images.pexels.com/photos/1654698/pexels-photo-1654698.jpeg?auto=compress&cs=tinysrgb&w=200', category: '郵輪心得', title: '皇家加勒比海洋交響號：史上最大郵輪初登艦', date: '2024-03-15', url: '/post/mock-1' },
   { image: 'https://images.pexels.com/photos/2662116/pexels-photo-2662116.jpeg?auto=compress&cs=tinysrgb&w=200', category: '岸上行程', title: '北歐峽灣岸上行程全紀錄：布道台健行挑戰', date: '2024-02-28', url: '/post/mock-4' },
@@ -58,16 +60,16 @@ const categories = [
     </div>
     <div class="text-center">
       <img
-        src="/logo.png"
-        alt="Loyal to Royal 皇家旅人"
+        src={siteAuthor.avatar}
+        alt={`Loyal to Royal ${siteAuthor.name}`}
         width="80"
         height="80"
         loading="lazy"
         class="mx-auto mb-3 h-20 w-20 rounded-md object-contain"
       />
       <p class="text-left text-[14px] leading-relaxed text-ink-soft">
-        無可救藥的皇家加勒比遊輪愛好者，立志要努力存錢早日退休，完整體驗皇家加勒比全球六大洲、80多條精彩航線，成為皇冠與錨俱樂部的「頂級會員」 (Pinnacle Club)
-        <a href="/about-rc" class="ml-1 font-semibold text-blue-accent hover:underline">了解更多</a>
+        {siteAuthor.bio}
+        <a href={siteAuthor.aboutUrl} class="ml-1 font-semibold text-blue-accent hover:underline">了解更多</a>
       </p>
     </div>
   </div>

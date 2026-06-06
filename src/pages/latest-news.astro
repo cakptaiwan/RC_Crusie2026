@@ -1,13 +1,11 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ContentLayout from '../components/ContentLayout.astro';
+import SubPagePosts from '../components/SubPagePosts.astro';
 ---
 
-<BaseLayout title="最新資訊" description="最新資訊 — 內容建置中。">
+<BaseLayout title="最新資訊" description="皇家加勒比與郵輪產業最新動態與資訊。">
   <ContentLayout>
-    <div class="flex min-h-[40vh] flex-col items-center justify-center py-16 text-center">
-      <h1 class="mb-3 text-2xl font-bold text-blue-brand">最新資訊</h1>
-      <p class="text-body text-ink-soft">內容建置中，敬請期待。</p>
-    </div>
+    <SubPagePosts page="旅人手記" subPage="最新資訊" label="最新資訊" />
   </ContentLayout>
 </BaseLayout>

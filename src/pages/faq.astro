@@ -1,14 +1,11 @@
 ﻿---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ContentLayout from '../components/ContentLayout.astro';
+import SubPagePosts from '../components/SubPagePosts.astro';
 ---
 
-<BaseLayout title="常見問題" description="常見問題 — 內容建置中。">
+<BaseLayout title="新手 FAQ" description="第一次搭郵輪的常見問題與解答。">
   <ContentLayout>
-    <div class="flex min-h-[40vh] flex-col items-center justify-center py-16 text-center">
-      <h1 class="mb-3 text-2xl font-bold text-blue-brand">常見問題</h1>
-      <p class="text-body text-ink-soft">內容建置中，敬請期待。</p>
-    </div>
+    <SubPagePosts page="新手出發" subPage="新手 FAQ" label="新手 FAQ" />
   </ContentLayout>
 </BaseLayout>
-

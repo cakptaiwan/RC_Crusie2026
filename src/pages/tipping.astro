@@ -1,13 +1,11 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ContentLayout from '../components/ContentLayout.astro';
+import SubPagePosts from '../components/SubPagePosts.astro';
 ---
 
-<BaseLayout title="小費怎麼給" description="小費怎麼給 — 內容建置中。">
+<BaseLayout title="小費怎麼給" description="郵輪小費完整攻略，解答華人旅客最常見的小費疑問。">
   <ContentLayout>
-    <div class="flex min-h-[40vh] flex-col items-center justify-center py-16 text-center">
-      <h1 class="mb-3 text-2xl font-bold text-blue-brand">小費怎麼給</h1>
-      <p class="text-body text-ink-soft">內容建置中，敬請期待。</p>
-    </div>
+    <SubPagePosts page="玩轉郵輪" subPage="小費怎麼給" label="小費怎麼給" />
   </ContentLayout>
 </BaseLayout>

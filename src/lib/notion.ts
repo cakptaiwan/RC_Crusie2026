@@ -121,6 +121,7 @@ async function queryDatabasePages(
   databaseId: string,
   options?: {
     pageFilter?: string;
+    subPageFilter?: string;
     featuredOnly?: boolean;
     pageSize?: number;
   }
@@ -134,6 +135,9 @@ async function queryDatabasePages(
     filters.push({ property: 'ShowOnHome', checkbox: { equals: true } });
   } else if (options?.pageFilter) {
     filters.push({ property: 'Page', select: { equals: options.pageFilter } });
+    if (options.subPageFilter) {
+      filters.push({ property: 'Subpage', select: { equals: options.subPageFilter } });
+    }
   }
   if (options?.featuredOnly) {
     filters.push({ property: 'Featured', checkbox: { equals: true } });
@@ -178,7 +182,7 @@ function parsePost(notionPage: PageObjectResponse): Post {
   const featured = props['Featured']?.checkbox ?? false;
   const status = props['Status']?.select?.name ?? '';
   const pg = props['Page']?.select?.name ?? 'HOME';
-  const subPage = props['SubPage']?.select?.name ?? '';
+  const subPage = props['Subpage']?.select?.name ?? props['SubPage']?.select?.name ?? '';
   const showOnHome = props['ShowOnHome']?.checkbox ?? false;
 
   const body1 = props['Body1']?.rich_text
@@ -211,7 +215,7 @@ function parsePost(notionPage: PageObjectResponse): Post {
 
 // ─── Mock data fallback ────────────────────────────────────────────────────────
 
-export function getMockPosts(pageFilter?: string): Post[] {
+export function getMockPosts(pageFilter?: string, subPageFilter?: string): Post[] {
   const all: Post[] = [
     {
       id: 'mock-1',
@@ -333,7 +337,10 @@ export function getMockPosts(pageFilter?: string): Post[] {
   ];
 
   if (!pageFilter || pageFilter === 'HOME') return all;
-  return all.filter((p) => p.page === pageFilter);
+  return all.filter(
+    (p) =>
+      p.page === pageFilter && (!subPageFilter || p.subPage === subPageFilter)
+  );
 }
 
 export function getMockPostById(id: string): Post | undefined {
@@ -346,7 +353,10 @@ export function getMockPostById(id: string): Post | undefined {
  * Fetch all published posts, optionally filtered by page section.
  * Falls back to mock data when NOTION_TOKEN / DATABASE_ID is not configured.
  */
-export async function getPosts(pageFilter?: string): Promise<Post[]> {
+export async function getPosts(
+  pageFilter?: string,
+  subPageFilter?: string
+): Promise<Post[]> {
   const token = import.meta.env.NOTION_TOKEN;
   const databaseId = import.meta.env.DATABASE_ID;
 
@@ -357,18 +367,23 @@ export async function getPosts(pageFilter?: string): Promise<Post[]> {
     databaseId === 'your_database_id_here'
   ) {
     console.warn('[notion] NOTION_TOKEN / DATABASE_ID 未設定，使用 mock 資料。');
-    return getMockPosts(pageFilter);
+    return getMockPosts(pageFilter, subPageFilter);
   }
 
   try {
     const notion = new Client({ auth: token });
-    const pages = await queryDatabasePages(notion, databaseId, { pageFilter });
+    const pages = await queryDatabasePages(notion, databaseId, {
+      pageFilter,
+      subPageFilter,
+    });
     const posts = pages.map(parsePost);
-    return posts.length > 0 ? posts : getMockPosts(pageFilter);
+    return posts.length > 0
+      ? posts
+      : getMockPosts(pageFilter, subPageFilter);
   } catch (err) {
     logNotionFetchError('getPosts', err);
     console.warn('[notion] 已改為使用 mock 資料（網頁不會顯示 Notion 最新內容）。');
-    return getMockPosts(pageFilter);
+    return getMockPosts(pageFilter, subPageFilter);
   }
 }
 

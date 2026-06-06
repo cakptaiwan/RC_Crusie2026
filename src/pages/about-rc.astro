@@ -1,21 +1,11 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ContentLayout from '../components/ContentLayout.astro';
+import SubPagePosts from '../components/SubPagePosts.astro';
 ---
 
-<BaseLayout
-  title="關於RC"
-  description="關於 Royal Caribbean 皇家加勒比郵輪公司的介紹與背景。"
->
+<BaseLayout title="品牌故事" description="Loyal to Royal 皇家旅人的品牌故事與理念。">
   <ContentLayout>
-    <div class="flex min-h-[40vh] flex-col items-center justify-center py-16 text-center">
-      <span class="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-light text-blue-accent">
-        <svg class="h-7 w-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-      </span>
-      <h1 class="mb-3 text-2xl font-bold text-blue-brand">關於RC</h1>
-      <p class="text-body text-ink-soft">內容建置中，敬請期待。</p>
-    </div>
+    <SubPagePosts page="旅人手記" subPage="品牌故事" label="品牌故事" />
   </ContentLayout>
 </BaseLayout>

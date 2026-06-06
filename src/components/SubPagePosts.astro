@@ -1,0 +1,33 @@
+---
+import PostCard from './PostCard.astro';
+import CategoryPageHeader from './CategoryPageHeader.astro';
+import { getPosts } from '../lib/notion';
+
+interface Props {
+  page: string;
+  subPage: string;
+  label: string;
+}
+
+const { page, subPage, label } = Astro.props;
+const posts = await getPosts(page, subPage);
+const leftPosts = posts.filter((_, i) => i % 2 === 0);
+const rightPosts = posts.filter((_, i) => i % 2 === 1);
+---
+
+<CategoryPageHeader label={label} />
+
+{posts.length > 0 ? (
+  <div class="grid grid-cols-1 items-start gap-6 md:grid-cols-2">
+    <div class="space-y-6">
+      {leftPosts.map((post) => <PostCard {...post} />)}
+    </div>
+    <div class="space-y-6">
+      {rightPosts.map((post) => <PostCard {...post} />)}
+    </div>
+  </div>
+) : (
+  <div class="flex min-h-[30vh] flex-col items-center justify-center py-16 text-center">
+    <p class="text-body text-ink-soft">尚無文章，敬請期待。</p>
+  </div>
+)}

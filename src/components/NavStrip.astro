@@ -1,5 +1,6 @@
 ---
 import { socialLinks, navSocialLinkClass, navSocialGroupClass } from '../data/social-links';
+import { siteAuthor } from '../data/site-author';
 
 interface Props {
   /** Fixed transparent bar over hero — homepage only */
@@ -78,6 +79,9 @@ const isItemActive = (item: NavItem) =>
     : (item.children?.some((c) => currentPath.startsWith(c.href)) ?? false);
 
 const NAV_H = '72px';
+
+const navLogoClass =
+  'h-12 w-12 shrink-0 rounded-lg object-contain transition-opacity duration-200 group-hover:opacity-80 md:h-14 md:w-14';
 ---
 
 {overlay ? (
@@ -89,9 +93,32 @@ const NAV_H = '72px';
     data-enter="fade"
     data-enter-delay="0"
   >
-    <div class="mx-auto flex h-full max-w-content items-center justify-end gap-6 px-gutter-sm md:px-gutter-md lg:px-gutter-lg">
+    <div class="mx-auto flex h-full max-w-content items-center justify-between gap-4 px-gutter-sm md:px-gutter-md lg:justify-end lg:gap-6 lg:px-gutter-lg">
+      <a href="/" class="group shrink-0 lg:hidden" aria-label={`Loyal to Royal ${siteAuthor.name} — 首頁`}>
+        <img
+          src={siteAuthor.avatar}
+          alt={`Loyal to Royal ${siteAuthor.name}`}
+          width="80"
+          height="80"
+          class={navLogoClass}
+        />
+      </a>
+
       <!-- Desktop menu -->
       <div class="hidden h-full flex-1 items-center justify-end gap-0.5 lg:flex">
+        <a
+          href="/"
+          class="group mr-1 flex h-full shrink-0 items-center"
+          aria-label={`Loyal to Royal ${siteAuthor.name} — 首頁`}
+        >
+          <img
+            src={siteAuthor.avatar}
+            alt={`Loyal to Royal ${siteAuthor.name}`}
+            width="80"
+            height="80"
+            class={navLogoClass}
+          />
+        </a>
         {navItems.map((item) => {
           const active = isItemActive(item);
           const hasChildren = !!item.children?.length;
@@ -205,8 +232,31 @@ const NAV_H = '72px';
         -webkit-backdrop-filter: blur(16px);
       `}
     >
-      <div class="mx-auto flex h-full max-w-content items-center justify-end gap-6 px-gutter-sm md:px-gutter-md lg:px-gutter-lg">
+      <div class="mx-auto flex h-full max-w-content items-center justify-between gap-4 px-gutter-sm md:px-gutter-md lg:justify-end lg:gap-6 lg:px-gutter-lg">
+        <a href="/" class="group shrink-0 lg:hidden" aria-label={`Loyal to Royal ${siteAuthor.name} — 首頁`}>
+          <img
+            src={siteAuthor.avatar}
+            alt={`Loyal to Royal ${siteAuthor.name}`}
+            width="80"
+            height="80"
+            class={navLogoClass}
+          />
+        </a>
+
         <div class="hidden h-full flex-1 items-center justify-end gap-0.5 lg:flex">
+          <a
+            href="/"
+            class="group mr-1 flex h-full shrink-0 items-center"
+            aria-label={`Loyal to Royal ${siteAuthor.name} — 首頁`}
+          >
+            <img
+              src={siteAuthor.avatar}
+              alt={`Loyal to Royal ${siteAuthor.name}`}
+              width="80"
+              height="80"
+              class={navLogoClass}
+            />
+          </a>
           {navItems.map((item) => {
             const active = isItemActive(item);
             const hasChildren = !!item.children?.length;

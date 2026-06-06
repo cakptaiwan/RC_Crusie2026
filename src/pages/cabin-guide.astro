@@ -1,21 +1,14 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ContentLayout from '../components/ContentLayout.astro';
+import SubPagePosts from '../components/SubPagePosts.astro';
 ---
 
 <BaseLayout
-  title="船艙攻略"
+  title="選艙須知"
   description="各類型郵輪船艙完整介紹，從內艙到頂級套房，幫你找到最值得的選擇。"
 >
   <ContentLayout>
-    <div class="flex min-h-[40vh] flex-col items-center justify-center py-16 text-center">
-      <span class="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-light text-blue-accent">
-        <svg class="h-7 w-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-        </svg>
-      </span>
-      <h1 class="mb-3 text-2xl font-bold text-blue-brand">船艙攻略</h1>
-      <p class="text-body text-ink-soft">內容建置中，敬請期待。</p>
-    </div>
+    <SubPagePosts page="新手出發" subPage="選艙須知" label="選艙須知" />
   </ContentLayout>
 </BaseLayout>
