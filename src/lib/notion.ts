@@ -168,7 +168,7 @@ function parsePost(notionPage: PageObjectResponse): Post {
   const excerpt = props['Excerpt']?.rich_text
     ? richTextToString(props['Excerpt'].rich_text)
     : '';
-  const image = props['Image']?.url ?? null;
+  const image = props['Image']?.url ?? props['Source_URL']?.url ?? null;
   const date = props['Date']?.date?.start ?? '';
   const author = props['Author']?.rich_text
     ? richTextToString(props['Author'].rich_text)

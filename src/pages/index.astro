@@ -2,7 +2,6 @@
 /**
  * index.astro — Royal Traveler 首頁
  */
-import { Image } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PostCard from '../components/PostCard.astro';
 import ContentLayout from '../components/ContentLayout.astro';
@@ -92,11 +91,11 @@ const latestPosts  = homePosts.slice(0, 4);
             data-enter-delay="520"
           >
             {featuredGrid[0]?.image ? (
-              <Image
+              <img
                 src={featuredGrid[0].image}
                 alt={featuredGrid[0].title}
-                width={700}
-                height={480}
+                width="700"
+                height="480"
                 loading="lazy"
                 class="ocean-event-card__img absolute inset-0 h-full w-full object-cover"
               />
@@ -133,11 +132,11 @@ const latestPosts  = homePosts.slice(0, 4);
             data-enter-delay="620"
           >
             {featuredGrid[1]?.image ? (
-              <Image
+              <img
                 src={featuredGrid[1].image}
                 alt={featuredGrid[1].title}
-                width={480}
-                height={300}
+                width="480"
+                height="300"
                 loading="lazy"
                 class="ocean-event-card__img absolute inset-0 h-full w-full object-cover"
               />
@@ -166,11 +165,11 @@ const latestPosts  = homePosts.slice(0, 4);
             data-enter-delay="720"
           >
             {featuredGrid[2]?.image ? (
-              <Image
+              <img
                 src={featuredGrid[2].image}
                 alt={featuredGrid[2].title}
-                width={480}
-                height={160}
+                width="480"
+                height="160"
                 loading="lazy"
                 class="ocean-event-card__img absolute inset-0 h-full w-full object-cover object-center"
               />
@@ -270,11 +269,11 @@ const latestPosts  = homePosts.slice(0, 4);
               data-enter-delay="820"
             >
               {featuredGrid[3].image ? (
-                <Image
+                <img
                   src={featuredGrid[3].image}
                   alt={featuredGrid[3].title}
-                  width={480}
-                  height={190}
+                  width="480"
+                  height="190"
                   loading="lazy"
                   class="ocean-event-card__img absolute inset-0 h-full w-full object-cover"
                 />

@@ -3,12 +3,7 @@
  * PostCard — renders a single post in one of two layouts:
  *   'card'  — vertical card with image header (default, used in grids)
  *   'list'  — horizontal thumbnail + text (used in Latest Posts)
- *
- * Images are served via astro:assets <Image> for automatic format conversion
- * (WebP/AVIF) and layout-shift prevention.  External domains must be listed
- * in astro.config.mjs → image.remotePatterns.
  */
-import { Image } from 'astro:assets';
 
 export interface Props {
   category: string;
@@ -47,11 +42,11 @@ const PLACEHOLDER_BG = 'bg-blue-light';
     <a href={url} class="grid min-h-[220px] md:min-h-[260px] md:grid-cols-[1.15fr_1fr]">
       {image ? (
         <div class="relative min-h-[180px] overflow-hidden md:min-h-0">
-          <Image
+          <img
             src={image}
             alt={title}
-            width={800}
-            height={480}
+            width="800"
+            height="480"
             loading="lazy"
             class="ocean-event-card__img absolute inset-0 h-full w-full object-cover"
           />
@@ -85,11 +80,11 @@ const PLACEHOLDER_BG = 'bg-blue-light';
   <article class="group flex gap-3 py-3 first:pt-0 last:pb-0">
     {image ? (
       <a href={url} class="shrink-0 overflow-hidden rounded-card">
-        <Image
+        <img
           src={image}
           alt={title}
-          width={96}
-          height={72}
+          width="96"
+          height="72"
           loading="lazy"
           class="h-[72px] w-[96px] object-cover transition-transform duration-300 group-hover:scale-105"
         />
@@ -120,11 +115,11 @@ const PLACEHOLDER_BG = 'bg-blue-light';
   <article class="ds-card motion-card-lift group">
     {image ? (
       <a href={url} class="block overflow-hidden">
-        <Image
+        <img
           src={image}
           alt={title}
-          width={700}
-          height={394}
+          width="700"
+          height="394"
           loading="lazy"
           class:list={[imageHeight, 'w-full object-cover transition-transform duration-500 group-hover:scale-105']}
         />
