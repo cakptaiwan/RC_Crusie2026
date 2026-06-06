@@ -54,6 +54,7 @@ export interface Post {
   featured: boolean;
   status: string;
   page: string;
+  subPage: string;
   body: string;
 }
 
@@ -174,6 +175,7 @@ function parsePost(notionPage: PageObjectResponse): Post {
   const featured = props['Featured']?.checkbox ?? false;
   const status = props['Status']?.select?.name ?? '';
   const pg = props['Page']?.select?.name ?? 'HOME';
+  const subPage = props['SubPage']?.select?.name ?? '';
 
   const body1 = props['Body1']?.rich_text
     ? richTextToString(props['Body1'].rich_text)
@@ -197,6 +199,7 @@ function parsePost(notionPage: PageObjectResponse): Post {
     featured,
     status,
     page: pg,
+    subPage,
     body,
   };
 }
@@ -221,6 +224,7 @@ export function getMockPosts(pageFilter?: string): Post[] {
       featured: true,
       status: '已發布',
       page: 'HOME',
+      subPage: '',
       body: '',
     },
     {
@@ -238,6 +242,7 @@ export function getMockPosts(pageFilter?: string): Post[] {
       featured: false,
       status: '已發布',
       page: 'HOME',
+      subPage: '',
       body: '',
     },
     {
@@ -255,6 +260,7 @@ export function getMockPosts(pageFilter?: string): Post[] {
       featured: false,
       status: '已發布',
       page: 'HOME',
+      subPage: '',
       body: '',
     },
     {
@@ -273,6 +279,7 @@ export function getMockPosts(pageFilter?: string): Post[] {
       featured: false,
       status: '已發布',
       page: 'HOME',
+      subPage: '',
       body: '',
     },
     {
@@ -290,6 +297,7 @@ export function getMockPosts(pageFilter?: string): Post[] {
       featured: false,
       status: '已發布',
       page: 'HOME',
+      subPage: '',
       body: '',
     },
     {
@@ -308,6 +316,7 @@ export function getMockPosts(pageFilter?: string): Post[] {
       featured: false,
       status: '已發布',
       page: 'HOME',
+      subPage: '',
       body: '',
     },
   ];

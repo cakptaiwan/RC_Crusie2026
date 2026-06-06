@@ -17,44 +17,60 @@ interface NavItem {
   label: string;
   href?: string;
   children?: NavChild[];
+  cta?: boolean;
 }
 
 const navItems: NavItem[] = [
-  { label: '關於皇家旅人', href: '/about-rc' },
   {
     label: '新手出發',
     children: [
-      { label: '航線選擇', href: '/beginners-guide' },
-      { label: '聰明花錢', href: '/pricing' },
-      { label: '聰明選艙', href: '/cabin-guide' },
-      { label: '常見問題', href: '/faq' },
+      { label: '遊輪是什麼', href: '/what-is-cruise' },
+      { label: '遊輪品牌', href: '/about-royal' },
+      { label: '聰明花費', href: '/pricing' },
+      { label: '選艙須知', href: '/cabin-guide' },
+      { label: '新手 FAQ', href: '/faq' },
     ],
   },
   {
     label: '玩轉郵輪',
     children: [
+      { label: '行李打包', href: '/packing' },
       { label: '娛樂設施', href: '/entertainment' },
       { label: '餐廳美食', href: '/dining' },
+      { label: '小費怎麼給', href: '/tipping' },
       { label: '岸上行程', href: '/shore-excursions' },
     ],
   },
   {
     label: '航線資訊',
     children: [
-      { label: '地中海', href: '/mediterranean' },
-      { label: '加勒比海', href: '/caribbean' },
-      { label: '亞洲航線', href: '/asia-routes' },
+      { label: '東南亞', href: '/southeast-asia' },
+      { label: '東北亞', href: '/northeast-asia' },
+      { label: '美洲', href: '/americas' },
+      { label: '歐洲', href: '/europe' },
     ],
   },
   {
     label: '讀者社群',
     children: [
-      { label: '留言板', href: '/discussion' },
       { label: '讀者投稿', href: '/reader-submit' },
+      { label: '留言板', href: '/discussion' },
+    ],
+  },
+  {
+    label: '旅人手記',
+    children: [
+      { label: '品牌故事', href: '/about-rc' },
+      { label: '最新資訊', href: '/latest-news' },
+      { label: '資源推薦', href: '/resources' },
       { label: '聯絡我們', href: '/discussion' },
     ],
   },
+  { label: '訂閱電子報', href: '/newsletter', cta: true },
 ];
+
+const newsletterCtaClass =
+  'flex items-center rounded-full bg-white px-6 py-2 font-sans text-[14px] font-medium tracking-wide whitespace-nowrap text-blue-accent transition-all duration-200 hover:bg-white/90';
 
 const isItemActive = (item: NavItem) =>
   item.href
@@ -85,8 +101,12 @@ const NAV_H = '72px';
                 <a
                   href={item.href}
                   class:list={[
-                    'nav-link flex items-center gap-1 px-5 py-2.5 font-sans text-[15px] tracking-wide whitespace-nowrap',
-                    active ? 'nav-link--active font-medium text-white' : 'font-normal text-white/70 hover:text-white',
+                    item.cta
+                      ? newsletterCtaClass
+                      : [
+                          'nav-link flex items-center gap-1 px-5 py-2.5 font-sans text-[15px] tracking-wide whitespace-nowrap',
+                          active ? 'nav-link--active font-medium text-white' : 'font-normal text-white/70 hover:text-white',
+                        ],
                   ]}
                 >
                   {item.label}
@@ -196,8 +216,12 @@ const NAV_H = '72px';
                   <a
                     href={item.href}
                     class:list={[
-                      'nav-link flex items-center gap-1 px-5 py-2.5 font-sans text-[15px] tracking-wide whitespace-nowrap',
-                      active ? 'nav-link--active font-medium text-white' : 'font-normal text-white/70 hover:text-white',
+                      item.cta
+                        ? newsletterCtaClass
+                        : [
+                            'nav-link flex items-center gap-1 px-5 py-2.5 font-sans text-[15px] tracking-wide whitespace-nowrap',
+                            active ? 'nav-link--active font-medium text-white' : 'font-normal text-white/70 hover:text-white',
+                          ],
                     ]}
                   >
                     {item.label}
@@ -285,11 +309,20 @@ const NAV_H = '72px';
 >
   <nav class="mx-auto max-w-content px-gutter-sm py-5 md:px-gutter-md" aria-label="行動裝置導覽">
     {navItems.map((item) => (
-      <div class="border-b border-white/8 last:border-0">
+      <div class:list={['border-b border-white/8 last:border-0', item.cta && 'border-0 py-2']}>
         {item.href && !item.children ? (
-          <a href={item.href} class="block py-4 font-sans text-[16px] tracking-wide text-white/70 hover:text-white">
-            {item.label}
-          </a>
+          item.cta ? (
+            <a
+              href={item.href}
+              class="flex w-full items-center justify-center rounded-full bg-white px-8 py-3.5 font-sans text-[15px] font-medium tracking-wide text-blue-accent transition-opacity duration-200 hover:opacity-90"
+            >
+              {item.label}
+            </a>
+          ) : (
+            <a href={item.href} class="block py-4 font-sans text-[16px] tracking-wide text-white/70 hover:text-white">
+              {item.label}
+            </a>
+          )
         ) : (
           <details class="group/detail">
             <summary class="flex cursor-pointer list-none items-center justify-between py-4 font-sans text-[16px] tracking-wide text-white/70 hover:text-white">
