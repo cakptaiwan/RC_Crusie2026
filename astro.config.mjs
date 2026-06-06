@@ -15,6 +15,7 @@ export default defineConfig({
       { protocol: 'https', hostname: 'images.pexels.com' },
       { protocol: 'https', hostname: '**.amazonaws.com' },   /* Notion asset CDN */
       { protocol: 'https', hostname: '**.notion.so' },
+      { protocol: 'https', hostname: 'res.cloudinary.com' }, /* Cloudinary 圖床 */
     ],
   },
 });
