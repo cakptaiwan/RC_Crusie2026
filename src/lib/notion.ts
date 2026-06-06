@@ -55,6 +55,7 @@ export interface Post {
   status: string;
   page: string;
   subPage: string;
+  showOnHome: boolean;
   body: string;
 }
 
@@ -129,7 +130,9 @@ async function queryDatabasePages(
   const filters: DataSourceFilter[] = [
     { property: 'Status', select: { equals: '已發布' } },
   ];
-  if (options?.pageFilter) {
+  if (options?.pageFilter === 'HOME') {
+    filters.push({ property: 'ShowOnHome', checkbox: { equals: true } });
+  } else if (options?.pageFilter) {
     filters.push({ property: 'Page', select: { equals: options.pageFilter } });
   }
   if (options?.featuredOnly) {
@@ -176,6 +179,7 @@ function parsePost(notionPage: PageObjectResponse): Post {
   const status = props['Status']?.select?.name ?? '';
   const pg = props['Page']?.select?.name ?? 'HOME';
   const subPage = props['SubPage']?.select?.name ?? '';
+  const showOnHome = props['ShowOnHome']?.checkbox ?? false;
 
   const body1 = props['Body1']?.rich_text
     ? richTextToString(props['Body1'].rich_text)
@@ -200,6 +204,7 @@ function parsePost(notionPage: PageObjectResponse): Post {
     status,
     page: pg,
     subPage,
+    showOnHome,
     body,
   };
 }
@@ -225,6 +230,7 @@ export function getMockPosts(pageFilter?: string): Post[] {
       status: '已發布',
       page: 'HOME',
       subPage: '',
+      showOnHome: true,
       body: '',
     },
     {
@@ -243,6 +249,7 @@ export function getMockPosts(pageFilter?: string): Post[] {
       status: '已發布',
       page: 'HOME',
       subPage: '',
+      showOnHome: true,
       body: '',
     },
     {
@@ -261,6 +268,7 @@ export function getMockPosts(pageFilter?: string): Post[] {
       status: '已發布',
       page: 'HOME',
       subPage: '',
+      showOnHome: true,
       body: '',
     },
     {
@@ -280,6 +288,7 @@ export function getMockPosts(pageFilter?: string): Post[] {
       status: '已發布',
       page: 'HOME',
       subPage: '',
+      showOnHome: true,
       body: '',
     },
     {
@@ -298,6 +307,7 @@ export function getMockPosts(pageFilter?: string): Post[] {
       status: '已發布',
       page: 'HOME',
       subPage: '',
+      showOnHome: true,
       body: '',
     },
     {
@@ -317,6 +327,7 @@ export function getMockPosts(pageFilter?: string): Post[] {
       status: '已發布',
       page: 'HOME',
       subPage: '',
+      showOnHome: true,
       body: '',
     },
   ];
