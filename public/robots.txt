@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://royaltraveler.com/sitemap-index.xml
+Sitemap: https://royal-cruiser.com/sitemap-index.xml

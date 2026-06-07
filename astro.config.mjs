@@ -4,7 +4,7 @@ import tailwind from '@astrojs/tailwind';
 import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
-  site: 'https://royaltraveler.com',
+  site: 'https://royal-cruiser.com',
   integrations: [
     tailwind({ applyBaseStyles: false }),
     sitemap(),
