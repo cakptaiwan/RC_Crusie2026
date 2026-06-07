@@ -1,11 +1,45 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ContentLayout from '../components/ContentLayout.astro';
-import SubPagePosts from '../components/SubPagePosts.astro';
 ---
-
-<BaseLayout title="品牌故事" description="Loyal to Royal 皇家旅人的品牌故事與理念。">
+<BaseLayout title="品牌故事" description="皇家旅人的品牌故事與理念——一個無可救藥愛上皇家加勒比遊輪的台灣旅人。">
   <ContentLayout>
-    <SubPagePosts page="旅人手記" subPage="品牌故事" label="品牌故事" />
+    <article class="ds-card-pad prose-royal">
+
+      <h1 class="mb-8 text-3xl font-semibold leading-tight tracking-brand text-blue-brand md:text-4xl">品牌故事</h1>
+
+      <h2>關於皇家旅人</h2>
+
+      <p>我是一個無可救藥愛上皇家加勒比遊輪的台灣旅人。第一次踏上皇家加勒比（Ovation of the Seas）的甲板，是跟家人一起出發的 5 天東南亞旅程，從新加坡到吉隆坡（馬來西亞）、普吉島（泰國）再回新加坡。泳池畔的現場樂隊、令人目不暇給的異國美食、星光下的露天電影、游完泳後的霜淇淋⋯⋯那些畫面到現在都還清晰。從那一刻起，我就知道：遊輪旅遊會是我最喜歡的旅遊形式，沒有之一。</p>
+
+      <p>幾次的搭乘之後，我慢慢地由皇家加勒比的新手，進化成有經驗的遊輪旅人。能輕鬆自在地安排下一趟行程，對於艙等、登船、升等、小費、酒水、簽證、網路、岸上行程等問題，也都慢慢有自己的體悟與見解。同時也感嘆，為何中文皇家加勒比的資訊如此稀缺——大家靠經驗磨出來的一點心得，基本上散落在各 FB 社團、部落客文章或是 Threads 的討論串裡，一段時間後就被淹沒了。是該有一個累積玩家經驗、快速讓新手建立遊輪旅遊輪廓的空間。</p>
+
+      <h2>這個網站是什麼</h2>
+
+      <p><strong>皇家旅人（Royal Cruiser）</strong>是一個以中文遊輪旅客為對象的資訊分享園地，特別聚焦「皇家加勒比遊輪」。不是業配文，沒有旅行社業者的促銷宣傳稿。市面上不缺旅遊部落格，但專門針對中文旅客、系統性整理皇家加勒比資訊的地方並不多——這個缺口，正是皇家旅人想銜接補上的。是一個真實搭過船的人，把蒐集到的英文資訊、實際搭乘的經驗、以及來自全球遊輪社群的知識，整理成對你有用的繁體中文內容。</p>
+
+      <h2>我們寫什麼</h2>
+
+      <p>個人力量與經驗都很有限（離 700 晚的 Pinnacle Club，還差 600 多晚），也不可能期待各路資深遊輪旅人踴躍分享與投稿。「皇家旅人」初期的經營策略，是透過國外各大社團及論壇的「皇家加勒比遊輪」資訊蒐整，聚焦在新手必須知道的搭船攻略、選艙指南、費用規劃、餐廳美食、設施介紹；進展到進階旅客關心的船型比較、航線分析、忠誠計畫。讓中文使用者的旅客，也能從玩得開心進化到玩得聰明。</p>
+
+      <h2>長期目標</h2>
+
+      <p>我的夢想是走完皇家加勒比全球六大洲、八十多條航線，跨過 700 晚的門檻，成為「皇冠與錨俱樂部」（Crown &amp; Anchor Society）的頂級會員 Pinnacle Club。我已經上路了，打算用 20 年來慢慢累積與達成。如果你也正在計畫人生中第一次、第二次或第十次的遊輪旅程，歡迎一起結伴出發。</p>
+
+      <p class="text-right"><strong>Royal Cruiser · 皇家旅人</strong></p>
+
+    </article>
   </ContentLayout>
 </BaseLayout>
+
+<style is:global>
+  .prose-royal p {
+    @apply mb-4 text-body text-ink-soft leading-[1.9];
+  }
+  .prose-royal h2 {
+    @apply mb-4 mt-8 text-h2 font-semibold text-ink;
+  }
+  .prose-royal strong {
+    @apply font-semibold text-ink;
+  }
+</style>
