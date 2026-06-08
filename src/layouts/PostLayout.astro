@@ -3,6 +3,7 @@ import BaseLayout from './BaseLayout.astro';
 import ContentLayout from '../components/ContentLayout.astro';
 import GiscusComments from '../components/GiscusComments.astro';
 import { siteAuthor } from '../data/site-author';
+import { sanitizeBodyHtml } from '../lib/sanitize-body';
 
 export interface Props {
   id: string;
@@ -29,6 +30,8 @@ const {
   likes = 0,
   body = '',
 } = Astro.props;
+
+const sanitizedBody = body ? sanitizeBodyHtml(body) : '';
 
 const formattedDate = date
   ? new Date(date).toLocaleDateString('zh-TW', { year: 'numeric', month: 'long', day: 'numeric' })
@@ -100,13 +103,13 @@ const formattedDate = date
           <p class="mb-5 text-body-lg font-medium text-ink">{excerpt}</p>
 
           <!-- Notion body content (Body1 + Body2) -->
-          {body && <div set:html={body} />}
+          {sanitizedBody && <div set:html={sanitizedBody} />}
 
           <!-- Content slot: full Notion block content rendered here when available -->
           <slot />
 
           <!-- Placeholder content shown when no slot content provided -->
-          {!body && <slot name="placeholder">
+          {!sanitizedBody && <slot name="placeholder">
             <div class="space-y-4 text-sm text-ink-soft leading-[1.9]">
               <p>郵輪旅遊是一種獨特而全面的旅行方式，讓旅客在一趟行程中探索多個目的地，同時享受船上豐富的娛樂設施與精緻餐飲。</p>
               <p>以下將以真實體驗的角度分享這次郵輪之旅。從踏上碼頭那一刻起，到最後看著目的地港口漸漸消失在海平面上，每個環節都值得細細品味。</p>
@@ -185,6 +188,9 @@ const formattedDate = date
   }
   .prose-royal ul {
     @apply mb-4 list-outside list-disc space-y-1.5 pl-5 text-body text-ink-soft;
+  }
+  .prose-royal .bg-blue-light ul {
+    @apply mb-0 list-outside list-disc space-y-1 pl-5 text-sm text-ink-soft;
   }
   .prose-royal ol {
     @apply mb-4 list-outside list-decimal space-y-1.5 pl-5 text-body text-ink-soft;

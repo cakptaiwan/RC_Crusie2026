@@ -4,7 +4,7 @@ export const subPages = [
   { name: '遊輪品牌', href: '/about-royal' },
   { name: '聰明花費', href: '/pricing' },
   { name: '選艙須知', href: '/cabin-guide' },
-  { name: '新手 FAQ', href: '/faq' },
+  { name: '新手FAQ', href: '/faq' },
   { name: '行李打包', href: '/packing' },
   { name: '娛樂設施', href: '/entertainment' },
   { name: '餐廳美食', href: '/dining' },

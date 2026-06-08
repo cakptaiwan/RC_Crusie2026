@@ -30,6 +30,7 @@
  */
 
 import { Client } from '@notionhq/client';
+import { sanitizeBodyHtml } from './sanitize-body';
 import type {
   PageObjectResponse,
   QueryDataSourceParameters,
@@ -191,7 +192,7 @@ function parsePost(notionPage: PageObjectResponse): Post {
   const body2 = props['Body2']?.rich_text
     ? richTextToString(props['Body2'].rich_text)
     : '';
-  const body = body1 + body2;
+  const body = sanitizeBodyHtml(body1 + body2);
 
   return {
     id: notionPage.id,
