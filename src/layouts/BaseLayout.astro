@@ -43,6 +43,55 @@ const { title, description, image, type, jsonLd } = Astro.props;
     </div>
     <MotionEnhancements />
 
+    <script is:inline>
+      (() => {
+        /** 掃描 root 內所有 <img>（預設為整頁） */
+        function scanAllImages(root = document) {
+          return Array.from(root.querySelectorAll('img'));
+        }
+
+        /** Cloudinary 圖片自動加上 f_auto,q_auto 轉換 */
+        function onImagesReady(images) {
+          images.forEach((img) => {
+            const src = img.getAttribute('src');
+            if (src && src.includes('res.cloudinary.com') && !src.includes('f_auto')) {
+              img.src = src.replace('/upload/', '/upload/f_auto,q_auto/');
+            }
+          });
+        }
+
+        /** 移除文章數為 0 的分類（含快取舊版 HTML） */
+        function hideZeroCountCategories(root = document) {
+          const widgets = root.querySelectorAll('[data-sidebar-categories], .sidebar-widget');
+          widgets.forEach((widget) => {
+            const title = widget.querySelector('.sidebar-section-title');
+            if (!title || title.textContent.trim() !== '文章分類') return;
+
+            widget.querySelectorAll('ul > li').forEach((li) => {
+              const attrCount = li.getAttribute('data-category-count');
+              const badge = li.querySelector('[data-count], span.rounded-full');
+              const count = attrCount ?? badge?.getAttribute('data-count') ?? badge?.textContent?.trim();
+              if (count === '0' || Number(count) === 0) li.remove();
+            });
+
+            const list = widget.querySelector('ul');
+            if (list && !list.children.length) widget.remove();
+          });
+        }
+
+        function onPageReady() {
+          onImagesReady(scanAllImages());
+          hideZeroCountCategories();
+        }
+
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', onPageReady, { once: true });
+        } else {
+          onPageReady();
+        }
+      })();
+    </script>
+
     <a href="#" class="fab-frap" aria-label="快速聯絡" data-enter="up" data-enter-delay="1100">
       <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
         <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />

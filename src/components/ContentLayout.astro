@@ -6,9 +6,16 @@ interface Props {
   showSidebar?: boolean;
   showNavStrip?: boolean;
   class?: string;
+  /** 側欄頂部偏移，用於與主內容區塊垂直對齊（如首頁精選區 mt-10） */
+  sidebarClass?: string;
 }
 
-const { showSidebar = true, showNavStrip = true, class: className = '' } = Astro.props;
+const {
+  showSidebar = true,
+  showNavStrip = true,
+  class: className = '',
+  sidebarClass = '',
+} = Astro.props;
 ---
 
 {showNavStrip && <NavStrip />}
@@ -20,7 +27,7 @@ const { showSidebar = true, showNavStrip = true, class: className = '' } = Astro
         <div class="min-w-0">
           <slot />
         </div>
-        <aside class="w-full lg:max-w-[18rem] xl:max-w-[20rem]">
+        <aside class:list={['w-full lg:max-w-[18rem] xl:max-w-[20rem]', sidebarClass]}>
           <Sidebar />
         </aside>
       </div>

@@ -1,0 +1,47 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ContentLayout from '../components/ContentLayout.astro';
+import PostCard from '../components/PostCard.astro';
+import { getAllPosts } from '../lib/notion';
+
+const q = Astro.url.searchParams.get('q')?.trim() ?? '';
+const allPosts = await getAllPosts();
+
+const results = q
+  ? allPosts.filter(
+      (post) =>
+        post.title.includes(q) ||
+        post.excerpt.includes(q) ||
+        post.category.includes(q) ||
+        post.subPage.includes(q)
+    )
+  : [];
+---
+
+<BaseLayout
+  title={q ? `搜尋：${q}` : '站內搜尋'}
+  description="搜尋皇家旅人部落格文章。"
+>
+  <ContentLayout>
+    <h1 class="mb-2 text-h1 text-blue-brand">
+      {q ? `搜尋結果：${q}` : '站內搜尋'}
+    </h1>
+
+    {q ? (
+      results.length > 0 ? (
+        <>
+          <p class="mb-8 text-body text-ink-soft">找到 {results.length} 篇文章</p>
+          <div class="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-5">
+            {results.map((post) => (
+              <PostCard {...post} />
+            ))}
+          </div>
+        </>
+      ) : (
+        <p class="py-16 text-center text-body text-ink-soft">找不到符合「{q}」的文章，請換個關鍵字試試。</p>
+      )
+    ) : (
+      <p class="py-16 text-center text-body text-ink-soft">請在側欄輸入關鍵字開始搜尋。</p>
+    )}
+  </ContentLayout>
+</BaseLayout>

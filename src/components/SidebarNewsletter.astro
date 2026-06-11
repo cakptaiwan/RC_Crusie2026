@@ -1,0 +1,24 @@
+---
+import SidebarPillForm from './SidebarPillForm.astro';
+---
+
+<div class="sidebar-widget">
+  <div class="sidebar-section-header">
+    <span class="sidebar-section-title">訂閱電子報</span>
+  </div>
+
+  <SidebarPillForm
+    action="/newsletter"
+    name="email"
+    type="email"
+    label="Email 郵件"
+    placeholder="在這填入 Email"
+    buttonLabel="訂閱"
+    required={true}
+    ariaLabel="訂閱電子報"
+  />
+
+  <p class="mt-3 text-[13px] leading-relaxed text-ink-soft">
+    我會分享皇家加勒比遊輪的搭船攻略、航線情報與旅人心得。千萬不可錯過！
+  </p>
+</div>

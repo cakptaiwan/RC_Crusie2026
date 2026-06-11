@@ -1,6 +1,5 @@
 /** 主選單子頁 — 名稱須與 Notion Subpage 欄位完全一致 */
 export const subPages = [
-  { name: '遊輪是什麼', href: '/what-is-cruise' },
   { name: '遊輪品牌', href: '/about-royal' },
   { name: '聰明花費', href: '/pricing' },
   { name: '選艙須知', href: '/cabin-guide' },

@@ -1,0 +1,135 @@
+---
+const repo = import.meta.env.GISCUS_REPO ?? '';
+const repoId = import.meta.env.GISCUS_REPO_ID ?? '';
+const category = import.meta.env.GISCUS_CATEGORY ?? 'Comments';
+const categoryId = import.meta.env.GISCUS_CATEGORY_ID ?? '';
+const isConfigured = !!(repo && repoId && categoryId);
+---
+
+<div
+  id="discussion-backdrop"
+  class="pointer-events-none fixed inset-0 z-[60] bg-blue-brand/25 opacity-0 backdrop-blur-[2px] transition-opacity duration-300"
+  aria-hidden="true"
+  data-discussion-backdrop
+></div>
+
+<aside
+  id="discussion-panel"
+  class="fixed inset-y-0 right-0 z-[61] flex w-full max-w-md translate-x-full flex-col rounded-l-2xl bg-white shadow-[-10px_0_40px_rgba(6,21,86,0.14)] transition-transform duration-300 ease-out"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="discussion-panel-title"
+  aria-hidden="true"
+  data-discussion-panel
+>
+  <header class="flex shrink-0 items-center justify-between border-b border-canvas-ceramic px-5 py-4 md:px-6">
+    <span id="discussion-panel-title" class="sidebar-section-title !mb-0 !border-0 !pb-0">
+      留言板
+    </span>
+    <button
+      type="button"
+      id="discussion-close"
+      class="flex h-9 w-9 items-center justify-center rounded-full text-ink-soft transition-colors hover:bg-blue-light hover:text-blue-brand"
+      aria-label="關閉留言板"
+    >
+      <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+  </header>
+
+  <div class="min-h-0 flex-1 overflow-y-auto px-5 py-5 md:px-6">
+    {
+      isConfigured ? (
+        <div id="discussion-giscus-container" class="min-h-[240px]" />
+      ) : (
+        <div class="text-center text-body text-ink-soft">
+          <span class="mx-auto mb-4 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-light text-blue-accent">
+            <svg class="h-7 w-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.5"
+                d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"
+              />
+            </svg>
+          </span>
+          <p class="mb-2 font-semibold text-ink">留言板建置中</p>
+          <p class="text-[14px] leading-relaxed">
+            歡迎分享你的皇家加勒比遊輪心得。Giscus 設定完成後，留言將在此顯示。
+          </p>
+          <a
+            href="/discussion"
+            class="btn-primary mt-6 inline-flex !rounded-2xl !px-6 !py-2.5 text-[14px]"
+          >
+            前往留言討論頁
+          </a>
+        </div>
+      )
+    }
+  </div>
+</aside>
+
+<script
+  is:inline
+  define:vars={{ repo, repoId, category, categoryId, isConfigured }}
+>
+  (() => {
+    const panel = document.querySelector('[data-discussion-panel]');
+    const backdrop = document.querySelector('[data-discussion-backdrop]');
+    const closeBtn = document.getElementById('discussion-close');
+    const openBtns = document.querySelectorAll('[data-discussion-open]');
+    if (!panel || !backdrop) return;
+
+    let giscusLoaded = false;
+
+    const loadGiscus = () => {
+      if (!isConfigured || giscusLoaded) return;
+      const container = document.getElementById('discussion-giscus-container');
+      if (!container || container.querySelector('script')) return;
+
+      const script = document.createElement('script');
+      script.src = 'https://giscus.app/client.js';
+      script.setAttribute('data-repo', repo);
+      script.setAttribute('data-repo-id', repoId);
+      script.setAttribute('data-category', category);
+      script.setAttribute('data-category-id', categoryId);
+      script.setAttribute('data-mapping', 'specific');
+      script.setAttribute('data-term', 'message-board');
+      script.setAttribute('data-theme', 'light');
+      script.setAttribute('data-lang', 'zh-TW');
+      script.crossOrigin = 'anonymous';
+      script.async = true;
+      container.appendChild(script);
+      giscusLoaded = true;
+    };
+
+    const openPanel = () => {
+      panel.classList.remove('translate-x-full');
+      panel.setAttribute('aria-hidden', 'false');
+      backdrop.classList.remove('pointer-events-none', 'opacity-0');
+      backdrop.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      loadGiscus();
+      closeBtn?.focus();
+    };
+
+    const closePanel = () => {
+      panel.classList.add('translate-x-full');
+      panel.setAttribute('aria-hidden', 'true');
+      backdrop.classList.add('pointer-events-none', 'opacity-0');
+      backdrop.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    };
+
+    openBtns.forEach((btn) => btn.addEventListener('click', openPanel));
+    closeBtn?.addEventListener('click', closePanel);
+    backdrop.addEventListener('click', closePanel);
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && panel.getAttribute('aria-hidden') === 'false') {
+        closePanel();
+      }
+    });
+  })();
+</script>

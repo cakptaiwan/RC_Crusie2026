@@ -1,0 +1,49 @@
+---
+interface Props {
+  action: string;
+  name: string;
+  type?: 'email' | 'search' | 'text';
+  placeholder: string;
+  buttonLabel: string;
+  label?: string;
+  required?: boolean;
+  ariaLabel?: string;
+}
+
+const {
+  action,
+  name,
+  type = 'text',
+  placeholder,
+  buttonLabel,
+  label,
+  required = false,
+  ariaLabel,
+} = Astro.props;
+---
+
+<form action={action} method="get" class="w-full" aria-label={ariaLabel}>
+  {
+    label && (
+      <label class="mb-1.5 block text-[13px] font-medium text-ink-soft">
+        {label}
+        {required && <span class="ml-0.5 text-semantic-error">*</span>}
+      </label>
+    )
+  }
+  <div class="flex w-full overflow-hidden rounded-full border border-blue-accent/35 bg-white shadow-sm">
+    <input
+      type={type}
+      name={name}
+      required={required}
+      placeholder={placeholder}
+      class="min-w-0 flex-1 border-0 bg-transparent px-4 py-2.5 text-[14px] text-ink outline-none placeholder:text-ink-soft/70"
+    />
+    <button
+      type="submit"
+      class="shrink-0 bg-blue-accent px-5 py-2.5 text-[14px] font-semibold text-white transition-colors duration-200 hover:bg-blue-brand"
+    >
+      {buttonLabel}
+    </button>
+  </div>
+</form>
