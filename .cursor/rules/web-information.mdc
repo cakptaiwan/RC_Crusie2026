@@ -23,28 +23,39 @@ alwaysApply: false
 | 頁尾 | `src/components/Footer.astro` | 深藍 `#061556`、置中緊湊版 |
 | 側欄 | `src/components/Sidebar.astro` | About Me 用 `/logo.png` 方形 LOGO |
 
-## 主選單（NavStrip — 5 項 + 下拉）
+## 主選單（NavStrip — 4 欄 + 訂閱電子報 CTA）
+
+資料來源：`src/data/nav-pages.ts`（NavStrip、Footer、側欄分類共用）
 
 ```
-關於皇家旅人          → /about-rc
 新手出發
-  ├ 航線選擇          → /beginners-guide
-  ├ 聰明花錢          → /pricing
-  ├ 聰明選艙          → /cabin-guide
-  └ 常見問題          → /faq
-玩轉郵輪
+  ├ 遊輪品牌          → /about-royal
+  ├ 訂票攻略          → /ticket-guide
+  ├ 認識遊輪          → /know-cruise
+  ├ 聰明花費          → /pricing
+  ├ 選艙須知          → /cabin-guide
+  └ 新手 FAQ          → /faq
+玩轉遊輪
+  ├ 行李打包          → /packing
   ├ 娛樂設施          → /entertainment
   ├ 餐廳美食          → /dining
+  ├ 小費怎麼給        → /tipping
   └ 岸上行程          → /shore-excursions
-航線與故事
-  ├ 地中海            → /mediterranean
-  ├ 加勒比海          → /caribbean
-  └ 亞洲航線          → /asia-routes
-讀者社群
-  ├ 留言板            → /discussion
-  ├ 讀者投稿          → /reader-submit
-  └ 聯絡我們          → /discussion
+航線資訊
+  ├ 東南亞航線        → /southeast-asia
+  ├ 東北亞航線        → /northeast-asia
+  ├ 美洲航線          → /americas
+  └ 歐洲航線          → /europe
+旅人手記
+  ├ 品牌故事          → /about-rc（靜態頁 + 品牌故事分類文章）
+  ├ 最新資訊          → /latest-news
+  ├ 航線快訊          → /route-news
+  └ 資源推薦          → /resources
+訂閱電子報（CTA）    → /newsletter
 ```
+
+- 舊路徑 `/what-is-cruise` 301 轉址至 `/know-cruise`
+- Notion `Subpage` 欄位須與 `nav-pages.ts` 的 `name` 完全一致
 
 - 桌面：`group-hover` 下拉；手機：漢堡選單 + `<details>/<summary>`
 - 字級 `text-[16px]`；active 狀態：白字 + **白色底線**（`box-shadow: inset 0 -2px 0 rgba(255,255,255,0.85)`）
@@ -68,11 +79,7 @@ alwaysApply: false
 
 ### Footer 連結欄
 
-| 欄位 | 連結 |
-|------|------|
-| 新手出發 | 第一次搭郵輪、聰明花錢、聰明選艙、常見問題 |
-| 航線與玩轉 | 地中海、加勒比海、亞洲航線、岸上行程 |
-| 讀者社群 | 關於皇家旅人、留言板、讀者投稿、聯絡我們 |
+四欄與主選單對齊（資料來源 `nav-pages.ts`），不含訂閱電子報 CTA。
 
 ## 字體（全站統一）
 

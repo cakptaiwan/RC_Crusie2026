@@ -1,47 +1,13 @@
 ---
 import { socialLinks, navSocialLinkClass, navSocialGroupClass } from '../data/social-links';
+import { navSections } from '../data/nav-pages';
 
 const currentYear = new Date().getFullYear();
 
-const linkColumns = [
-  {
-    heading: '新手出發',
-    links: [
-      { href: '/about-royal', label: '遊輪品牌' },
-      { href: '/pricing', label: '聰明花費' },
-      { href: '/cabin-guide', label: '選艙須知' },
-      { href: '/faq', label: '新手 FAQ' },
-    ],
-  },
-  {
-    heading: '玩轉郵輪',
-    links: [
-      { href: '/packing', label: '行李打包' },
-      { href: '/entertainment', label: '娛樂設施' },
-      { href: '/dining', label: '餐廳美食' },
-      { href: '/tipping', label: '小費怎麼給' },
-      { href: '/shore-excursions', label: '岸上行程' },
-    ],
-  },
-  {
-    heading: '航線資訊',
-    links: [
-      { href: '/southeast-asia', label: '東南亞航線' },
-      { href: '/northeast-asia', label: '東北亞航線' },
-      { href: '/americas', label: '美洲航線' },
-      { href: '/europe', label: '歐洲航線' },
-    ],
-  },
-  {
-    heading: '旅人手記',
-    links: [
-      { href: '/about-rc', label: '品牌故事' },
-      { href: '/latest-news', label: '最新資訊' },
-      { href: '/resources', label: '資源推薦' },
-      { href: '/newsletter', label: '訂閱電子報' },
-    ],
-  },
-];
+const linkColumns = navSections.map((section) => ({
+  heading: section.label,
+  links: section.children.map(({ label, href }) => ({ href, label })),
+}));
 
 const legalLinks = [
   { href: '#', label: '隱私權政策' },

@@ -37,6 +37,10 @@ export const socialLinks = [
   },
 ] as const;
 
+/** White square + navy icon — nav strip (130% scale) */
+export const navStripSocialLinkClass =
+  'social-icon-link flex h-[47px] w-[47px] shrink-0 items-center justify-center rounded bg-white p-2.5 text-[#061556] shadow-sm';
+
 /** White square + navy icon — for nav bar & footer on dark background */
 export const navSocialLinkClass =
   'social-icon-link flex h-9 w-9 shrink-0 items-center justify-center rounded bg-white p-2 text-[#061556] shadow-sm';

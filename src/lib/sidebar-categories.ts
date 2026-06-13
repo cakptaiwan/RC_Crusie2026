@@ -1,4 +1,4 @@
-import { subPages } from '../data/sub-pages';
+import { subPages } from '../data/nav-pages';
 import type { Post } from './notion';
 
 const hiddenCategories = new Set(['資源推薦', '聯絡我們']);

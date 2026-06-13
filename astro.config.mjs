@@ -5,6 +5,9 @@ import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
   site: 'https://royal-cruiser.com',
+  redirects: {
+    '/what-is-cruise': '/know-cruise',
+  },
   integrations: [
     tailwind({ applyBaseStyles: false }),
     sitemap(),

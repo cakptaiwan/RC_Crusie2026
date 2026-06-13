@@ -7,17 +7,25 @@ interface Props {
   page: string;
   subPage: string;
   label: string;
+  hideHeader?: boolean;
+  sectionTitle?: string;
+  hideWhenEmpty?: boolean;
 }
 
-const { page, subPage, label } = Astro.props;
+const { page, subPage, label, hideHeader = false, sectionTitle, hideWhenEmpty = false } = Astro.props;
 const posts = await getPosts(page, subPage);
 const leftPosts = posts.filter((_, i) => i % 2 === 0);
 const rightPosts = posts.filter((_, i) => i % 2 === 1);
 ---
 
-<CategoryPageHeader label={label} />
+{posts.length === 0 && hideWhenEmpty ? null : (
+  <>
+    {!hideHeader && <CategoryPageHeader label={label} />}
+    {hideHeader && sectionTitle && (
+      <h2 class="mb-4 mt-8 text-h2 font-semibold text-ink">{sectionTitle}</h2>
+    )}
 
-{posts.length > 0 ? (
+    {posts.length > 0 ? (
   <div class="grid grid-cols-1 items-start gap-4 md:grid-cols-2 md:gap-5">
     <div class="space-y-4">
       {leftPosts.map((post) => <PostCard {...post} />)}
@@ -30,4 +38,6 @@ const rightPosts = posts.filter((_, i) => i % 2 === 1);
   <div class="flex min-h-[30vh] flex-col items-center justify-center py-16 text-center">
     <p class="text-body text-ink-soft">尚無文章，敬請期待。</p>
   </div>
+    )}
+  </>
 )}
