@@ -66,6 +66,122 @@ function richTextToString(rt: RichTextItemResponse[]): string {
   return rt.map((t) => t.plain_text).join('');
 }
 
+/** 從 Notion URL / Files / Rich Text 欄位解析圖片網址 */
+function propertyToImageUrl(prop: unknown): string | null {
+  if (!prop || typeof prop !== 'object') return null;
+  const p = prop as Record<string, unknown>;
+
+  if (p.type === 'url' && typeof p.url === 'string' && p.url.trim()) {
+    return p.url.trim();
+  }
+
+  if (p.type === 'files' && Array.isArray(p.files) && p.files.length > 0) {
+    const file = p.files[0] as Record<string, unknown>;
+    if (file.type === 'external') {
+      const external = file.external as { url?: string } | undefined;
+      if (external?.url) return external.url;
+    }
+    if (file.type === 'file') {
+      const uploaded = file.file as { url?: string } | undefined;
+      if (uploaded?.url) return uploaded.url;
+    }
+  }
+
+  if (p.type === 'rich_text' && Array.isArray(p.rich_text)) {
+    const text = richTextToString(p.rich_text as RichTextItemResponse[]).trim();
+    if (/^https?:\/\//i.test(text)) return text;
+  }
+
+  // 舊版直接讀 .url 的寫法（部分 SDK 回傳格式）
+  if (typeof p.url === 'string' && p.url.trim()) return p.url.trim();
+
+  return null;
+}
+
+function pageCoverToUrl(cover: PageObjectResponse['cover']): string | null {
+  if (!cover) return null;
+  if (cover.type === 'external') return cover.external?.url ?? null;
+  if (cover.type === 'file') return cover.file?.url ?? null;
+  return null;
+}
+
+function firstImageFromHtml(html: string): string | null {
+  const match = html.match(/<img[^>]+src=["']([^"']+)["']/i);
+  return match?.[1] ?? null;
+}
+
+/** 依常見欄位名稱與頁面封面解析封面圖 */
+function resolvePostImage(
+  props: Record<string, unknown>,
+  cover: PageObjectResponse['cover'],
+  rawBody: string
+): string | null {
+  const candidates = [
+    'Image',
+    'Source_URL',
+    'Cover',
+    '封面圖片',
+    'Thumbnail',
+    'Hero Image',
+  ];
+
+  for (const name of candidates) {
+    const url = propertyToImageUrl(props[name]);
+    if (url) return url;
+  }
+
+  for (const [key, value] of Object.entries(props)) {
+    if (/image|cover|thumbnail|photo|圖|封面/i.test(key)) {
+      const url = propertyToImageUrl(value);
+      if (url) return url;
+    }
+  }
+
+  const coverUrl = pageCoverToUrl(cover);
+  if (coverUrl) return coverUrl;
+
+  return firstImageFromHtml(rawBody);
+}
+
+/** 從 Notion 頁面區塊取第一張圖（Image 欄位為空時的備援） */
+async function fetchFirstBlockImage(
+  notion: NotionClient,
+  pageId: string
+): Promise<string | null> {
+  try {
+    const response = await notion.blocks.children.list({
+      block_id: pageId,
+      page_size: 100,
+    });
+
+    for (const block of response.results) {
+      if (!('type' in block) || block.type !== 'image') continue;
+      const image = block.image;
+      if (image.type === 'external') return image.external.url;
+      if (image.type === 'file') return image.file.url;
+    }
+  } catch {
+    return null;
+  }
+  return null;
+}
+
+async function enrichPostImage(
+  notion: NotionClient,
+  post: Post
+): Promise<Post> {
+  if (post.image) return post;
+  const blockImage = await fetchFirstBlockImage(notion, post.id);
+  return blockImage ? { ...post, image: blockImage } : post;
+}
+
+async function enrichPostsImages(
+  notion: NotionClient,
+  posts: Post[]
+): Promise<Post[]> {
+  return Promise.all(posts.map((post) => enrichPostImage(notion, post)));
+}
+
 function logNotionFetchError(context: string, err: unknown): void {
   const message = err instanceof Error ? err.message : String(err);
   if (
@@ -173,7 +289,17 @@ function parsePost(notionPage: PageObjectResponse): Post {
   const excerpt = props['Excerpt']?.rich_text
     ? richTextToString(props['Excerpt'].rich_text)
     : '';
-  const image = props['Image']?.url ?? props['Source_URL']?.url ?? null;
+
+  const body1 = props['Body1']?.rich_text
+    ? richTextToString(props['Body1'].rich_text)
+    : '';
+  const body2 = props['Body2']?.rich_text
+    ? richTextToString(props['Body2'].rich_text)
+    : '';
+  const rawBody = body1 + body2;
+  const body = sanitizeBodyHtml(rawBody);
+  const image = resolvePostImage(props, notionPage.cover, rawBody);
+
   const date = props['Date']?.date?.start ?? '';
   const author = props['Author']?.rich_text
     ? richTextToString(props['Author'].rich_text)
@@ -185,14 +311,6 @@ function parsePost(notionPage: PageObjectResponse): Post {
   const pg = props['Page']?.select?.name ?? 'HOME';
   const subPage = props['Subpage']?.select?.name ?? props['SubPage']?.select?.name ?? '';
   const showOnHome = props['ShowOnHome']?.checkbox ?? false;
-
-  const body1 = props['Body1']?.rich_text
-    ? richTextToString(props['Body1'].rich_text)
-    : '';
-  const body2 = props['Body2']?.rich_text
-    ? richTextToString(props['Body2'].rich_text)
-    : '';
-  const body = sanitizeBodyHtml(body1 + body2);
 
   return {
     id: notionPage.id,
@@ -377,7 +495,10 @@ export async function getPosts(
       pageFilter,
       subPageFilter,
     });
-    const posts = pages.map(parsePost);
+    const posts = await enrichPostsImages(
+      notion,
+      pages.map(parsePost)
+    );
     return posts.length > 0
       ? posts
       : getMockPosts(pageFilter, subPageFilter);
@@ -407,7 +528,7 @@ export async function getAllPosts(): Promise<Post[]> {
   try {
     const notion = new Client({ auth: token });
     const pages = await queryDatabasePages(notion, databaseId);
-    const posts = pages.map(parsePost);
+    const posts = await enrichPostsImages(notion, pages.map(parsePost));
     return posts.length > 0 ? posts : getMockPosts();
   } catch (err) {
     logNotionFetchError('getAllPosts', err);
@@ -435,7 +556,8 @@ export async function getPostById(id: string): Promise<Post | undefined> {
   try {
     const notion = new Client({ auth: token });
     const page = (await notion.pages.retrieve({ page_id: id })) as PageObjectResponse;
-    return parsePost(page);
+    const post = parsePost(page);
+    return enrichPostImage(notion, post);
   } catch (err) {
     logNotionFetchError('getPostById', err);
     return getMockPostById(id);
@@ -466,7 +588,7 @@ export async function getFeaturedPosts(): Promise<Post[]> {
       featuredOnly: true,
       pageSize: 3,
     });
-    const posts = pages.map(parsePost);
+    const posts = await enrichPostsImages(notion, pages.map(parsePost));
     return posts.length > 0
       ? posts
       : getMockPosts('HOME').filter((p) => p.featured).slice(0, 3);
