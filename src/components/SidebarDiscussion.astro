@@ -1,15 +1,15 @@
 ---
-import DiscussionPanel from './DiscussionPanel.astro';
+import ContactPanel from './ContactPanel.astro';
 ---
 
 <div class="sidebar-widget">
   <div class="sidebar-section-header">
-    <span class="sidebar-section-title">留言板</span>
+    <span class="sidebar-section-title">聯絡我們</span>
   </div>
 
   <button
     type="button"
-    data-discussion-open
+    data-contact-open
     class="flex w-full items-center justify-center gap-2 rounded-full bg-blue-accent px-5 py-2.5 text-[14px] font-semibold text-white transition-colors duration-200 hover:bg-blue-brand"
   >
     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -17,15 +17,15 @@ import DiscussionPanel from './DiscussionPanel.astro';
         stroke-linecap="round"
         stroke-linejoin="round"
         stroke-width="2"
-        d="M8 12h.01M12 12h.01M16 12h.01M21 3H3c-1.1 0-2 .9-2 2v14l4-4h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"
+        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
       />
     </svg>
-    我要留言
+    聯絡我們
   </button>
 
   <p class="mt-3 text-[13px] leading-relaxed text-ink-soft">
-    希望知道什麼類型的遊輪資訊呢，請你告訴我們
+    想知道什麼遊輪資訊，對於網站有什麼指教，都請不吝告訴我
   </p>
 </div>
 
-<DiscussionPanel />
+<ContactPanel />

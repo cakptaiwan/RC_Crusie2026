@@ -1,0 +1,196 @@
+---
+const inputClass =
+  'w-full rounded-2xl border border-canvas-ceramic bg-white px-4 py-2.5 text-[14px] text-ink outline-none transition-colors placeholder:text-ink-soft/60 focus:border-blue-accent';
+const labelClass = 'mb-1.5 block text-[13px] font-medium text-ink-soft';
+---
+
+<div
+  id="contact-backdrop"
+  class="pointer-events-none fixed inset-0 z-[60] bg-blue-brand/25 opacity-0 backdrop-blur-[2px] transition-opacity duration-300"
+  aria-hidden="true"
+  data-contact-backdrop
+></div>
+
+<aside
+  id="contact-panel"
+  class="fixed inset-y-0 right-0 z-[61] flex w-full max-w-md translate-x-full flex-col rounded-l-2xl bg-white shadow-[-10px_0_40px_rgba(6,21,86,0.14)] transition-transform duration-300 ease-out"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="contact-panel-title"
+  aria-hidden="true"
+  data-contact-panel
+>
+  <header class="flex shrink-0 items-center justify-between border-b border-canvas-ceramic px-5 py-4 md:px-6">
+    <span id="contact-panel-title" class="sidebar-section-title !mb-0 !border-0 !pb-0">
+      聯絡我們
+    </span>
+    <button
+      type="button"
+      id="contact-close"
+      class="flex h-9 w-9 items-center justify-center rounded-full text-ink-soft transition-colors hover:bg-blue-light hover:text-blue-brand"
+      aria-label="關閉聯絡表單"
+    >
+      <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+  </header>
+
+  <div class="min-h-0 flex-1 overflow-y-auto px-5 py-5 md:px-6">
+    <p class="mb-5 text-[14px] leading-relaxed text-ink-soft">
+      想知道什麼遊輪資訊，對於網站有什麼指教，都請不吝告訴我。
+    </p>
+
+    <form id="contact-form" class="space-y-4" novalidate>
+      <div>
+        <label for="contact-name" class={labelClass}>姓名 <span class="text-semantic-error">*</span></label>
+        <input id="contact-name" name="name" type="text" required autocomplete="name" class={inputClass} placeholder="請輸入姓名" />
+      </div>
+
+      <div>
+        <label for="contact-phone" class={labelClass}>聯絡電話 <span class="text-semantic-error">*</span></label>
+        <input id="contact-phone" name="phone" type="tel" required autocomplete="tel" class={inputClass} placeholder="09xx-xxx-xxx" />
+      </div>
+
+      <div>
+        <label for="contact-email" class={labelClass}>電子郵件 <span class="text-semantic-error">*</span></label>
+        <input id="contact-email" name="email" type="email" required autocomplete="email" class={inputClass} placeholder="your@email.com" />
+      </div>
+
+      <div>
+        <label for="contact-subject" class={labelClass}>主題 <span class="text-semantic-error">*</span></label>
+        <input id="contact-subject" name="subject" type="text" required class={inputClass} placeholder="想詢問的主題" />
+      </div>
+
+      <div>
+        <label for="contact-message" class={labelClass}>留言內容 <span class="text-semantic-error">*</span></label>
+        <textarea
+          id="contact-message"
+          name="message"
+          required
+          rows="5"
+          class:list={[inputClass, 'resize-y min-h-[120px]']}
+          placeholder="請描述你的問題或建議"
+        ></textarea>
+      </div>
+
+      <input type="text" name="website" tabindex="-1" autocomplete="off" class="hidden" aria-hidden="true" />
+
+      <div id="contact-status" class="hidden rounded-2xl px-4 py-3 text-[14px] leading-relaxed" role="status" aria-live="polite"></div>
+
+      <button
+        type="submit"
+        id="contact-submit"
+        class="flex w-full items-center justify-center gap-2 rounded-full bg-blue-accent px-5 py-3 text-[14px] font-semibold text-white transition-colors duration-200 hover:bg-blue-brand disabled:cursor-not-allowed disabled:opacity-60"
+      >
+        <span id="contact-submit-label">送出訊息</span>
+        <svg id="contact-submit-spinner" class="hidden h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+        </svg>
+      </button>
+    </form>
+  </div>
+</aside>
+
+<script is:inline>
+  (() => {
+    const panel = document.querySelector('[data-contact-panel]');
+    const backdrop = document.querySelector('[data-contact-backdrop]');
+    const closeBtn = document.getElementById('contact-close');
+    const openBtns = document.querySelectorAll('[data-contact-open]');
+    const form = document.getElementById('contact-form');
+    const statusEl = document.getElementById('contact-status');
+    const submitBtn = document.getElementById('contact-submit');
+    const submitLabel = document.getElementById('contact-submit-label');
+    const spinner = document.getElementById('contact-submit-spinner');
+
+    if (!panel || !backdrop || !form || !statusEl || !submitBtn) return;
+
+    const setStatus = (type, message) => {
+      statusEl.classList.remove('hidden', 'bg-blue-light', 'text-blue-brand', 'bg-red-50', 'text-red-700');
+      if (type === 'success') {
+        statusEl.classList.add('bg-blue-light', 'text-blue-brand');
+      } else if (type === 'error') {
+        statusEl.classList.add('bg-red-50', 'text-red-700');
+      } else {
+        statusEl.classList.add('hidden');
+        statusEl.textContent = '';
+        return;
+      }
+      statusEl.textContent = message;
+    };
+
+    const setLoading = (loading) => {
+      submitBtn.disabled = loading;
+      submitLabel.textContent = loading ? '送出中…' : '送出訊息';
+      spinner?.classList.toggle('hidden', !loading);
+    };
+
+    const openPanel = () => {
+      panel.classList.remove('translate-x-full');
+      panel.setAttribute('aria-hidden', 'false');
+      backdrop.classList.remove('pointer-events-none', 'opacity-0');
+      backdrop.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      closeBtn?.focus();
+    };
+
+    const closePanel = () => {
+      panel.classList.add('translate-x-full');
+      panel.setAttribute('aria-hidden', 'true');
+      backdrop.classList.add('pointer-events-none', 'opacity-0');
+      backdrop.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    };
+
+    openBtns.forEach((btn) => btn.addEventListener('click', openPanel));
+    closeBtn?.addEventListener('click', closePanel);
+    backdrop.addEventListener('click', closePanel);
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && panel.getAttribute('aria-hidden') === 'false') {
+        closePanel();
+      }
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      setStatus('clear');
+
+      const formData = new FormData(form);
+      const payload = {
+        name: String(formData.get('name') ?? ''),
+        phone: String(formData.get('phone') ?? ''),
+        email: String(formData.get('email') ?? ''),
+        subject: String(formData.get('subject') ?? ''),
+        message: String(formData.get('message') ?? ''),
+        website: String(formData.get('website') ?? ''),
+      };
+
+      setLoading(true);
+
+      try {
+        const response = await fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+
+        const result = await response.json();
+
+        if (!response.ok || !result.ok) {
+          setStatus('error', result.error ?? '訊息送出失敗，請稍後再試。');
+          return;
+        }
+
+        setStatus('success', result.message ?? '訊息已送出，感謝你的聯絡！');
+        form.reset();
+      } catch {
+        setStatus('error', '網路連線異常，請確認網路後再試。');
+      } finally {
+        setLoading(false);
+      }
+    });
+  })();
+</script>
