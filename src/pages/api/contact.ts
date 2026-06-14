@@ -1,7 +1,7 @@
 import type { APIRoute } from 'astro';
 import { Resend } from 'resend';
-import { getSecret, CONTACT_TO_EMAIL, CONTACT_FROM_EMAIL } from 'astro:env/server';
 import { buildContactEmailHtml } from '../../lib/contact-email';
+import { readRuntimeEnv } from '../../lib/runtime-env';
 
 export const prerender = false;
 
@@ -26,9 +26,10 @@ function normalizeField(value: unknown, maxLength: number): string {
 }
 
 export const POST: APIRoute = async ({ request }) => {
-  const apiKey = getSecret('RESEND_API_KEY');
-  const toEmail = CONTACT_TO_EMAIL;
-  const fromEmail = CONTACT_FROM_EMAIL ?? 'Royal Cruiser <onboarding@resend.dev>';
+  const apiKey = readRuntimeEnv('RESEND_API_KEY');
+  const toEmail = readRuntimeEnv('CONTACT_TO_EMAIL');
+  const fromEmail =
+    readRuntimeEnv('CONTACT_FROM_EMAIL') ?? 'Royal Cruiser <onboarding@resend.dev>';
 
   if (!apiKey || !toEmail) {
     console.error('[contact] Missing env:', {
