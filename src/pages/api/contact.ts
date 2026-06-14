@@ -1,5 +1,6 @@
 import type { APIRoute } from 'astro';
 import { Resend } from 'resend';
+import { getSecret, CONTACT_TO_EMAIL, CONTACT_FROM_EMAIL } from 'astro:env/server';
 import { buildContactEmailHtml } from '../../lib/contact-email';
 
 export const prerender = false;
@@ -25,12 +26,15 @@ function normalizeField(value: unknown, maxLength: number): string {
 }
 
 export const POST: APIRoute = async ({ request }) => {
-  const apiKey = import.meta.env.RESEND_API_KEY;
-  const toEmail = import.meta.env.CONTACT_TO_EMAIL;
-  const fromEmail =
-    import.meta.env.CONTACT_FROM_EMAIL ?? 'Royal Cruiser <onboarding@resend.dev>';
+  const apiKey = getSecret('RESEND_API_KEY');
+  const toEmail = CONTACT_TO_EMAIL;
+  const fromEmail = CONTACT_FROM_EMAIL ?? 'Royal Cruiser <onboarding@resend.dev>';
 
   if (!apiKey || !toEmail) {
+    console.error('[contact] Missing env:', {
+      hasApiKey: !!apiKey,
+      hasToEmail: !!toEmail,
+    });
     return jsonResponse(
       { ok: false, error: '聯絡表單服務尚未完成設定，請稍後再試。' },
       503

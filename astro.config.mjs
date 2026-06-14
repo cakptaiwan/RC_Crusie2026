@@ -1,5 +1,5 @@
 // @ts-check
-import { defineConfig } from 'astro/config';
+import { defineConfig, envField } from 'astro/config';
 import tailwind from '@astrojs/tailwind';
 import sitemap from '@astrojs/sitemap';
 import cloudflare from '@astrojs/cloudflare';
@@ -7,6 +7,25 @@ import cloudflare from '@astrojs/cloudflare';
 export default defineConfig({
   site: 'https://royal-cruiser.com',
   adapter: cloudflare(),
+  env: {
+    schema: {
+      RESEND_API_KEY: envField.string({
+        context: 'server',
+        access: 'secret',
+        optional: true,
+      }),
+      CONTACT_TO_EMAIL: envField.string({
+        context: 'server',
+        access: 'public',
+        optional: true,
+      }),
+      CONTACT_FROM_EMAIL: envField.string({
+        context: 'server',
+        access: 'public',
+        optional: true,
+      }),
+    },
+  },
   redirects: {
     '/what-is-cruise': '/know-cruise',
   },
