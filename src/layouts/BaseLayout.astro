@@ -32,6 +32,20 @@ const { title, description, image, type, jsonLd } = Astro.props;
     />
     <SEO title={title} description={description} image={image} type={type} jsonLd={jsonLd} />
     <script is:inline>document.documentElement.classList.add('js');</script>
+
+<!-- Google Analytics -->
+{import.meta.env.PUBLIC_GA_ID && (
+  <>
+    <script async src={`https://www.googletagmanager.com/gtag/js?id=${import.meta.env.PUBLIC_GA_ID}`}></script>
+    <script define:vars={{ gaId: import.meta.env.PUBLIC_GA_ID }}>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', gaId);
+    </script>
+  </>
+)}
+
   </head>
   <body class="relative min-h-screen text-ink antialiased">
     <OceanBackground />
