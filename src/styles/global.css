@@ -819,4 +819,35 @@
       transition: none;
     }
   }
+
+  /* 文章內文表格樣式（PostLayout: .prose-royal；privacy/terms: .prose） */
+  .prose-royal table,
+  .prose table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+    font-size: 0.9em;
+  }
+
+  .prose-royal th,
+  .prose-royal td,
+  .prose th,
+  .prose td {
+    border: 1px solid #e2e8f0;
+    padding: 0.6rem 0.9rem;
+    text-align: left;
+    vertical-align: top;
+  }
+
+  .prose-royal th,
+  .prose th {
+    background: #f8fafc;
+    font-weight: 600;
+    color: #374151;
+  }
+
+  .prose-royal tr:nth-child(even) td,
+  .prose tr:nth-child(even) td {
+    background: #fafafa;
+  }
 }
