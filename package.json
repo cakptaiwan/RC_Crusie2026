@@ -15,6 +15,9 @@
     "@astrojs/tailwind": "^6.0.2",
     "@notionhq/client": "^5.20.0",
     "astro": "^5.2.5",
+    "dotenv": "^17.4.2",
+    "marked": "^18.0.5",
+    "notion-to-md": "^3.1.9",
     "resend": "^6.12.4",
     "tailwindcss": "^3.4.19"
   }

@@ -30,6 +30,8 @@
  */
 
 import { Client } from '@notionhq/client';
+import { NotionToMarkdown } from 'notion-to-md';
+import { marked } from 'marked';
 import { sanitizeBodyHtml } from './sanitize-body';
 import type {
   PageObjectResponse,
@@ -180,6 +182,59 @@ async function enrichPostsImages(
   posts: Post[]
 ): Promise<Post[]> {
   return Promise.all(posts.map((post) => enrichPostImage(notion, post)));
+}
+
+/**
+ * 修正「粗體緊貼中文標點」導致 Markdown 粗體失效的問題。
+ * 在中文標點與 ** 之間插入零寬字元（U+200B，不可見），
+ * 讓 marked 的粗體開頭/收尾判定能成立。
+ */
+function fixCjkBold(md: string): string {
+  return md
+    .replace(/([：，。、！？；）】」』])(\*\*)/g, '$1\u200B$2') // 收尾：標點 + **
+    .replace(/(\*\*)([：，。、！？；（【「『])/g, '$1\u200B$2'); // 開頭：** + 標點
+}
+
+/**
+ * 讀取 Notion 頁面內容區（Page Content blocks）→ Markdown → HTML。
+ * 這是新架構的內文來源；Body1/Body2 欄位逐步淘汰中。
+ */
+async function fetchPageContentHtml(
+  notion: NotionClient,
+  pageId: string
+): Promise<string> {
+  try {
+    const n2m = new NotionToMarkdown({ notionClient: notion });
+    const mdBlocks = await n2m.pageToMarkdown(pageId);
+    const md = n2m.toMarkdownString(mdBlocks).parent;
+    if (!md || !md.trim()) return '';
+    const html = await marked.parse(fixCjkBold(md));
+    return sanitizeBodyHtml(typeof html === 'string' ? html : '');
+  } catch (err) {
+    logNotionFetchError('fetchPageContentHtml', err);
+    return '';
+  }
+}
+
+/** 用 Page Content 內文覆蓋 post.body；抓到空的就保留原本 body（過渡期 fallback） */
+async function enrichPostBody(
+  notion: NotionClient,
+  post: Post
+): Promise<Post> {
+  const pageHtml = await fetchPageContentHtml(notion, post.id);
+  return pageHtml ? { ...post, body: pageHtml } : post;
+}
+
+/** 逐篇（序列）補上 Page Content 內文，避免並發過多觸發 Notion 流量限制 */
+async function enrichPostsBodies(
+  notion: NotionClient,
+  posts: Post[]
+): Promise<Post[]> {
+  const out: Post[] = [];
+  for (const post of posts) {
+    out.push(await enrichPostBody(notion, post));
+  }
+  return out;
 }
 
 function logNotionFetchError(context: string, err: unknown): void {
@@ -528,7 +583,8 @@ export async function getAllPosts(): Promise<Post[]> {
   try {
     const notion = new Client({ auth: token });
     const pages = await queryDatabasePages(notion, databaseId);
-    const posts = await enrichPostsImages(notion, pages.map(parsePost));
+    const withImages = await enrichPostsImages(notion, pages.map(parsePost));
+    const posts = await enrichPostsBodies(notion, withImages);
     return posts.length > 0 ? posts : getMockPosts();
   } catch (err) {
     logNotionFetchError('getAllPosts', err);
@@ -557,7 +613,8 @@ export async function getPostById(id: string): Promise<Post | undefined> {
     const notion = new Client({ auth: token });
     const page = (await notion.pages.retrieve({ page_id: id })) as PageObjectResponse;
     const post = parsePost(page);
-    return enrichPostImage(notion, post);
+    const withImage = await enrichPostImage(notion, post);
+    return enrichPostBody(notion, withImage);
   } catch (err) {
     logNotionFetchError('getPostById', err);
     return getMockPostById(id);
