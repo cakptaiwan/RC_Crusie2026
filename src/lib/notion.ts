@@ -197,7 +197,6 @@ function fixCjkBold(md: string): string {
 
 /**
  * 讀取 Notion 頁面內容區（Page Content blocks）→ Markdown → HTML。
- * 這是新架構的內文來源；Body1/Body2 欄位逐步淘汰中。
  */
 async function fetchPageContentHtml(
   notion: NotionClient,
@@ -216,7 +215,7 @@ async function fetchPageContentHtml(
   }
 }
 
-/** 用 Page Content 內文覆蓋 post.body；抓到空的就保留原本 body（過渡期 fallback） */
+/** 用 Page Content 內文覆蓋 post.body；Page Content 為空時保留空 body */
 async function enrichPostBody(
   notion: NotionClient,
   post: Post
@@ -345,14 +344,8 @@ function parsePost(notionPage: PageObjectResponse): Post {
     ? richTextToString(props['Excerpt'].rich_text)
     : '';
 
-  const body1 = props['Body1']?.rich_text
-    ? richTextToString(props['Body1'].rich_text)
-    : '';
-  const body2 = props['Body2']?.rich_text
-    ? richTextToString(props['Body2'].rich_text)
-    : '';
-  const rawBody = body1 + body2;
-  const body = sanitizeBodyHtml(rawBody);
+  const rawBody = '';
+  const body = '';
   const image = resolvePostImage(props, notionPage.cover, rawBody);
 
   const date = props['Date']?.date?.start ?? '';
