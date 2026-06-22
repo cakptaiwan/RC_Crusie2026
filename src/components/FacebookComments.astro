@@ -1,0 +1,45 @@
+---
+export interface Props {
+  url?: string;
+}
+const { url = '' } = Astro.props;
+const pageUrl = url || '';
+const appId = '61591129253765';
+---
+
+<section class="fb-comments-section mt-12 border-t-2 border-canvas-ceramic pt-8">
+  <div class="mb-6 flex items-center justify-between">
+    <h3 class="text-micro font-semibold tracking-brand text-ink">讀者討論</h3>
+    <a
+      href="https://www.facebook.com/profile.php?id=61591129253765"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="text-micro text-ink-soft hover:text-blue-accent"
+    >
+      Facebook 粉絲團
+    </a>
+  </div>
+
+  <div
+    class="fb-comments"
+    data-href={pageUrl}
+    data-width="100%"
+    data-numposts="10"
+    data-order-by="social"
+    data-lazy="true"
+  ></div>
+
+  <script is:inline define:vars={{ appId }}>
+    window.fbAsyncInit = function () {
+      FB.init({ appId: appId, xfbml: true, version: 'v21.0' });
+    };
+    (function (d, s, id) {
+      if (d.getElementById(id)) return;
+      const fjs = d.getElementsByTagName(s)[0];
+      const js = d.createElement(s);
+      js.id = id;
+      js.src = 'https://connect.facebook.net/zh_TW/sdk.js';
+      fjs.parentNode.insertBefore(js, fjs);
+    })(document, 'script', 'facebook-jssdk');
+  </script>
+</section>
