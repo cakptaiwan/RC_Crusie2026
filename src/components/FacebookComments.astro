@@ -30,16 +30,21 @@ const appId = '970465772684393';
   ></div>
 
   <script is:inline define:vars={{ appId }}>
-    window.fbAsyncInit = function () {
-      FB.init({ appId: appId, xfbml: true, version: 'v21.0' });
-    };
-    (function (d, s, id) {
-      if (d.getElementById(id)) return;
-      const fjs = d.getElementsByTagName(s)[0];
-      const js = d.createElement(s);
+    (function(d, s, id) {
+      window.fbAsyncInit = function() {
+        FB.init({ appId: appId, xfbml: true, version: 'v21.0' });
+        FB.XFBML.parse();
+      };
+      if (d.getElementById(id)) {
+        if (window.FB) { FB.XFBML.parse(); }
+        return;
+      }
+      var js = d.createElement(s);
       js.id = id;
       js.src = 'https://connect.facebook.net/zh_TW/sdk.js';
+      js.async = true;
+      var fjs = d.getElementsByTagName(s)[0];
       fjs.parentNode.insertBefore(js, fjs);
-    })(document, 'script', 'facebook-jssdk');
+    }(document, 'script', 'facebook-jssdk'));
   </script>
 </section>
