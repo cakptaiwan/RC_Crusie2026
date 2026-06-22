@@ -36,9 +36,35 @@ const sanitizedBody = body ? sanitizeBodyHtml(body) : '';
 const formattedDate = date
   ? new Date(date).toLocaleDateString('zh-TW', { year: 'numeric', month: 'long', day: 'numeric' })
   : '';
+
+const articleJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: title,
+  datePublished: date,
+  dateModified: date,
+  author: {
+    '@type': 'Person',
+    name: author || '皇家旅人',
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'Royal Cruiser 皇家旅人',
+    url: 'https://royal-cruiser.com',
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://royal-cruiser.com/logo.png',
+    },
+  },
+  image: image || 'https://royal-cruiser.com/og-default.jpg',
+  url: `https://royal-cruiser.com/post/${id}`,
+  inLanguage: 'zh-TW',
+  description: excerpt,
+};
 ---
 
 <BaseLayout title={title} description={excerpt} image={image ?? undefined} type="article">
+  <script type="application/ld+json" slot="head" set:html={JSON.stringify(articleJsonLd)} />
 
   <!-- Post Hero Image -->
   {image && (
@@ -76,7 +102,7 @@ const formattedDate = date
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
-            {formattedDate}
+            <time datetime={date}>{formattedDate}</time>
           </span>
           <span class="flex items-center gap-1.5">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
