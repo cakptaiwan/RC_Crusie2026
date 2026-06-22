@@ -278,7 +278,7 @@ async function resolveDataSourceId(
   if (cachedDataSourceId) return cachedDataSourceId;
 
   const database = await notion.databases.retrieve({ database_id: databaseId });
-  const dataSourceId = database.data_sources?.[0]?.id;
+  const dataSourceId = (database as any).data_sources?.[0]?.id;
   if (!dataSourceId) {
     throw new Error('Database 沒有可查詢的 data source，請確認 Crusie2026 為完整資料庫頁面。');
   }
@@ -314,8 +314,11 @@ async function queryDatabasePages(
     filters.push({ property: 'Featured', checkbox: { equals: true } });
   }
 
+  const validFilters = filters.filter((f): f is NonNullable<typeof f> => f != null);
   const filter: DataSourceFilter =
-    filters.length === 1 ? filters[0]! : { and: filters };
+    validFilters.length === 1
+      ? validFilters[0]!
+      : ({ and: validFilters } as DataSourceFilter);
 
   const sorts: DataSourceSort = [{ property: 'Date', direction: 'descending' }];
 
