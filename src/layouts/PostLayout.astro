@@ -64,6 +64,7 @@ const articleJsonLd = {
 ---
 
 <BaseLayout title={title} description={excerpt} image={image ?? undefined} type="article">
+  <meta property="fb:app_id" content="970465772684393" slot="head" />
   <script type="application/ld+json" slot="head" set:html={JSON.stringify(articleJsonLd)} />
 
   <!-- Post Hero Image -->
