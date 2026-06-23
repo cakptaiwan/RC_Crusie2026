@@ -19,7 +19,6 @@ interface NavItem {
   label: string;
   href?: string;
   children?: NavChild[];
-  cta?: boolean;
 }
 
 const navItems: NavItem[] = [
@@ -27,11 +26,7 @@ const navItems: NavItem[] = [
     label: section.label,
     children: section.children.map(({ label, href }) => ({ label, href })),
   })),
-  { label: '訂閱電子報', href: '/newsletter', cta: true },
 ];
-
-const newsletterCtaClass =
-  'flex items-center rounded-full bg-white px-8 py-2.5 font-sans text-[18px] font-medium tracking-wide whitespace-nowrap text-blue-accent transition-all duration-200 hover:bg-white/90';
 
 const isItemActive = (item: NavItem) =>
   item.href
@@ -88,12 +83,8 @@ const navLogoClass =
                 <a
                   href={item.href}
                   class:list={[
-                    item.cta
-                      ? newsletterCtaClass
-                      : [
-                          'nav-link flex items-center gap-1 px-5 py-2.5 font-sans text-[20px] tracking-wide whitespace-nowrap',
-                          active ? 'nav-link--active font-medium text-white' : 'font-normal text-white/70 hover:text-white',
-                        ],
+                    'nav-link flex items-center gap-1 px-5 py-2.5 font-sans text-[20px] tracking-wide whitespace-nowrap',
+                    active ? 'nav-link--active font-medium text-white' : 'font-normal text-white/70 hover:text-white',
                   ]}
                 >
                   {item.label}
@@ -226,12 +217,8 @@ const navLogoClass =
                   <a
                     href={item.href}
                     class:list={[
-                      item.cta
-                        ? newsletterCtaClass
-                        : [
-                            'nav-link flex items-center gap-1 px-5 py-2.5 font-sans text-[20px] tracking-wide whitespace-nowrap',
-                            active ? 'nav-link--active font-medium text-white' : 'font-normal text-white/70 hover:text-white',
-                          ],
+                      'nav-link flex items-center gap-1 px-5 py-2.5 font-sans text-[20px] tracking-wide whitespace-nowrap',
+                      active ? 'nav-link--active font-medium text-white' : 'font-normal text-white/70 hover:text-white',
                     ]}
                   >
                     {item.label}
@@ -319,20 +306,11 @@ const navLogoClass =
 >
   <nav class="mx-auto max-w-content px-gutter-sm py-5 md:px-gutter-md" aria-label="行動裝置導覽">
     {navItems.map((item) => (
-      <div class:list={['border-b border-white/8 last:border-0', item.cta && 'border-0 py-2']}>
+      <div class="border-b border-white/8 last:border-0">
         {item.href && !item.children ? (
-          item.cta ? (
-            <a
-              href={item.href}
-              class="flex w-full items-center justify-center rounded-full bg-white px-8 py-3.5 font-sans text-[15px] font-medium tracking-wide text-blue-accent transition-opacity duration-200 hover:opacity-90"
-            >
-              {item.label}
-            </a>
-          ) : (
-            <a href={item.href} class="block py-4 font-sans text-[16px] tracking-wide text-white/70 hover:text-white">
-              {item.label}
-            </a>
-          )
+          <a href={item.href} class="block py-4 font-sans text-[16px] tracking-wide text-white/70 hover:text-white">
+            {item.label}
+          </a>
         ) : (
           <details class="group/detail">
             <summary class="flex cursor-pointer list-none items-center justify-between py-4 font-sans text-[16px] tracking-wide text-white/70 hover:text-white">
