@@ -205,23 +205,33 @@ async function fetchPageContentHtml(
   try {
     const n2m = new NotionToMarkdown({ notionClient: notion });
 
-    // 自訂 callout block 轉換：輸出帶 class 的 div，而非普通 blockquote
     n2m.setCustomTransformer('callout', async (block) => {
       const b = block as any;
-      const color: string = b?.callout?.color ?? '';
       const emoji: string = b?.callout?.icon?.emoji ?? '📌';
       const richText = b?.callout?.rich_text ?? [];
-      const text = richText.map((t: any) => t?.plain_text ?? '').join('');
-      const colorClass = color.includes('blue') ? 'notion-callout-blue'
-        : color.includes('yellow') ? 'notion-callout-yellow'
-        : color.includes('red') ? 'notion-callout-red'
-        : 'notion-callout-default';
-      return `<div class="notion-callout ${colorClass}"><span class="callout-icon">${emoji}</span><div class="callout-content">${text}</div></div>`;
+      const title = richText.map((t: any) => t?.plain_text ?? '').join('');
+      // 輸出特殊標記，子項目由 notion-to-md 繼續處理後插入中間
+      return `CALLOUT_START:${emoji}:${title}\n`;
     });
 
     const mdBlocks = await n2m.pageToMarkdown(pageId);
-    const md = n2m.toMarkdownString(mdBlocks).parent;
+    let md = n2m.toMarkdownString(mdBlocks).parent;
     if (!md || !md.trim()) return '';
+
+    // 把 CALLOUT_START 標記換成真正的 HTML div
+    md = md.replace(
+      /CALLOUT_START:([^:]+):([^\n]*)\n([\s\S]*?)(?=\n##|\n CALLOUT_START|$)/,
+      (_match: string, emoji: string, title: string, children: string) => {
+        const childHtml = children.trim()
+          ? `<ul>${children.trim().split('\n')
+              .filter((l: string) => l.trim().startsWith('-') || l.trim().startsWith('*'))
+              .map((l: string) => `<li>${l.trim().replace(/^[-*]\s*/, '')}</li>`)
+              .join('')}</ul>`
+          : '';
+        return `<div class="notion-callout notion-callout-blue"><span class="callout-icon">${emoji}</span><div class="callout-content"><strong>${title}</strong>${childHtml}</div></div>\n\n`;
+      }
+    );
+
     const html = await marked.parse(fixCjkBold(md));
     return sanitizeBodyHtml(typeof html === 'string' ? html : '');
   } catch (err) {
