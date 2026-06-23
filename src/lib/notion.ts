@@ -210,27 +210,29 @@ async function fetchPageContentHtml(
       const emoji: string = b?.callout?.icon?.emoji ?? '📌';
       const richText = b?.callout?.rich_text ?? [];
       const title = richText.map((t: any) => t?.plain_text ?? '').join('');
-      // 輸出特殊標記，子項目由 notion-to-md 繼續處理後插入中間
-      return `CALLOUT_START:${emoji}:${title}\n`;
+
+      // 直接呼叫 Notion API 抓子項目
+      let childrenHtml = '';
+      try {
+        const children = await notion.blocks.children.list({ block_id: block.id });
+        const items = children.results
+          .filter((c: any) => c?.type === 'bulleted_list_item')
+          .map((c: any) => {
+            const text = (c?.bulleted_list_item?.rich_text ?? [])
+              .map((t: any) => t?.plain_text ?? '').join('');
+            return `<li>${text}</li>`;
+          });
+        if (items.length > 0) {
+          childrenHtml = `<ul>${items.join('')}</ul>`;
+        }
+      } catch (_) {}
+
+      return `<div class="notion-callout notion-callout-blue"><span class="callout-icon">${emoji}</span><div class="callout-content"><strong>${title}</strong>${childrenHtml}</div></div>\n\n`;
     });
 
     const mdBlocks = await n2m.pageToMarkdown(pageId);
-    let md = n2m.toMarkdownString(mdBlocks).parent;
+    const md = n2m.toMarkdownString(mdBlocks).parent;
     if (!md || !md.trim()) return '';
-
-    // 把 CALLOUT_START 標記換成真正的 HTML div
-    md = md.replace(
-      /CALLOUT_START:([^:]+):([^\n]*)\n([\s\S]*?)(?=\n##|\n CALLOUT_START|$)/,
-      (_match: string, emoji: string, title: string, children: string) => {
-        const childHtml = children.trim()
-          ? `<ul>${children.trim().split('\n')
-              .filter((l: string) => l.trim().startsWith('-') || l.trim().startsWith('*'))
-              .map((l: string) => `<li>${l.trim().replace(/^[-*]\s*/, '')}</li>`)
-              .join('')}</ul>`
-          : '';
-        return `<div class="notion-callout notion-callout-blue"><span class="callout-icon">${emoji}</span><div class="callout-content"><strong>${title}</strong>${childHtml}</div></div>\n\n`;
-      }
-    );
 
     const html = await marked.parse(fixCjkBold(md));
     return sanitizeBodyHtml(typeof html === 'string' ? html : '');
