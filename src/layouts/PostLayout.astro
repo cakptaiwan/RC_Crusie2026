@@ -216,6 +216,19 @@ const articleJsonLd = {
   .prose-royal blockquote p {
     @apply text-ink-soft;
   }
+  /* Notion Callout 摘要方塊（本文重點）*/
+  .prose-royal .notion-callout {
+    @apply flex gap-3 rounded-lg border border-blue-accent bg-blue-light p-4 my-6;
+  }
+  .prose-royal .notion-callout-blue {
+    @apply bg-blue-light border-blue-accent;
+  }
+  .prose-royal .callout-icon {
+    @apply text-lg flex-shrink-0;
+  }
+  .prose-royal .callout-content {
+    @apply text-sm text-ink-soft leading-relaxed;
+  }
   .prose-royal ul {
     @apply mb-4 list-outside list-disc space-y-1.5 pl-5 text-body text-ink-soft;
   }

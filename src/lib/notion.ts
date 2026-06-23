@@ -204,6 +204,21 @@ async function fetchPageContentHtml(
 ): Promise<string> {
   try {
     const n2m = new NotionToMarkdown({ notionClient: notion });
+
+    // 自訂 callout block 轉換：輸出帶 class 的 div，而非普通 blockquote
+    n2m.setCustomTransformer('callout', async (block) => {
+      const b = block as any;
+      const color: string = b?.callout?.color ?? '';
+      const emoji: string = b?.callout?.icon?.emoji ?? '📌';
+      const richText = b?.callout?.rich_text ?? [];
+      const text = richText.map((t: any) => t?.plain_text ?? '').join('');
+      const colorClass = color.includes('blue') ? 'notion-callout-blue'
+        : color.includes('yellow') ? 'notion-callout-yellow'
+        : color.includes('red') ? 'notion-callout-red'
+        : 'notion-callout-default';
+      return `<div class="notion-callout ${colorClass}"><span class="callout-icon">${emoji}</span><div class="callout-content">${text}</div></div>`;
+    });
+
     const mdBlocks = await n2m.pageToMarkdown(pageId);
     const md = n2m.toMarkdownString(mdBlocks).parent;
     if (!md || !md.trim()) return '';
