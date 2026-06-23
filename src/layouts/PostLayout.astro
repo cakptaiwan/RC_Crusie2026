@@ -1,7 +1,7 @@
 ---
 import BaseLayout from './BaseLayout.astro';
 import ContentLayout from '../components/ContentLayout.astro';
-import FacebookComments from '../components/FacebookComments.astro';
+import DisqusComments from '../components/DisqusComments.astro';
 import { siteAuthor } from '../data/site-author';
 import { sanitizeBodyHtml } from '../lib/sanitize-body';
 
@@ -189,7 +189,11 @@ const articleJsonLd = {
           </div>
         </div>
 
-        <FacebookComments url={`https://www.royal-cruiser.com/post/${id}/`} />
+        <DisqusComments
+          url={`https://www.royal-cruiser.com/post/${id}/`}
+          identifier={id}
+          title={title}
+        />
 
       </article>
 

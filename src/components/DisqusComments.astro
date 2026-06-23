@@ -1,0 +1,33 @@
+---
+export interface Props {
+  url?: string;
+  identifier?: string;
+  title?: string;
+}
+const { url = '', identifier = '', title = '' } = Astro.props;
+const shortname = 'royal-cruiser';
+---
+
+<section class="disqus-section mt-12 border-t-2 border-canvas-ceramic pt-8">
+  <div class="mb-6 flex items-center justify-between">
+    <h3 class="text-micro font-semibold tracking-brand text-ink">讀者討論</h3>
+    <a href="https://disqus.com" target="_blank" rel="noopener noreferrer"
+      class="text-micro text-ink-soft hover:text-blue-accent">Disqus</a>
+  </div>
+
+  <div id="disqus_thread"></div>
+
+  <script is:inline define:vars={{ shortname, url, identifier, title }}>
+    var disqus_config = function () {
+      this.page.url = url;
+      this.page.identifier = identifier;
+      this.page.title = title;
+    };
+    (function() {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://' + shortname + '.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+</section>
