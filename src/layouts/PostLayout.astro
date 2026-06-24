@@ -2,6 +2,7 @@
 import BaseLayout from './BaseLayout.astro';
 import ContentLayout from '../components/ContentLayout.astro';
 import DisqusComments from '../components/DisqusComments.astro';
+import { getPosts } from '../lib/notion';
 import { siteAuthor } from '../data/site-author';
 import { sanitizeBodyHtml } from '../lib/sanitize-body';
 
@@ -61,6 +62,12 @@ const articleJsonLd = {
   inLanguage: 'zh-TW',
   description: excerpt,
 };
+
+// 相關文章：同 Category，排除自己，取最新 3 篇
+const allPosts = await getPosts();
+const relatedPosts = allPosts
+  .filter((p) => p.category === category && p.id !== id)
+  .slice(0, 3);
 ---
 
 <BaseLayout title={title} description={excerpt} image={image ?? undefined} type="article">
@@ -188,6 +195,23 @@ const articleJsonLd = {
             <p class="text-body text-ink-soft">{siteAuthor.bio}</p>
           </div>
         </div>
+
+        {relatedPosts.length > 0 && (
+          <div class="mt-12 border-t-2 border-canvas-ceramic pt-8">
+            <h3 class="mb-6 text-micro font-semibold tracking-brand text-ink">相關文章</h3>
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+              {relatedPosts.map((p) => (
+                <a href={p.url} class="group block rounded-lg border border-canvas-ceramic bg-white p-4 transition hover:border-blue-accent hover:shadow-sm">
+                  {p.image && (
+                    <img src={p.image} alt={p.title} class="mb-3 h-32 w-full rounded object-cover" />
+                  )}
+                  <p class="text-[13px] font-semibold text-ink group-hover:text-blue-accent line-clamp-2">{p.title}</p>
+                  <p class="mt-1 text-[12px] text-ink-soft">{p.date}</p>
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
 
         <DisqusComments
           url={`https://www.royal-cruiser.com/post/${id}/`}
