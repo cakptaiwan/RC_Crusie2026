@@ -17,6 +17,7 @@ export interface Props {
   comments?: number;
   likes?: number;
   body?: string;
+  showTOC?: boolean;
 }
 
 const {
@@ -30,6 +31,7 @@ const {
   comments = 0,
   likes = 0,
   body = '',
+  showTOC = false,
 } = Astro.props;
 
 const sanitizedBody = body ? sanitizeBodyHtml(body) : '';
@@ -131,6 +133,15 @@ const relatedPosts = allPosts
             {likes} 人喜歡</span>
         </div>
 
+        {showTOC && (
+          <details class="toc-box mb-8 rounded-lg border border-blue-accent/30 bg-blue-light/40 p-4" open>
+            <summary class="cursor-pointer select-none text-[14px] font-semibold text-ink hover:text-blue-accent">
+              本文目錄
+            </summary>
+            <div id="toc-list" class="mt-3 space-y-2"></div>
+          </details>
+        )}
+
         <!-- Article Body -->
         <div class="prose-royal">
           <!-- Lead paragraph from excerpt -->
@@ -224,7 +235,44 @@ const relatedPosts = allPosts
   </ContentLayout>
 </BaseLayout>
 
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const tocList = document.getElementById('toc-list');
+    if (!tocList) return;
+    const headings = document.querySelectorAll('.prose-royal h2');
+    if (headings.length === 0) {
+      tocList.closest('.toc-box')?.remove();
+      return;
+    }
+    headings.forEach((h, i) => {
+      const id = `heading-${i}`;
+      h.id = id;
+      const a = document.createElement('a');
+      a.href = `#${id}`;
+      a.textContent = `${i + 1}. ${h.textContent ?? ''}`;
+      a.className = 'block hover:text-blue-accent transition-colors';
+      tocList.appendChild(a);
+    });
+  });
+</script>
+
 <style is:global>
+  /* TOC 樣式 */
+  .toc-box summary::-webkit-details-marker { display: none; }
+  .toc-box summary::marker { display: none; }
+  #toc-list a {
+    display: block;
+    font-size: 0.875rem;
+    color: var(--color-ink-soft, #64748b);
+    padding: 3px 0;
+    transition: color 0.15s;
+    line-height: 1.5;
+    text-decoration: none;
+  }
+  #toc-list a:hover {
+    color: #1e40af;
+    text-decoration: underline;
+  }
   .prose-royal p {
     @apply mb-4 text-body text-ink-soft leading-[1.9];
   }

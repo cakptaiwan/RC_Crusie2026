@@ -59,6 +59,7 @@ export interface Post {
   page: string;
   subPage: string;
   showOnHome: boolean;
+  showTOC: boolean;
   body: string;
 }
 
@@ -389,6 +390,7 @@ function parsePost(notionPage: PageObjectResponse): Post {
   const pg = props['Page']?.select?.name ?? 'HOME';
   const subPage = props['Subpage']?.select?.name ?? props['SubPage']?.select?.name ?? '';
   const showOnHome = props['ShowOnHome']?.checkbox ?? false;
+  const showTOC = props['ShowTOC']?.checkbox ?? false;
 
   return {
     id: notionPage.id,
@@ -406,6 +408,7 @@ function parsePost(notionPage: PageObjectResponse): Post {
     page: pg,
     subPage,
     showOnHome,
+    showTOC,
     body,
   };
 }
@@ -432,6 +435,7 @@ export function getMockPosts(pageFilter?: string, subPageFilter?: string): Post[
       page: 'HOME',
       subPage: '',
       showOnHome: true,
+      showTOC: false,
       body: '',
     },
     {
@@ -451,6 +455,7 @@ export function getMockPosts(pageFilter?: string, subPageFilter?: string): Post[
       page: 'HOME',
       subPage: '',
       showOnHome: true,
+      showTOC: false,
       body: '',
     },
     {
@@ -470,6 +475,7 @@ export function getMockPosts(pageFilter?: string, subPageFilter?: string): Post[
       page: 'HOME',
       subPage: '',
       showOnHome: true,
+      showTOC: false,
       body: '',
     },
     {
@@ -490,6 +496,7 @@ export function getMockPosts(pageFilter?: string, subPageFilter?: string): Post[
       page: 'HOME',
       subPage: '',
       showOnHome: true,
+      showTOC: false,
       body: '',
     },
     {
@@ -509,6 +516,7 @@ export function getMockPosts(pageFilter?: string, subPageFilter?: string): Post[
       page: 'HOME',
       subPage: '',
       showOnHome: true,
+      showTOC: false,
       body: '',
     },
     {
@@ -529,6 +537,7 @@ export function getMockPosts(pageFilter?: string, subPageFilter?: string): Post[
       page: 'HOME',
       subPage: '',
       showOnHome: true,
+      showTOC: false,
       body: '',
     },
   ];
