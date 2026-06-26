@@ -27,7 +27,9 @@ export default defineConfig({
     },
   },
   redirects: {
-    '/what-is-cruise': '/know-cruise',
+    '/what-is-cruise': '/about-royal',
+    '/know-cruise': '/about-royal',
+    '/cabin-guide': '/pricing',
   },
   integrations: [
     tailwind({ applyBaseStyles: false }),

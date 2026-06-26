@@ -1,26 +1,88 @@
 ---
+import SidebarPillForm from './SidebarPillForm.astro';
 ---
 
 <div class="sidebar-widget">
   <div class="sidebar-section-header">
     <span class="sidebar-section-title">站內搜尋</span>
   </div>
-  <div id="search"></div>
+  <div id="search">
+    <SidebarPillForm
+      action="/search"
+      name="q"
+      type="search"
+      label="關鍵字"
+      placeholder="輸入關鍵字…"
+      buttonLabel="搜尋"
+      ariaLabel="站內搜尋"
+    />
+  </div>
 </div>
 
 <link rel="stylesheet" href="/pagefind/pagefind-ui.css" />
-<script src="/pagefind/pagefind-ui.js" is:inline></script>
+<script src="/pagefind/pagefind-ui.js" data-pagefind-ui is:inline></script>
 <script is:inline>
-  window.addEventListener('DOMContentLoaded', () => {
-    if (window.PagefindUI) {
-      new window.PagefindUI({
-        element: '#search',
-        showImages: false,
-        translations: {
-          placeholder: '輸入關鍵字…',
-          zero_results: '找不到相關文章',
-        }
-      });
-    }
-  });
+  function initPagefindSearch() {
+    if (!window.PagefindUI) return false;
+    const root = document.getElementById('search');
+    if (!root || root.dataset.pagefindInit === '1') return true;
+
+    new window.PagefindUI({
+      element: '#search',
+      showImages: false,
+      translations: {
+        placeholder: '輸入關鍵字…',
+        zero_results: '找不到相關文章',
+      },
+    });
+    root.dataset.pagefindInit = '1';
+    return true;
+  }
+
+  function bootPagefindSearch() {
+    if (initPagefindSearch()) return;
+
+    const script = document.querySelector('script[data-pagefind-ui]');
+    if (!script || script.dataset.bound === '1') return;
+    script.dataset.bound = '1';
+
+    script.addEventListener('load', () => initPagefindSearch());
+    script.addEventListener('error', () => {
+      /* Pagefind 未部署或 dev 環境：保留 GET /search 表單 */
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', bootPagefindSearch);
+  } else {
+    bootPagefindSearch();
+  }
 </script>
+
+<style is:global>
+  /* Pagefind 側欄搜尋框 — 對齊皇家旅人 pill 樣式 */
+  #search .pagefind-ui {
+    width: 100%;
+  }
+  #search .pagefind-ui__form {
+    width: 100%;
+  }
+  #search .pagefind-ui__search-input {
+    display: block;
+    width: 100%;
+    border-radius: 9999px;
+    border: 1px solid rgb(0 115 187 / 0.35);
+    background: #fff;
+    padding: 0.625rem 1rem;
+    font-size: 14px;
+    color: #1e2937;
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.05);
+    outline: none;
+  }
+  #search .pagefind-ui__search-input::placeholder {
+    color: rgb(100 116 139 / 0.7);
+  }
+  #search .pagefind-ui__search-input:focus {
+    border-color: #0073bb;
+  }
+</style>

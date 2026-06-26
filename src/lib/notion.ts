@@ -370,7 +370,7 @@ function parsePost(notionPage: PageObjectResponse): Post {
     props['Name']?.title?.map((t: RichTextItemResponse) => t.plain_text).join('') ??
     '(無標題)';
 
-  const category = props['Category']?.select?.name ?? '未分類';
+  const category = props['Subpage']?.select?.name ?? '未分類';
   const excerpt = props['Excerpt']?.rich_text
     ? richTextToString(props['Excerpt'].rich_text)
     : '';
