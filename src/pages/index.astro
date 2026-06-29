@@ -35,9 +35,14 @@ const [featured, homePosts] = await Promise.all([
   getPosts('HOME'),
 ]);
 
-const heroPost: Post = featured[0] ?? FALLBACK_POST;
+const heroPost: Post = featured[0] ?? homePosts[0] ?? FALLBACK_POST;
 
-const featuredGrid = homePosts.slice(0, 4);
+/** Featured 優先；不足 4 篇時以 ShowOnHome 補齊（去重，保留封面圖） */
+const featuredIds = new Set(featured.map((p) => p.id));
+const featuredGrid = [
+  ...featured,
+  ...homePosts.filter((p) => !featuredIds.has(p.id)),
+].slice(0, 4);
 /** Main trending grid (4) + one side post (former accent slot) */
 const trending     = [...homePosts.slice(2, 6), ...homePosts.slice(0, 1)];
 const latestPosts  = homePosts.slice(0, 4);

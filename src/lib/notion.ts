@@ -13,7 +13,7 @@
  * │ Author (作者)     │ Rich Text   │ 作者名稱，預設「皇家旅人」                        │
  * │ Comments (留言數) │ Number      │ 留言數量（可手動更新）                            │
  * │ Likes (讚數)      │ Number      │ 按讚數量（可手動更新）                            │
- * │ Featured (精選)   │ Checkbox    │ 勾選後顯示在首頁 Hero 精選區                     │
+ * │ Featured (精選)   │ Checkbox    │ 勾選後顯示在首頁 Hero 與「精選遊輪活動」區塊       │
  * │ Status (狀態)     │ Select      │ 已發布 / 草稿（只有「已發布」才會顯示）            │
  * │ Page (所屬頁面)   │ Select      │ HOME / 關於郵輪 / 第一次搭乘 / 艙房介紹 / 方案選擇 / 岸上行程 │
  * └──────────────────┴─────────────┴──────────────────────────────────────────────┘
@@ -210,7 +210,7 @@ async function fetchPageContentHtml(
       const b = block as any;
       const emoji: string = b?.callout?.icon?.emoji ?? '📌';
       const richText = b?.callout?.rich_text ?? [];
-      const title = richText.map((t: any) => t?.plain_text ?? '').join('');
+      const rawTitle = richText.map((t: any) => t?.plain_text ?? '').join('');
 
       // 直接呼叫 Notion API 抓子項目
       let childrenHtml = '';
@@ -228,7 +228,24 @@ async function fetchPageContentHtml(
         }
       } catch (_) {}
 
-      return `<div class="notion-callout notion-callout-blue"><span class="callout-icon">${emoji}</span><div class="callout-content"><strong>${title}</strong>${childrenHtml}</div></div>\n\n`;
+      // 若 title 含有 \n• 則拆成標題 + 條列
+      let titleHtml = '';
+      let inlineChildrenHtml = '';
+      if (rawTitle.includes('\n•')) {
+        const lines = rawTitle.split('\n');
+        const firstLine = lines[0].replace(/^📌\s*/, '').trim();
+        titleHtml = firstLine ? `<strong>${firstLine}</strong>` : '';
+        const bullets = lines.slice(1).filter((l: string) => l.trim().startsWith('•'));
+        if (bullets.length > 0) {
+          const items = bullets.map((l: string) => `<li>${l.replace(/^•\s*/, '').trim()}</li>`);
+          inlineChildrenHtml = `<ul>${items.join('')}</ul>`;
+        }
+      } else {
+        titleHtml = `<strong>${rawTitle.replace(/^📌\s*/, '').trim()}</strong>`;
+      }
+
+      const finalChildren = childrenHtml || inlineChildrenHtml;
+      return `<div class="notion-callout notion-callout-blue"><span class="callout-icon">${emoji}</span><div class="callout-content">${titleHtml}${finalChildren}</div></div>\n\n`;
     });
 
     const mdBlocks = await n2m.pageToMarkdown(pageId);
@@ -654,7 +671,7 @@ export async function getPostById(id: string): Promise<Post | undefined> {
 }
 
 /**
- * Fetch featured posts (Featured = true) for the home hero section.
+ * Fetch featured posts (Featured = true) for the home hero and featured grid.
  */
 export async function getFeaturedPosts(): Promise<Post[]> {
   const token = import.meta.env.NOTION_TOKEN;
@@ -675,7 +692,7 @@ export async function getFeaturedPosts(): Promise<Post[]> {
     const notion = new Client({ auth: token });
     const pages = await queryDatabasePages(notion, databaseId, {
       featuredOnly: true,
-      pageSize: 3,
+      pageSize: 4,
     });
     const posts = await enrichPostsImages(notion, pages.map(parsePost));
     return posts.length > 0
