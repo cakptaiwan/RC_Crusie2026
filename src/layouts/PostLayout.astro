@@ -76,20 +76,6 @@ const relatedPosts = allPosts
   <meta property="fb:app_id" content="970465772684393" slot="head" />
   <script type="application/ld+json" slot="head" set:html={JSON.stringify(articleJsonLd)} />
 
-  <!-- Post Hero Image -->
-  {image && (
-    <div class="mx-auto max-w-content px-gutter-sm md:px-gutter-md lg:px-gutter-lg">
-      <div class="overflow-hidden rounded-card shadow-card" style="max-height: 300px;">
-        <img
-          src={image}
-          alt={title}
-          loading="eager"
-          class="h-[300px] w-full object-cover"
-        />
-      </div>
-    </div>
-  )}
-
   <ContentLayout>
       <article class="ds-card-pad">
 
