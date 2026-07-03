@@ -1,0 +1,52 @@
+{
+  "updated": "2026-07-03",
+  "source": "royalcaribbean.com/booked/cruise-ship-wifi、royalcaribbean.com/booked/beverage-packages 官方頁面，交叉核對 RoyalCaribbeanBlog、CruisePortAdvisor、EatSleepCruise、CruiseMummy 等第三方確認頁",
+  "note": "本表僅收錄『方案名稱』，不收錄實際價格（價格為動態定價，隨航次/艙型/購買時間浮動，無法做成固定白名單，文章中出現具體美金數字一律視為需人工核實，不由本表判斷真偽）。陸上行程因港口與行程數量龐大（全球300+港口），無法窮舉為名稱白名單，見下方 shore_excursions 區塊的替代處理方式。",
+
+  "wifi_packages": {
+    "brand": "VOOM - The Fastest Internet at Sea",
+    "current_packages": [
+      "VOOM Surf + Stream",
+      "Surf + Stream"
+    ],
+    "discontinued_do_not_use": {
+      "name": "VOOM Surf（基本方案）",
+      "note": "已於2023年停產，現行僅剩 Surf + Stream 一種方案。若文章描述『便宜的 Surf 陽春方案可選』屬於過時/幻覺內容，應攔截。"
+    },
+    "related_terms": [
+      "Starlink",
+      "royal-wifi（船上WiFi網路名稱）"
+    ]
+  },
+
+  "beverage_packages": {
+    "current_packages": [
+      "Deluxe Beverage Package",
+      "Refreshment Package",
+      "Royal Refreshment Package",
+      "Classic Soda Package",
+      "Café Select"
+    ],
+    "related_terms": [
+      "Coca-Cola Freestyle",
+      "Coca-Cola Freestyle Cup"
+    ],
+    "policy_change_note": {
+      "date": "2026-03-15",
+      "change": "Deluxe Beverage Package 與 Refreshment Package 起，不再自動附贈 Coca-Cola 紀念杯與 Freestyle 機台使用權，改為船上加購 US$4.99；Classic Soda Package 不受影響，仍附贈紀念杯。",
+      "usage": "文章若描述『買 Deluxe 套餐就送汽水機無限暢飲』屬於 2026-03-15 後的過時資訊，應標記提醒人工核實航次日期。"
+    }
+  },
+
+  "shore_excursions": {
+    "whitelist_not_applicable": true,
+    "reason": "全球300+停靠港，每港數十至數百個行程，無法窮舉為固定名稱清單",
+    "alternative_check": {
+      "booking_platform_names": [
+        "Cruise Planner",
+        "Shore Excursions（App內分類頁籤）"
+      ],
+      "recommended_rule": "Check Agent 不比對陸上行程『名稱』真偽，改為標記規則：文章中若出現具體陸上行程價格、報名截止時間、退費規則等『政策性』描述，一律標記🟡供人工核實（因高度隨港口/航次浮動，且屬規則11『高風險主題』涵蓋範圍）"
+    }
+  }
+}

@@ -1,0 +1,88 @@
+{
+  "updated": "2026-07-03",
+  "source": "royalcaribbean.com/cruise-dining、royalcaribbean.com/cruise-activities 官方頁面，交叉核對 RoyalCaribbeanBlog、CruiseMapper、Iglu Cruise 等第三方確認頁",
+  "note": "v1 扁平清單，不分船別（同名設施可能只存在於部分船）。用途：攔截完全捏造的餐廳/設施名稱（如「Scoop 柜台」）。不保證某設施實際存在於文章所述的那艘船上——『真名字用錯船』是階段二（船×設施對照表）才處理的問題，v1 不涵蓋。新設施上線／改名時需人工更新，嚴禁由 AI 憑記憶生成清單。",
+
+  "dining_specialty": [
+    "Chops Grille",
+    "Giovanni's Table",
+    "Giovanni's Italian Kitchen",
+    "Izumi",
+    "Izumi Hibachi",
+    "Izumi Omakase",
+    "Jamie's Italian",
+    "Hooked Seafood",
+    "Sabor",
+    "Samba Grill",
+    "Wonderland",
+    "Wonderland Imaginative Cuisine",
+    "150 Central Park",
+    "Chef's Table",
+    "Sichuan Red",
+    "Johnny Rockets",
+    "Johnny Rockets Express",
+    "The Mason Jar",
+    "Portofino",
+    "Empire Supper Club",
+    "Royal Railway",
+    "Solarium Bistro",
+    "Hot Pot at Solarium Bistro"
+  ],
+
+  "dining_complimentary": [
+    "Windjammer",
+    "Windjammer Marketplace",
+    "Windjammer Café",
+    "Main Dining Room",
+    "Café Promenade",
+    "El Loco Fresh",
+    "Sorrento's",
+    "Sorrento's Pizzeria",
+    "Vitality Café",
+    "Dog House",
+    "Park Café",
+    "Sugar Beach",
+    "Mini Bites"
+  ],
+
+  "activities_facilities": [
+    "FlowRider",
+    "RipCord by iFLY",
+    "North Star",
+    "Two70",
+    "SeaPlex",
+    "Bionic Bar",
+    "Ultimate Abyss",
+    "Thrill Island",
+    "The Perfect Storm",
+    "Typhoon",
+    "Cyclone",
+    "Supercell",
+    "Royal Escape Room",
+    "Rock Climbing Wall",
+    "Crown's Edge",
+    "Adventure Ocean",
+    "Battle for Planet Z",
+    "Central Park",
+    "Boardwalk",
+    "AquaTheater",
+    "The Blaster",
+    "Riptide",
+    "Perfect Day at CocoCay"
+  ],
+
+  "programs_services": [
+    "Crown & Anchor Society",
+    "Royal App",
+    "Royal Caribbean App",
+    "Adventure Ocean",
+    "Royal Genie",
+    "Royal Suite Class"
+  ],
+
+  "known_ship_exclusive_note": {
+    "RipCord by iFLY": "僅 Quantum/Quantum Ultra 級（Quantum, Anthem, Ovation, Spectrum）",
+    "Thrill Island": "僅 Icon of the Seas",
+    "150 Central Park / Chef's Table": "僅部分 Oasis 級船"
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "updated": "2026-07-03",
+  "source": "官方英文船隊頁 royalcaribbean.com/cruise-ships 交叉核對維基百科繁中條目、皇家加勒比港澳台官網、旅行社官方頁面（金怡假期/永安旅遊/東瀛遊/鳳凰旅遊/wingontravel）",
+  "note": "v1 涵蓋 Icon/Quantum/Oasis/Freedom/Voyager 五大船級共21艘（皆為現役且經多來源交叉確認）。Radiance/Vision 舊船級（Radiance, Brilliance, Serenade, Jewel, Grandeur, Rhapsody, Vision, Enchantment）尚未逐一核對中文譯名，暫不列入白名單，待後續更新；Utopia of the Seas、Star of the Seas 中文譯名亦待確認。新船下水／更名時需人工更新此表，嚴禁由 AI 憑記憶生成譯名。",
+  "ships": [
+    {"zh": "海洋標誌號", "en": "Icon of the Seas", "class": "Icon"},
+    {"zh": "海洋神話號", "en": "Legend of the Seas", "class": "Icon", "note": "2026年7月首航"},
+
+    {"zh": "海洋量子號", "en": "Quantum of the Seas", "class": "Quantum"},
+    {"zh": "海洋聖歌號", "en": "Anthem of the Seas", "class": "Quantum"},
+    {"zh": "海洋贊禮號", "en": "Ovation of the Seas", "class": "Quantum"},
+    {"zh": "海洋光譜號", "en": "Spectrum of the Seas", "class": "Quantum Ultra"},
+    {"zh": "海洋奧德賽號", "en": "Odyssey of the Seas", "class": "Quantum Ultra"},
+
+    {"zh": "海洋綠洲號", "en": "Oasis of the Seas", "class": "Oasis"},
+    {"zh": "海洋魅麗號", "en": "Allure of the Seas", "class": "Oasis", "alt_zh": ["海洋魅力號"]},
+    {"zh": "海洋和諧號", "en": "Harmony of the Seas", "class": "Oasis", "alt_zh": ["海洋和悅號"]},
+    {"zh": "海洋交響號", "en": "Symphony of the Seas", "class": "Oasis", "alt_zh": ["海洋交響樂號"]},
+    {"zh": "海洋奇蹟號", "en": "Wonder of the Seas", "class": "Oasis"},
+
+    {"zh": "海洋自由號", "en": "Freedom of the Seas", "class": "Freedom"},
+    {"zh": "海洋自主號", "en": "Liberty of the Seas", "class": "Freedom", "warning": "常見混淆：與 Freedom of the Seas（海洋自由號）不同船，不得互稱"},
+    {"zh": "海洋獨立號", "en": "Independence of the Seas", "class": "Freedom"},
+
+    {"zh": "海洋航行者號", "en": "Voyager of the Seas", "class": "Voyager"},
+    {"zh": "海洋探險者號", "en": "Explorer of the Seas", "class": "Voyager"},
+    {"zh": "海洋冒險者號", "en": "Adventure of the Seas", "class": "Voyager"},
+    {"zh": "海洋領航者號", "en": "Navigator of the Seas", "class": "Voyager"},
+    {"zh": "海洋水手號", "en": "Mariner of the Seas", "class": "Voyager"}
+  ],
+  "pending_verification": [
+    "Utopia of the Seas",
+    "Star of the Seas",
+    "Radiance of the Seas",
+    "Brilliance of the Seas",
+    "Serenade of the Seas",
+    "Jewel of the Seas",
+    "Grandeur of the Seas",
+    "Rhapsody of the Seas",
+    "Vision of the Seas",
+    "Enchantment of the Seas"
+  ]
+}
