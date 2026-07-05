@@ -27,6 +27,8 @@ import SidebarPillForm from './SidebarPillForm.astro';
     const root = document.getElementById('search');
     if (!root || root.dataset.pagefindInit === '1') return true;
 
+    // 清空容器內原本的備用表單（SidebarPillForm），避免兩者同時顯示
+    root.innerHTML = '';
     new window.PagefindUI({
       element: '#search',
       showImages: false,
