@@ -210,11 +210,13 @@ const relatedPosts = allPosts
           </div>
         )}
 
-        <DisqusComments
-          url={`https://www.royal-cruiser.com/post/${id}/`}
-          identifier={id}
-          title={title}
-        />
+        {false && (
+          <DisqusComments
+            url={`https://www.royal-cruiser.com/post/${id}/`}
+            identifier={id}
+            title={title}
+          />
+        )}
 
       </article>
 
