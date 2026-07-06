@@ -43,6 +43,38 @@ type NotionClient = Client;
 type DataSourceFilter = QueryDataSourceParameters['filter'];
 type DataSourceSort = QueryDataSourceParameters['sorts'];
 
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+/** 逐篇補圖/補內文之間的固定間隔（毫秒），主動避免觸發 Notion API 429 */
+const REQUEST_PACING_MS = 350;
+
+/**
+ * 共用的 Notion Client（build 全程只建立一次）。
+ *
+ * 客製化重試策略：Notion 429 回應常帶有很長的 retry-after 建議值
+ * （實測曾遇到 339 秒），若照 SDK 預設上限（60 秒）等待，逐篇補圖／
+ * 補內文的迴圈中只要撞到幾次限流，整個 build 就會被拖到停滯不前。
+ * 這裡改用短間隔（最多等 3 秒）＋ 有上限次數的重試（3 次），
+ * 讓單一請求盡快失敗並交由呼叫端 fallback（例如保留空圖片、跳過內文），
+ * 而不是被動枯等 retry-after 建議的長秒數卡住整批 build。
+ */
+let cachedNotionClient: NotionClient | null = null;
+function getNotionClient(token: string): NotionClient {
+  if (!cachedNotionClient) {
+    cachedNotionClient = new Client({
+      auth: token,
+      retry: {
+        maxRetries: 3,
+        initialRetryDelayMs: 500,
+        maxRetryDelayMs: 3000,
+      },
+    });
+  }
+  return cachedNotionClient;
+}
+
 export interface Post {
   id: string;
   category: string;
@@ -178,11 +210,21 @@ async function enrichPostImage(
   return blockImage ? { ...post, image: blockImage } : post;
 }
 
+/**
+ * 逐篇（序列）補上封面圖，避免像先前的 Promise.all 那樣一次對所有缺圖文章
+ * 同時發出請求（併發爆量觸發 429），只在真的需要打 API 補圖時才加入間隔。
+ */
 async function enrichPostsImages(
   notion: NotionClient,
   posts: Post[]
 ): Promise<Post[]> {
-  return Promise.all(posts.map((post) => enrichPostImage(notion, post)));
+  const out: Post[] = [];
+  for (const post of posts) {
+    const needsFetch = !post.image;
+    out.push(await enrichPostImage(notion, post));
+    if (needsFetch) await sleep(REQUEST_PACING_MS);
+  }
+  return out;
 }
 
 /**
@@ -269,7 +311,10 @@ async function enrichPostBody(
   return pageHtml ? { ...post, body: pageHtml } : post;
 }
 
-/** 逐篇（序列）補上 Page Content 內文，避免並發過多觸發 Notion 流量限制 */
+/**
+ * 逐篇（序列）補上 Page Content 內文，避免並發過多觸發 Notion 流量限制。
+ * 每篇之間主動加入固定間隔，提前避開 429，而非等限流發生才被動重試。
+ */
 async function enrichPostsBodies(
   notion: NotionClient,
   posts: Post[]
@@ -277,6 +322,7 @@ async function enrichPostsBodies(
   const out: Post[] = [];
   for (const post of posts) {
     out.push(await enrichPostBody(notion, post));
+    await sleep(REQUEST_PACING_MS);
   }
   return out;
 }
@@ -573,10 +619,35 @@ export function getMockPostById(id: string): Post | undefined {
 // ─── Main exports ──────────────────────────────────────────────────────────────
 
 /**
+ * Build 期間的記憶體快取：許多頁面／元件（PostLayout 的相關文章、Sidebar
+ * 的分類清單、search.astro 的全站索引…）常以相同條件重複呼叫
+ * getPosts()/getAllPosts()/getFeaturedPosts()。Astro 的 SSG 對每個頁面／
+ * 元件的 frontmatter 各自獨立執行，並不會自動去重這些呼叫；若不加快取，
+ * 光是「全站文章列表＋逐篇內文」這組昂貴查詢，就可能因為 Sidebar 出現在
+ * 每一篇文章頁而被重覆執行數十次。這裡快取的是 Promise 本身（而非 await
+ * 後的結果），讓同一次 build 內同條件的並發呼叫也只會真正打一次 API。
+ */
+const postsCache = new Map<string, Promise<Post[]>>();
+let allPostsCache: Promise<Post[]> | null = null;
+let featuredPostsCache: Promise<Post[]> | null = null;
+
+/**
  * Fetch all published posts, optionally filtered by page section.
  * Falls back to mock data when NOTION_TOKEN / DATABASE_ID is not configured.
  */
 export async function getPosts(
+  pageFilter?: string,
+  subPageFilter?: string
+): Promise<Post[]> {
+  const cacheKey = `${pageFilter ?? ''}::${subPageFilter ?? ''}`;
+  const cached = postsCache.get(cacheKey);
+  if (cached) return cached;
+  const promise = fetchPostsUncached(pageFilter, subPageFilter);
+  postsCache.set(cacheKey, promise);
+  return promise;
+}
+
+async function fetchPostsUncached(
   pageFilter?: string,
   subPageFilter?: string
 ): Promise<Post[]> {
@@ -594,7 +665,7 @@ export async function getPosts(
   }
 
   try {
-    const notion = new Client({ auth: token });
+    const notion = getNotionClient(token);
     const pages = await queryDatabasePages(notion, databaseId, {
       pageFilter,
       subPageFilter,
@@ -617,6 +688,12 @@ export async function getPosts(
  * Fetch all posts across all pages — used for generating static post routes.
  */
 export async function getAllPosts(): Promise<Post[]> {
+  if (allPostsCache) return allPostsCache;
+  allPostsCache = fetchAllPostsUncached();
+  return allPostsCache;
+}
+
+async function fetchAllPostsUncached(): Promise<Post[]> {
   const token = import.meta.env.NOTION_TOKEN;
   const databaseId = import.meta.env.DATABASE_ID;
 
@@ -630,7 +707,7 @@ export async function getAllPosts(): Promise<Post[]> {
   }
 
   try {
-    const notion = new Client({ auth: token });
+    const notion = getNotionClient(token);
     const pages = await queryDatabasePages(notion, databaseId);
     const withImages = await enrichPostsImages(notion, pages.map(parsePost));
     const posts = await enrichPostsBodies(notion, withImages);
@@ -659,7 +736,7 @@ export async function getPostById(id: string): Promise<Post | undefined> {
   }
 
   try {
-    const notion = new Client({ auth: token });
+    const notion = getNotionClient(token);
     const page = (await notion.pages.retrieve({ page_id: id })) as PageObjectResponse;
     const post = parsePost(page);
     const withImage = await enrichPostImage(notion, post);
@@ -674,6 +751,12 @@ export async function getPostById(id: string): Promise<Post | undefined> {
  * Fetch featured posts (Featured = true) for the home hero and featured grid.
  */
 export async function getFeaturedPosts(): Promise<Post[]> {
+  if (featuredPostsCache) return featuredPostsCache;
+  featuredPostsCache = fetchFeaturedPostsUncached();
+  return featuredPostsCache;
+}
+
+async function fetchFeaturedPostsUncached(): Promise<Post[]> {
   const token = import.meta.env.NOTION_TOKEN;
   const databaseId = import.meta.env.DATABASE_ID;
 
@@ -689,7 +772,7 @@ export async function getFeaturedPosts(): Promise<Post[]> {
   }
 
   try {
-    const notion = new Client({ auth: token });
+    const notion = getNotionClient(token);
     const pages = await queryDatabasePages(notion, databaseId, {
       featuredOnly: true,
       pageSize: 4,
