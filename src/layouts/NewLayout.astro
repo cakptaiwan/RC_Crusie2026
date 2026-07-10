@@ -25,6 +25,7 @@ const currentYear = new Date().getFullYear();
 <link rel="icon" type="image/png" href="/assets/favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600;700;900&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/reveal/reveal-animation.css">
 <style is:global>
 body{margin:0;background:#EDF4FA;font-family:'Noto Sans TC',sans-serif}
 .srf{font-family:'Noto Serif TC',serif}
@@ -253,7 +254,7 @@ a:hover{opacity:.75}
 </nav>
 <slot />
 <ContactPanel />
-<footer class="ft">
+<footer class="ft rev">
 <div class="ftgrid">
 <div class="ftc"><h4 class="fth">{footerCol1.label}</h4>{footerCol1.children.map((child) => <a class="ftl" href={categoryHref(child.slug)}>{child.label}</a>)}</div>
 <div class="ftc"><h4 class="fth">{footerCol2.label}</h4>{footerCol2.children.map((child) => <a class="ftl" href={categoryHref(child.slug)}>{child.label}</a>)}</div>
@@ -270,5 +271,6 @@ a:hover{opacity:.75}
 <div class="ftbar"><span>© {currentYear} Royal Cruiser 皇家旅人 · All Rights Reserved</span><span class="fx gap24"><a class="ftl" href="/privacy" style="padding:0;display:inline">隱私權政策</a><a class="ftl" href="/terms" style="padding:0;display:inline">使用條款</a></span></div>
 </footer>
 </div>
+<script src="/reveal/reveal-animation.js" defer></script>
 </body>
 </html>

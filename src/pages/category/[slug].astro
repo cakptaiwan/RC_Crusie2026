@@ -39,7 +39,7 @@ const padNum = (n: number) => String(n).padStart(2, '0');
   </div>
   <div class="main2" style="padding-top:26px">
     <div>
-      <div class="sec-head" style="margin-top:0">
+      <div class="sec-head rev" style="margin-top:0">
         <div>
           <div class="ovl">Category · {categoryOvlLabel(category.slug)}</div>
           <h1 class="a-h2 srf">{category.label}</h1>
@@ -52,7 +52,7 @@ const padNum = (n: number) => String(n).padStart(2, '0');
           <p class="a-ex" style="margin-top:24px">尚無文章，敬請期待。</p>
         ) : (
           <>
-            <a class="t-lead" href={newArticleUrl(leadPost.id)}>
+            <a class="t-lead rev-l" href={newArticleUrl(leadPost.id)}>
               <span class="t-leadimg zi" style="display:block">
                 <img class="ph" src={postImage(leadPost.image)} alt={leadPost.title} />
               </span>
@@ -70,7 +70,7 @@ const padNum = (n: number) => String(n).padStart(2, '0');
             </a>
             {
               restPosts.length > 0 && (
-                <div style="margin-top:36px">
+                <div class="rev-r" style="margin-top:36px">
                   {
                     restPosts.map((post, index) => (
                       <a

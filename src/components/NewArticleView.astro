@@ -32,7 +32,7 @@ const relatedPosts = allPosts
   <span class="crumb-title">{post.title}</span>
 </div>
 
-<div class="ah">
+<div class="ah rise d1">
   <span class="stamp">{post.subPage || post.category}</span>
   <h1 class="ah1 srf">{post.title}</h1>
   <div class="ameta">
@@ -43,7 +43,7 @@ const relatedPosts = allPosts
 </div>
 
 {post.image && (
-  <div class="aheroimg zi">
+  <div class="aheroimg zi rev">
     <img class="ph" src={postImage} alt={post.title} />
   </div>
 )}
@@ -52,7 +52,12 @@ const relatedPosts = allPosts
   {post.excerpt && <p>{post.excerpt}</p>}
   {mappedBody && <div set:html={mappedBody} />}
 
-  <div class="authbox">
+  <div class="tagrow rev">
+    <span class="ovl" style="font-size:11px">Tags</span>
+    <span class="stamp">{post.subPage || post.category}</span>
+  </div>
+
+  <div class="authbox rev">
     <span class="avat srf">{siteAuthor.name.slice(0, 1)}</span>
     <span>
       <span class="fw7 fs15 navy">{siteAuthor.name} · {siteAuthor.tagline}</span>
@@ -63,13 +68,13 @@ const relatedPosts = allPosts
   {
     relatedPosts.length > 0 && (
       <>
-        <div class="sec-head" style="margin-top:64px">
+        <div class="sec-head rev" style="margin-top:64px">
           <div>
             <div class="ovl">Related · 延伸閱讀</div>
             <h2 class="a-h2 srf" style="font-size:32px">相關文章</h2>
           </div>
         </div>
-        <div class="l-grid">
+        <div class="l-grid rev">
           {
             relatedPosts.map((related, index) => (
               <a

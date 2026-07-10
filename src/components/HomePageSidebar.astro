@@ -7,17 +7,17 @@ const categoryCounts = getCategoryCounts(await getAllPosts()).filter((cat) => ca
 ---
 
 <aside>
-  <div class="sb" style="border-top:2px solid #0B2A4A">
+  <div class="sb rev" style="border-top:2px solid #0B2A4A">
     <div class="sbh"><span class="sbt srf">關於我</span><span class="ovl">About</span></div>
     <p class="sbp">{siteAuthor.bio}</p>
     <a class="alink fs13" href={siteAuthor.aboutUrl} style="display:inline-block;margin-top:14px">了解更多 →</a>
   </div>
-  <div class="sb">
+  <div class="sb rev">
     <div class="sbh"><span class="sbt srf">聯絡我們</span><span class="ovl">Contact</span></div>
     <p class="sbp">想知道什麼遊輪資訊，對於網站有什麼指教，都請不吝告訴我。</p>
     <button type="button" class="obtn" data-contact-open style="margin-top:16px;border:none;cursor:pointer;font-family:inherit">聯絡我們</button>
   </div>
-  <div class="sb">
+  <div class="sb rev">
     <div class="sbh"><span class="sbt srf">訂閱電子報</span><span class="ovl">Newsletter</span></div>
     <p class="sbp">分享皇家加勒比遊輪的搶船攻略、航線情報與旅人心得，千萬不可錯過。</p>
     <div class="fx gap8" style="margin-top:16px">
@@ -26,7 +26,7 @@ const categoryCounts = getCategoryCounts(await getAllPosts()).filter((cat) => ca
     </div>
     <p id="home-newsletter-msg" class="fs13 mt8" style="display:none"></p>
   </div>
-  <div class="sb">
+  <div class="sb rev">
     <div class="sbh"><span class="sbt srf">站內搜尋</span><span class="ovl">Search</span></div>
     <div id="home-search" style="margin-top:16px">
       <form class="fx gap8" action="/search" method="get" data-search-fallback>
@@ -35,7 +35,7 @@ const categoryCounts = getCategoryCounts(await getAllPosts()).filter((cat) => ca
       </form>
     </div>
   </div>
-  <div class="sb">
+  <div class="sb rev">
     <div class="sbh"><span class="sbt srf">文章分類</span><span class="ovl">Categories</span></div>
     <div class="mt12">
       {

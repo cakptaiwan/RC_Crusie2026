@@ -42,7 +42,7 @@ const padNum = (n: number) => String(n).padStart(2, '0');
   <!-- Hero 登船證：設計稿靜態品牌形象 -->
   <div class="c-hero" style="margin:40px 56px 0">
     <div class="tband">
-      <div class="ticket">
+      <div class="ticket rise d1">
         <div class="tmain">
           <div class="tkhd"><span>BOARDING PASS · 登船證</span><span style="opacity:.65">ROYAL CRUISER</span></div>
           <div class="tbody">
@@ -52,8 +52,8 @@ const padNum = (n: number) => String(n).padStart(2, '0');
                 <span><span class="codelbl">PASSENGER</span><span class="codeval" style="display:block">每一位喜愛遊輪的華人旅人</span></span>
                 <span><span class="codelbl">CLASS</span><span class="codeval" style="display:block">海景陽台艙</span></span>
               </div>
-              <h1 class="bph1 srf" style="font-size:44px;margin:18px 0 24px">上船那一刻起，就沒有行程。</h1>
-              <div class="route" style="max-width:540px">
+              <h1 class="bph1 srf rise d2" style="font-size:44px;margin:18px 0 24px">上船那一刻起，就沒有行程。</h1>
+              <div class="route rise d3" style="max-width:540px">
                 <span><span class="rl">FROM</span><span class="rc" style="display:block;font-size:30px">TAIWAN</span><span class="rsub">基隆 KEELUNG</span></span>
                 <span class="rline">
                   <span class="rdot"></span><span class="rdash"></span>
@@ -107,7 +107,7 @@ const padNum = (n: number) => String(n).padStart(2, '0');
 
   <!-- 精選遊輪活動 -->
   <div class="a-sec">
-    <div class="a-head">
+    <div class="a-head rev">
       <div>
         <div class="ovl">Featured Cruises · 第一手航線情報</div>
         <h2 class="a-h2 srf">精選遊輪活動</h2>
@@ -117,7 +117,7 @@ const padNum = (n: number) => String(n).padStart(2, '0');
     {
       featuredLead ? (
         <div class="a-grid">
-          <a href={newArticleUrl(featuredLead.id)} style="text-decoration:none;color:inherit">
+          <a class="rev-l" href={newArticleUrl(featuredLead.id)} style="text-decoration:none;color:inherit">
             <div class="a-leadimg zi">
               <img class="ph" src={postImage(featuredLead.image)} alt={featuredLead.title} />
             </div>
@@ -129,7 +129,7 @@ const padNum = (n: number) => String(n).padStart(2, '0');
             {featuredLead.excerpt && <p class="a-ex">{featuredLead.excerpt}</p>}
             <span class="alink">閱讀全文 →</span>
           </a>
-          <div>
+          <div class="rev-r">
             {
               featuredRows.map((post, index) => (
                 <a
@@ -163,7 +163,7 @@ const padNum = (n: number) => String(n).padStart(2, '0');
   <div class="main2">
     <div>
       <!-- 熱門文章 -->
-      <div class="sec-head" style="margin-top:0">
+      <div class="sec-head rev" style="margin-top:0">
         <div>
           <div class="ovl">Trending Now · 旅人們最近熱讀</div>
           <h2 class="a-h2 srf">熱門文章</h2>
@@ -173,7 +173,7 @@ const padNum = (n: number) => String(n).padStart(2, '0');
       {
         trendingLead ? (
           <>
-            <a class="t-lead" href={newArticleUrl(trendingLead.id)}>
+            <a class="t-lead rev-l" href={newArticleUrl(trendingLead.id)}>
               <span class="t-leadimg zi" style="display:block">
                 <img class="ph" src={postImage(trendingLead.image)} alt={trendingLead.title} />
               </span>
@@ -189,7 +189,7 @@ const padNum = (n: number) => String(n).padStart(2, '0');
             </a>
             {
               trendingCells.length > 0 && (
-                <div class="t-grid" style="margin-top:36px">
+                <div class="t-grid rev-r" style="margin-top:36px">
                   {
                     trendingCells.map((post) => (
                       <a class="t-cell" href={newArticleUrl(post.id)}>
@@ -214,7 +214,7 @@ const padNum = (n: number) => String(n).padStart(2, '0');
       }
 
       <!-- 最新文章 -->
-      <div class="sec-head">
+      <div class="sec-head rev">
         <div>
           <div class="ovl">Latest Stories · 刷新的旅遊筆記</div>
           <h2 class="a-h2 srf">最新文章</h2>
@@ -223,7 +223,7 @@ const padNum = (n: number) => String(n).padStart(2, '0');
       </div>
       {
         latestPosts.length > 0 ? (
-          <div class="l-grid">
+          <div class="l-grid rev">
             {
               latestPosts.map((post, index) => (
                 <a
