@@ -43,6 +43,27 @@ type NotionClient = Client;
 type DataSourceFilter = QueryDataSourceParameters['filter'];
 type DataSourceSort = QueryDataSourceParameters['sorts'];
 
+/** Build 期間 Notion API 呼叫統計（供效能驗證） */
+export const notionBuildStats = {
+  dataSourceQuery: 0,
+  databaseRetrieve: 0,
+  pageRetrieve: 0,
+  blockChildrenList: 0,
+  getPostById: 0,
+  getPostsCacheHits: 0,
+  getAllPostsCacheHits: 0,
+  featuredPostsCacheHits: 0,
+};
+
+function logNotionBuildStats(label: string): void {
+  console.log(
+    `[notion] build stats (${label}): query=${notionBuildStats.dataSourceQuery}, ` +
+      `dbRetrieve=${notionBuildStats.databaseRetrieve}, pageRetrieve=${notionBuildStats.pageRetrieve}, ` +
+      `blocks=${notionBuildStats.blockChildrenList}, getPostById=${notionBuildStats.getPostById}, ` +
+      `cacheHits(all=${notionBuildStats.getAllPostsCacheHits}, posts=${notionBuildStats.getPostsCacheHits}, featured=${notionBuildStats.featuredPostsCacheHits})`,
+  );
+}
+
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
@@ -188,6 +209,7 @@ async function fetchFirstBlockImage(
       block_id: pageId,
       page_size: 100,
     });
+    notionBuildStats.blockChildrenList += 1;
 
     for (const block of response.results) {
       if (!('type' in block) || block.type !== 'image') continue;
@@ -258,6 +280,7 @@ async function fetchPageContentHtml(
       let childrenHtml = '';
       try {
         const children = await notion.blocks.children.list({ block_id: block.id });
+        notionBuildStats.blockChildrenList += 1;
         const items = children.results
           .filter((c: any) => c?.type === 'bulleted_list_item')
           .map((c: any) => {
@@ -369,6 +392,7 @@ async function resolveDataSourceId(
   if (cachedDataSourceId) return cachedDataSourceId;
 
   const database = await notion.databases.retrieve({ database_id: databaseId });
+  notionBuildStats.databaseRetrieve += 1;
   const dataSourceId = (database as any).data_sources?.[0]?.id;
   if (!dataSourceId) {
     throw new Error('Database 沒有可查詢的 data source，請確認 Crusie2026 為完整資料庫頁面。');
@@ -419,6 +443,7 @@ async function queryDatabasePages(
     sorts,
     ...(options?.pageSize ? { page_size: options.pageSize } : {}),
   });
+  notionBuildStats.dataSourceQuery += 1;
 
   return response.results.filter(
     (item): item is PageObjectResponse =>
@@ -641,7 +666,10 @@ export async function getPosts(
 ): Promise<Post[]> {
   const cacheKey = `${pageFilter ?? ''}::${subPageFilter ?? ''}`;
   const cached = postsCache.get(cacheKey);
-  if (cached) return cached;
+  if (cached) {
+    notionBuildStats.getPostsCacheHits += 1;
+    return cached;
+  }
   const promise = fetchPostsUncached(pageFilter, subPageFilter);
   postsCache.set(cacheKey, promise);
   return promise;
@@ -688,7 +716,10 @@ async function fetchPostsUncached(
  * Fetch all posts across all pages — used for generating static post routes.
  */
 export async function getAllPosts(): Promise<Post[]> {
-  if (allPostsCache) return allPostsCache;
+  if (allPostsCache) {
+    notionBuildStats.getAllPostsCacheHits += 1;
+    return allPostsCache;
+  }
   allPostsCache = fetchAllPostsUncached();
   return allPostsCache;
 }
@@ -711,6 +742,7 @@ async function fetchAllPostsUncached(): Promise<Post[]> {
     const pages = await queryDatabasePages(notion, databaseId);
     const withImages = await enrichPostsImages(notion, pages.map(parsePost));
     const posts = await enrichPostsBodies(notion, withImages);
+    logNotionBuildStats('getAllPosts');
     return posts.length > 0 ? posts : getMockPosts();
   } catch (err) {
     logNotionFetchError('getAllPosts', err);
@@ -736,8 +768,10 @@ export async function getPostById(id: string): Promise<Post | undefined> {
   }
 
   try {
+    notionBuildStats.getPostById += 1;
     const notion = getNotionClient(token);
     const page = (await notion.pages.retrieve({ page_id: id })) as PageObjectResponse;
+    notionBuildStats.pageRetrieve += 1;
     const post = parsePost(page);
     const withImage = await enrichPostImage(notion, post);
     return enrichPostBody(notion, withImage);
@@ -751,7 +785,10 @@ export async function getPostById(id: string): Promise<Post | undefined> {
  * Fetch featured posts (Featured = true) for the home hero and featured grid.
  */
 export async function getFeaturedPosts(): Promise<Post[]> {
-  if (featuredPostsCache) return featuredPostsCache;
+  if (featuredPostsCache) {
+    notionBuildStats.featuredPostsCacheHits += 1;
+    return featuredPostsCache;
+  }
   featuredPostsCache = fetchFeaturedPostsUncached();
   return featuredPostsCache;
 }

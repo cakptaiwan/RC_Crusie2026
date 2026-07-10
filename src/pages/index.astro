@@ -1,413 +1,254 @@
 ---
-/**
- * index.astro — Royal Cruiser 首頁
- */
-import BaseLayout from '../layouts/BaseLayout.astro';
-import PostCard from '../components/PostCard.astro';
-import ContentLayout from '../components/ContentLayout.astro';
-import SectionHeader from '../components/SectionHeader.astro';
-import HeroHeader from '../components/HeroHeader.astro';
-import { getPosts, getFeaturedPosts } from '../lib/notion';
+import NewLayout from '../layouts/NewLayout.astro';
+import HomePageSidebar from '../components/HomePageSidebar.astro';
+import { getCategoryHrefBySubPage } from '../data/new-layout-nav';
+import { newArticleUrl } from '../lib/new-article-url';
+import { getAllPosts, getFeaturedPosts, getPosts } from '../lib/notion';
 import type { Post } from '../lib/notion';
 
-const FALLBACK_HERO =
-  'https://images.pexels.com/photos/1654698/pexels-photo-1654698.jpeg?auto=compress&cs=tinysrgb&w=1200';
-
-const FALLBACK_POST: Post = {
-  id:       'fallback',
-  category: '精選',
-  title:    '探索郵輪旅遊的精彩世界',
-  excerpt:  '郵輪旅遊是一種獨特而全面的旅行方式，讓旅客在一趟行程中探索多個目的地。',
-  image:    FALLBACK_HERO,
-  date:     '2024-03-15',
-  author:   '皇家旅人',
-  comments: 0,
-  likes:    0,
-  url:      '#',
-  featured: true,
-  status:   '已發布',
-  page:     'HOME',
-  subPage:    '',
-  showOnHome: false,
-  showTOC:    false,
-  body:     '',
-};
-
-const [featured, homePosts] = await Promise.all([
+const [featured, homePosts, allPosts] = await Promise.all([
   getFeaturedPosts(),
   getPosts('HOME'),
+  getAllPosts(),
 ]);
 
-const heroPost: Post = featured[0] ?? homePosts[0] ?? FALLBACK_POST;
-
-/** Featured 優先；不足 4 篇時以 ShowOnHome 補齊（去重，保留封面圖） */
 const featuredIds = new Set(featured.map((p) => p.id));
-const featuredGrid = [
+const featuredPosts: Post[] = [
   ...featured,
   ...homePosts.filter((p) => !featuredIds.has(p.id)),
-].slice(0, 4);
-/** Main trending grid (4) + one side post (former accent slot) */
-const trending     = [...homePosts.slice(2, 6), ...homePosts.slice(0, 1)];
-const latestPosts  = homePosts.slice(0, 4);
+].slice(0, 5);
+const [featuredLead, ...featuredRows] = featuredPosts;
+
+/** 熱門：沿用正式站 ShowOnHome 邏輯（無真實熱門度） */
+const trending: Post[] = [...homePosts.slice(2, 6), ...homePosts.slice(0, 1)].slice(0, 5);
+const [trendingLead, ...trendingCells] = trending;
+
+/** 最新：全站依日期排序（getAllPosts 已 desc） */
+const latestPosts = allPosts.slice(0, 4);
+
+const featuredViewAll = featuredLead
+  ? getCategoryHrefBySubPage(featuredLead.subPage, 'onboard-activities')
+  : '/category/onboard-activities';
+
+const formatDate = (date: string) => (date ? date.slice(0, 10) : '');
+const postImage = (image: string | null) => image ?? '/assets/ships.png';
+const padNum = (n: number) => String(n).padStart(2, '0');
 ---
 
-<BaseLayout
+<NewLayout
   title="皇家加勒比遊輪攻略｜新手入門到老手進階"
   description="皇家加勒比遊輪全攻略，從新手訂票入門到老手玩法進階，船上活動、岸上行程、聰明花費技巧一次掌握，實際搭乘經驗分享，給華人旅客最實用的皇家加勒比遊輪資訊。"
-  image="https://res.cloudinary.com/dpz7ky2nr/image/upload/v1781675198/royal-cruiser/ships/spectrum/rc/spectrum/1559581418_SC-Aerial_md.jpg"
 >
-  <HeroHeader post={heroPost} />
-
-  <ContentLayout showNavStrip={false} sidebarClass="lg:mt-10">
-
-    <!-- FEATURED CRUISES — Full-bleed light blue block, L-shape grid -->
-    <section class="relative mb-12 mt-10 md:mb-16" aria-labelledby="section-featured">
-      <div
-        class="pointer-events-none absolute inset-y-0"
-        style="left: -100vw; right: 0; background: linear-gradient(135deg, rgba(232,242,253,0.72) 0%, rgba(210,228,245,0.65) 100%); box-shadow: inset 0 1px 0 rgba(255,255,255,0.85); backdrop-filter: blur(6px);"
-        aria-hidden="true"
-      />
-      <!-- pr-5/md:pr-7 matches Latest section wrapper padding so right edges align -->
-      <div class="relative py-8 pr-5 md:py-10 md:pr-7">
-        <SectionHeader
-          eyebrow="Featured Cruises"
-          title="精選遊輪活動"
-          lead="不論是首次搭船還是資深旅人，這裡都收錄最值得參考的航線故事與第一手資訊，陪你規劃下一段海上假期。"
-          href="/about-royal"
-          accent="blue"
-          enterDelay="420"
-        />
-
-        <!--
-          L-SHAPE GRID (md+):
-          col-1 rows 1-2: CARD 1 (tall)   |  col-2 row-1: CARD 2
-                                           |  col-2 row-2: CARD 3
-          col-1 row-3: ghost quote (empty) |  col-2 row-3: CARD 4 (protrudes left)
-        -->
-        <div
-          class="grid gap-4
-                 md:grid-cols-[5fr_3fr]
-                 md:[grid-template-rows:300px_160px_190px]"
-        >
-
-          <!-- CARD 1: col-1 rows 1-2 — dominant tall left card -->
-          <a
-            href={featuredGrid[0]?.url ?? '#'}
-            class="ocean-event-card group relative overflow-hidden rounded-2xl h-72
-                   md:col-start-1 md:row-start-1 md:row-span-2 md:h-auto"
-            style="box-shadow: 0 6px 28px rgba(6,21,86,0.15), 0 1px 4px rgba(6,21,86,0.08);"
-            data-enter="up"
-            data-enter-delay="520"
-          >
-            {featuredGrid[0]?.image ? (
-              <img
-                src={featuredGrid[0].image}
-                alt={featuredGrid[0].title}
-                width="700"
-                height="480"
-                loading="lazy"
-                class="ocean-event-card__img absolute inset-0 h-full w-full object-cover"
-              />
-            ) : (
-              <div class="absolute inset-0 bg-gradient-to-br from-[#061556] via-[#0a2a6e] to-[#0073BB]" />
-            )}
-            <div class="absolute inset-0 bg-gradient-to-t from-[#061556]/94 via-[#061556]/30 to-transparent" />
-            <div
-              class="absolute inset-y-0 left-0 w-[3px]"
-              style="background: linear-gradient(to bottom, transparent 10%, rgba(0,115,187,0.7) 50%, transparent 90%);"
-              aria-hidden="true"
-            />
-            <div class="absolute bottom-0 left-0 right-0 p-6 md:p-8">
-              <p class="section-eyebrow mb-2">Featured Story</p>
-              <span class="mb-3 inline-block rounded-full bg-[#0073BB] px-3 py-1 text-[12px] font-semibold text-white">
-                {featuredGrid[0]?.category}
-              </span>
-              <h3 class="mt-1 font-serif font-bold leading-[1.35] text-white text-xl md:text-[1.65rem]">
-                {featuredGrid[0]?.title}
-              </h3>
-              <p class="mt-3 font-sans text-[12px] text-white/50">
-                {featuredGrid[0]?.date} · {featuredGrid[0]?.author}
-              </p>
-            </div>
-          </a>
-
-          <!-- CARD 2: col-2 row-1 — tall right-top, left-aligned -->
-          <a
-            href={featuredGrid[1]?.url ?? '#'}
-            class="ocean-event-card group relative overflow-hidden rounded-2xl h-52
-                   md:col-start-2 md:row-start-1 md:h-auto"
-            style="box-shadow: 0 6px 28px rgba(6,21,86,0.15), 0 1px 4px rgba(6,21,86,0.08);"
-            data-enter="up"
-            data-enter-delay="620"
-          >
-            {featuredGrid[1]?.image ? (
-              <img
-                src={featuredGrid[1].image}
-                alt={featuredGrid[1].title}
-                width="480"
-                height="300"
-                loading="lazy"
-                class="ocean-event-card__img absolute inset-0 h-full w-full object-cover"
-              />
-            ) : (
-              <div class="absolute inset-0 bg-gradient-to-br from-[#0073BB] via-[#0a4a8a] to-[#061556]" />
-            )}
-            <div class="absolute inset-0 bg-gradient-to-t from-[#061556]/92 via-[#061556]/20 to-transparent" />
-            <div class="absolute bottom-0 left-0 right-0 p-4 md:p-5">
-              <span class="mb-1.5 inline-block rounded-full bg-[#0073BB] px-2.5 py-1 text-[12px] font-semibold text-white">
-                {featuredGrid[1]?.category}
-              </span>
-              <h3 class="mt-1 line-clamp-2 font-serif font-semibold leading-[1.45] text-white text-sm md:text-base">
-                {featuredGrid[1]?.title}
-              </h3>
-              <p class="mt-1.5 font-sans text-[11px] text-white/45">{featuredGrid[1]?.date}</p>
-            </div>
-          </a>
-
-          <!-- CARD 3: col-2 row-2 — compact 160px, right-aligned -->
-          <a
-            href={featuredGrid[2]?.url ?? '#'}
-            class="ocean-event-card group relative overflow-hidden rounded-2xl h-44
-                   md:col-start-2 md:row-start-2 md:h-auto"
-            style="box-shadow: 0 6px 28px rgba(6,21,86,0.15), 0 1px 4px rgba(6,21,86,0.08);"
-            data-enter="up"
-            data-enter-delay="720"
-          >
-            {featuredGrid[2]?.image ? (
-              <img
-                src={featuredGrid[2].image}
-                alt={featuredGrid[2].title}
-                width="480"
-                height="160"
-                loading="lazy"
-                class="ocean-event-card__img absolute inset-0 h-full w-full object-cover object-center"
-              />
-            ) : (
-              <div class="absolute inset-0 bg-gradient-to-tl from-[#061556] to-[#0073BB]/70" />
-            )}
-            <div class="absolute inset-0 bg-gradient-to-t from-[#061556]/93 via-[#061556]/30 to-transparent" />
-            <div class="absolute bottom-0 left-0 right-0 p-4 md:p-5 text-right">
-              <span class="mb-1.5 inline-block rounded-full bg-[#0073BB] px-2.5 py-1 text-[12px] font-semibold text-white">
-                {featuredGrid[2]?.category}
-              </span>
-              <h3 class="mt-1 line-clamp-2 font-serif font-semibold leading-[1.45] text-white text-sm">
-                {featuredGrid[2]?.title}
-              </h3>
-            </div>
-          </a>
-
-          <!-- col-1 row-3: intentional negative space with ghost quote -->
-          <div
-            class="hidden overflow-hidden md:col-start-1 md:row-start-3 md:flex md:flex-col md:justify-center md:pr-[38%]"
-            aria-hidden="true"
-          >
-            <!-- Rotating quote ticker -->
-            <div id="quote-ticker" class="select-none overflow-hidden" aria-hidden="true">
-              <p
-                id="quote-text"
-                class="break-words font-serif leading-[1.55] text-[#061556]/75"
-                style="font-size: clamp(1.05rem, 1.2vw + 0.75rem, 1.35rem); word-break: break-word;"
-              ></p>
-            </div>
-            <div class="mt-3 h-px w-10 bg-[#0073BB]/35"></div>
-
-            <script>
-              (() => {
-                const quotes = [
-                  '一次打包，世界靠岸',
-                  '海風吹過來的那一刻，什麼都不重要了',
-                  '不用搬行李、訂飯店、趕行程，只要吹海風、看表演、吃美食就好',
-                  '一覺醒來，又是不同的國家、新奇的城市',
-                  '第一次就上癮，從此回不去的旅行方式',
-                  '不是在某個城市，就是在前往下一個城市的海上，醒來不知身在何處，卻每一天都期待',
-                  '上船那刻起，就沒有行程了',
-                  '別人在機場轉機，你在地中海看日落、在加勒比海喝調酒、在甲板上數星星，同樣的出發，不一樣的過法',
-                  '有一種旅行，是你睡著的時候，悄悄靠岸另一個國家，陌生的語言，夾雜熟悉的期待',
-                ];
-
-                const el = document.getElementById('quote-text') as HTMLElement | null;
-                if (!el) return;
-
-                // Shuffle once for random order
-                const shuffled = [...quotes].sort(() => Math.random() - 0.5);
-                let idx = 0;
-
-                const show = (text: string) => {
-                  // Slide out to left
-                  el.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
-                  el.style.opacity = '0';
-                  el.style.transform = 'translateX(-12px)';
-
-                  setTimeout(() => {
-                    el.textContent = text;
-                    // Reset to right, then slide in to center
-                    el.style.transition = 'none';
-                    el.style.transform = 'translateX(16px)';
-                    el.style.opacity = '0';
-
-                    requestAnimationFrame(() => {
-                      requestAnimationFrame(() => {
-                        el.style.transition = 'opacity 0.55s ease, transform 0.55s ease';
-                        el.style.opacity = '1';
-                        el.style.transform = 'translateX(0)';
-                      });
-                    });
-                  }, 420);
-                };
-
-                // Initial display
-                show(shuffled[idx]);
-
-                setInterval(() => {
-                  idx = (idx + 1) % shuffled.length;
-                  show(shuffled[idx]);
-                }, 5000);
-              })();
-            </script>
-          </div>
-
-          <!-- CARD 4: col-2 row-3 only — protrudes left by 50% -->
-          {featuredGrid[3] && (
-            <a
-              href={featuredGrid[3].url}
-              class="ocean-event-card group relative z-[1] overflow-hidden rounded-2xl h-40
-                     md:col-start-2 md:row-start-3 md:h-auto
-                     md:-ml-[50%] md:w-[150%]"
-              style="box-shadow: 0 6px 28px rgba(6,21,86,0.15), 0 1px 4px rgba(6,21,86,0.08);"
-              data-enter="up"
-              data-enter-delay="820"
-            >
-              {featuredGrid[3].image ? (
-                <img
-                  src={featuredGrid[3].image}
-                  alt={featuredGrid[3].title}
-                  width="480"
-                  height="190"
-                  loading="lazy"
-                  class="ocean-event-card__img absolute inset-0 h-full w-full object-cover"
-                />
-              ) : (
-                <div class="absolute inset-0 bg-gradient-to-br from-[#061556] via-[#0a2a6e] to-[#0073BB]/80" />
-              )}
-              <div class="absolute inset-0 bg-gradient-to-t from-[#061556]/94 via-[#061556]/40 to-transparent" />
-              <div class="absolute inset-0 flex flex-col items-start justify-end p-5 md:p-6">
-                <span class="mb-2 inline-block rounded-full bg-[#0073BB] px-3 py-1 text-[12px] font-semibold text-white">
-                  {featuredGrid[3].category}
+  <!-- Hero 登船證：設計稿靜態品牌形象 -->
+  <div class="c-hero" style="margin:40px 56px 0">
+    <div class="tband">
+      <div class="ticket">
+        <div class="tmain">
+          <div class="tkhd"><span>BOARDING PASS · 登船證</span><span style="opacity:.65">ROYAL CRUISER</span></div>
+          <div class="tbody">
+            <img class="tship" src="/assets/ship-blueprint.png" alt="皇家加勒比遊輪藍圖線稿" />
+            <div class="tin">
+              <div class="coderow" style="gap:44px">
+                <span><span class="codelbl">PASSENGER</span><span class="codeval" style="display:block">每一位喜愛遊輪的華人旅人</span></span>
+                <span><span class="codelbl">CLASS</span><span class="codeval" style="display:block">海景陽台艙</span></span>
+              </div>
+              <h1 class="bph1 srf" style="font-size:44px;margin:18px 0 24px">上船那一刻起，就沒有行程。</h1>
+              <div class="route" style="max-width:540px">
+                <span><span class="rl">FROM</span><span class="rc" style="display:block;font-size:30px">TAIWAN</span><span class="rsub">基隆 KEELUNG</span></span>
+                <span class="rline">
+                  <span class="rdot"></span><span class="rdash"></span>
+                  <svg width="42" height="28" viewBox="0 0 46 30" fill="none" aria-hidden="true">
+                    <path d="M6 20 L40 20 L35 27 L10 27 Z" fill="#0B2A4A"></path>
+                    <path d="M12 15 L32 15 L32 20 L12 20 Z" fill="#0B2A4A"></path>
+                    <path d="M16 10 L27 10 L27 15 L16 15 Z" fill="#0B2A4A"></path>
+                    <rect x="20" y="4" width="4" height="6" fill="#0B2A4A"></rect>
+                    <circle cx="15" cy="17.5" r="1.1" fill="#EDF4FA"></circle>
+                    <circle cx="20" cy="17.5" r="1.1" fill="#EDF4FA"></circle>
+                    <circle cx="25" cy="17.5" r="1.1" fill="#EDF4FA"></circle>
+                    <circle cx="30" cy="17.5" r="1.1" fill="#EDF4FA"></circle>
+                  </svg>
+                  <span class="rdash"></span><span class="rdot"></span>
                 </span>
-                <div class="flex w-full items-end justify-between gap-3">
-                  <h3 class="line-clamp-2 font-serif font-semibold leading-[1.45] text-white text-sm md:text-base">
-                    {featuredGrid[3].title}
-                  </h3>
-                  <span
-                    class="shrink-0 rounded-full border border-white/50 px-3 py-1 text-[10px] font-semibold text-white transition-all duration-200 group-hover:bg-[#0073BB] group-hover:border-[#0073BB]"
-                  >閱讀</span>
-                </div>
+                <span style="text-align:right"><span class="rl">TO</span><span class="rc" style="display:block;font-size:30px">ALASKA</span><span class="rsub">阿拉斯加</span></span>
               </div>
+            </div>
+          </div>
+          <div class="tfoot">
+            <div class="coderow" style="gap:40px">
+              <span><span class="codelbl">DECK</span><span class="codeval mono" style="display:block">05</span></span>
+              <span><span class="codelbl">GATE</span><span class="codeval mono" style="display:block">12</span></span>
+              <span><span class="codelbl">YEAR</span><span class="codeval mono" style="display:block">2026</span></span>
+            </div>
+            <span class="tnote">開航前 60 分鐘停止登船 · GATE CLOSES 60 MIN BEFORE DEPARTURE</span>
+            <span class="bar" style="width:180px;height:28px"></span>
+          </div>
+        </div>
+        <div class="tstub">
+          <span class="snotch" style="top:-16px"></span><span class="snotch" style="bottom:-16px"></span>
+          <div class="tkhd tkhd2"><span>JOURNAL</span><span style="opacity:.65">皇家旅人誌</span></div>
+          <div class="tsbody">
+            <span><span class="codelbl">PASSENGER</span><span class="codeval" style="display:block">華人旅人 CN TRAVELER</span></span>
+            <span class="fx gap24">
+              <span><span class="codelbl">FROM</span><span class="codeval" style="display:block">TAIWAN</span></span>
+              <span><span class="codelbl">TO</span><span class="codeval" style="display:block">ALASKA</span></span>
+            </span>
+            <span class="fx gap24">
+              <span><span class="codelbl">DECK</span><span class="codeval mono" style="display:block">05</span></span>
+              <span><span class="codelbl">GATE</span><span class="codeval mono" style="display:block">12</span></span>
+              <span><span class="codelbl">YEAR</span><span class="codeval mono" style="display:block">2026</span></span>
+            </span>
+            <span class="ex2" style="font-size:12.5px;margin-top:auto">專為全球華人而寫的皇家加勒比遊輪誌——航線情報、實戰攻略與海上生活。</span>
+            <span class="bar" style="height:30px;display:block"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 精選遊輪活動 -->
+  <div class="a-sec">
+    <div class="a-head">
+      <div>
+        <div class="ovl">Featured Cruises · 第一手航線情報</div>
+        <h2 class="a-h2 srf">精選遊輪活動</h2>
+      </div>
+      <a class="alink" href={featuredViewAll}>查看全部 →</a>
+    </div>
+    {
+      featuredLead ? (
+        <div class="a-grid">
+          <a href={newArticleUrl(featuredLead.id)} style="text-decoration:none;color:inherit">
+            <div class="a-leadimg zi">
+              <img class="ph" src={postImage(featuredLead.image)} alt={featuredLead.title} />
+            </div>
+            <div class="fx ac gap12">
+              <span class="a-cat">{featuredLead.subPage || featuredLead.category}</span>
+              <span class="a-date">{formatDate(featuredLead.date)}</span>
+            </div>
+            <h3 class="a-h3 srf">{featuredLead.title}</h3>
+            {featuredLead.excerpt && <p class="a-ex">{featuredLead.excerpt}</p>}
+            <span class="alink">閱讀全文 →</span>
+          </a>
+          <div>
+            {
+              featuredRows.map((post, index) => (
+                <a
+                  class="a-row"
+                  href={newArticleUrl(post.id)}
+                  style={[
+                    index === 0 ? 'border-top:none;padding-top:0' : '',
+                    index === featuredRows.length - 1 ? 'border-bottom:1px solid rgba(11,42,74,.16)' : '',
+                  ].filter(Boolean).join(';') || undefined}
+                >
+                  <span class="a-num srf">{padNum(index + 1)}</span>
+                  <span>
+                    <span class="a-cat">{post.subPage || post.category}</span>
+                    <span class="a-rt srf" style="display:block">{post.title}</span>
+                    <span class="a-date">{formatDate(post.date)}</span>
+                  </span>
+                  <span class="a-thumb zi">
+                    <img class="ph" src={postImage(post.image)} alt={post.title} />
+                  </span>
+                </a>
+              ))
+            }
+          </div>
+        </div>
+      ) : (
+        <p class="a-ex">尚無精選文章，敬請期待。</p>
+      )
+    }
+  </div>
+
+  <div class="main2">
+    <div>
+      <!-- 熱門文章 -->
+      <div class="sec-head" style="margin-top:0">
+        <div>
+          <div class="ovl">Trending Now · 旅人們最近熱讀</div>
+          <h2 class="a-h2 srf">熱門文章</h2>
+        </div>
+        <a class="alink" href="/category/latest-news">查看全部 →</a>
+      </div>
+      {
+        trendingLead ? (
+          <>
+            <a class="t-lead" href={newArticleUrl(trendingLead.id)}>
+              <span class="t-leadimg zi" style="display:block">
+                <img class="ph" src={postImage(trendingLead.image)} alt={trendingLead.title} />
+              </span>
+              <span>
+                <span class="fx ac gap12">
+                  <span class="a-cat">Trending · {trendingLead.subPage || trendingLead.category}</span>
+                  <span class="a-date">{formatDate(trendingLead.date)}</span>
+                </span>
+                <span class="a-h3 srf" style="display:block;font-size:25px">{trendingLead.title}</span>
+                {trendingLead.excerpt && <span class="a-ex" style="display:block">{trendingLead.excerpt}</span>}
+                <span class="alink">閱讀全文 →</span>
+              </span>
             </a>
-          )}
+            {
+              trendingCells.length > 0 && (
+                <div class="t-grid" style="margin-top:36px">
+                  {
+                    trendingCells.map((post) => (
+                      <a class="t-cell" href={newArticleUrl(post.id)}>
+                        <span>
+                          <span class="a-cat">{post.subPage || post.category}</span>
+                          <span class="l-t">{post.title}</span>
+                          <span class="a-date">{formatDate(post.date)}</span>
+                        </span>
+                        <span class="t-thumb zi">
+                          <img class="ph" src={postImage(post.image)} alt={post.title} />
+                        </span>
+                      </a>
+                    ))
+                  }
+                </div>
+              )
+            }
+          </>
+        ) : (
+          <p class="a-ex">尚無熱門文章，敬請期待。</p>
+        )
+      }
 
+      <!-- 最新文章 -->
+      <div class="sec-head">
+        <div>
+          <div class="ovl">Latest Stories · 刷新的旅遊筆記</div>
+          <h2 class="a-h2 srf">最新文章</h2>
         </div>
+        <a class="alink" href="/category/route-news">查看全部 →</a>
       </div>
-    </section>
-
-    <!-- TRENDING — asymmetric: 1 feature + 2 offset cards -->
-    <section class="mb-12 md:mb-16" aria-labelledby="section-trending">
-      <SectionHeader
-        eyebrow="Trending Now"
-        title="熱門文章"
-        lead="旅人們最近最常閱讀的航程心得與攻略，從新手入門到進階玩法。"
-        href="/latest-news"
-        accent="blue"
-      />
-      <div class="flex flex-col gap-5">
-        {trending[0] && (
-          <div data-reveal="fade" data-reveal-delay="0">
-            <PostCard {...trending[0]} variant="feature" />
+      {
+        latestPosts.length > 0 ? (
+          <div class="l-grid">
+            {
+              latestPosts.map((post, index) => (
+                <a
+                  class="l-row"
+                  href={newArticleUrl(post.id)}
+                  style={index < 2 ? 'border-top:none;padding-top:0' : undefined}
+                >
+                  <span class="l-thumb zi">
+                    <img class="ph" src={postImage(post.image)} alt={post.title} />
+                  </span>
+                  <span>
+                    <span class="a-cat">{post.subPage || post.category}</span>
+                    <span class="l-t">{post.title}</span>
+                    <span class="a-date">{formatDate(post.date)}</span>
+                  </span>
+                </a>
+              ))
+            }
           </div>
-        )}
-        <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:items-stretch">
-          {trending[1] && (
-            <div
-              data-reveal="scale"
-              data-reveal-delay="120"
-              class="sm:col-start-1 sm:row-start-1"
-            >
-              <PostCard {...trending[1]} />
-            </div>
-          )}
+        ) : (
+          <p class="a-ex">尚無最新文章，敬請期待。</p>
+        )
+      }
+    </div>
 
-          {trending[2] && (
-            <div
-              data-reveal="scale"
-              data-reveal-delay="240"
-              class="sm:col-start-2 sm:row-start-1 sm:mt-6"
-            >
-              <PostCard {...trending[2]} />
-            </div>
-          )}
-
-          {trending[3] && (
-            <div
-              data-reveal="scale"
-              data-reveal-delay="360"
-              class="sm:col-start-1 sm:row-start-2"
-            >
-              <PostCard {...trending[3]} />
-            </div>
-          )}
-
-          {/* Side post — row 2 right; offset down to mirror left/right stagger */}
-          <div class="sm:col-start-2 sm:row-start-2 sm:mt-6">
-            {trending[4] && (
-              <div data-reveal="scale" data-reveal-delay="480">
-                <PostCard {...trending[4]} />
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- LATEST STORIES — editorial two-column list -->
-    <section class="mb-12 md:mb-16" aria-labelledby="section-latest">
-      <div
-        class="card-surface relative overflow-hidden rounded-3xl p-6 md:p-8"
-        style="background: rgba(255,255,255,0.82); box-shadow: 0 1px 3px rgba(6,21,86,0.06), 0 8px 32px rgba(6,21,86,0.07); backdrop-filter: blur(12px);"
-        data-reveal="fade"
-      >
-        <SectionHeader
-          eyebrow="Latest Stories"
-          title="最新文章"
-          lead="剛更新的旅遊筆記與航程資訊，保持你對皇家加勒比的最新了解。"
-          href="/route-news"
-          accent="blue"
-        />
-        <div class="grid grid-cols-1 sm:grid-cols-2 sm:divide-x sm:divide-[#E8EEF4]">
-          <div class="divide-y divide-[#E8EEF4] sm:pr-6">
-            {latestPosts.slice(0, 2).map((post, i) => (
-              <div class="group relative py-4 first:pt-0 last:pb-0">
-                <span
-                  class="pointer-events-none absolute -left-1 top-4 hidden font-serif text-[2.5rem] font-bold leading-none text-[#061556]/[0.06] sm:block"
-                  aria-hidden="true"
-                >{String(i + 1).padStart(2, '0')}</span>
-                <PostCard {...post} variant="list" />
-              </div>
-            ))}
-          </div>
-          <div class="divide-y divide-[#E8EEF4] border-t border-[#E8EEF4] pt-4 sm:border-0 sm:pl-6 sm:pt-0">
-            {latestPosts.slice(2, 4).map((post, i) => (
-              <div class="group relative py-4 first:pt-0 last:pb-0">
-                <span
-                  class="pointer-events-none absolute -left-1 top-4 hidden font-serif text-[2.5rem] font-bold leading-none text-[#061556]/[0.06] sm:block"
-                  aria-hidden="true"
-                >{String(i + 3).padStart(2, '0')}</span>
-                <PostCard {...post} variant="list" />
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </section>
-
-  </ContentLayout>
-</BaseLayout>
+    <HomePageSidebar />
+  </div>
+</NewLayout>

@@ -1,0 +1,95 @@
+---
+import { siteAuthor } from '../data/site-author';
+import { getCategoryHrefBySubPage } from '../data/new-layout-nav';
+import { mapArticleBodyHtml, estimateReadMinutes } from '../lib/map-article-body';
+import { newArticleUrl, newHomeUrl } from '../lib/new-article-url';
+import { getPosts } from '../lib/notion';
+import type { Post } from '../lib/notion';
+
+interface Props {
+  post: Post;
+}
+
+const { post } = Astro.props;
+const mappedBody = mapArticleBodyHtml(post.body);
+const readMinutes = estimateReadMinutes(post.excerpt, post.body);
+const categoryHref = getCategoryHrefBySubPage(post.subPage || post.category);
+const postImage = post.image ?? '/assets/ships.png';
+
+const formattedDate = post.date
+  ? new Date(post.date).toLocaleDateString('zh-TW', { year: 'numeric', month: '2-digit', day: '2-digit' })
+  : '';
+
+const allPosts = await getPosts();
+const relatedPosts = allPosts
+  .filter((p) => p.category === post.category && p.id !== post.id)
+  .slice(0, 3);
+---
+
+<div class="crumb">
+  <a href={newHomeUrl}>首頁</a><span>/</span>
+  <a href={categoryHref}>{post.subPage || post.category}</a><span>/</span>
+  <span class="crumb-title">{post.title}</span>
+</div>
+
+<div class="ah">
+  <span class="stamp">{post.subPage || post.category}</span>
+  <h1 class="ah1 srf">{post.title}</h1>
+  <div class="ameta">
+    <span>{formattedDate}</span><span>·</span>
+    <span>{post.author || '皇家旅人'}</span><span>·</span>
+    <span>閱讀約 {readMinutes} 分鐘</span>
+  </div>
+</div>
+
+{post.image && (
+  <div class="aheroimg zi">
+    <img class="ph" src={postImage} alt={post.title} />
+  </div>
+)}
+
+<div class="abody">
+  {post.excerpt && <p>{post.excerpt}</p>}
+  {mappedBody && <div set:html={mappedBody} />}
+
+  <div class="authbox">
+    <span class="avat srf">{siteAuthor.name.slice(0, 1)}</span>
+    <span>
+      <span class="fw7 fs15 navy">{siteAuthor.name} · {siteAuthor.tagline}</span>
+      <span class="sbp" style="display:block;margin-top:8px">{siteAuthor.bio}</span>
+    </span>
+  </div>
+
+  {
+    relatedPosts.length > 0 && (
+      <>
+        <div class="sec-head" style="margin-top:64px">
+          <div>
+            <div class="ovl">Related · 延伸閱讀</div>
+            <h2 class="a-h2 srf" style="font-size:32px">相關文章</h2>
+          </div>
+        </div>
+        <div class="l-grid">
+          {
+            relatedPosts.map((related, index) => (
+              <a
+                class="l-row"
+                href={newArticleUrl(related.id)}
+                style={index < 2 ? 'border-top:none;padding-top:0' : undefined}
+              >
+                <span class="l-thumb zi">
+                  <img class="ph" src={related.image ?? '/assets/ships.png'} alt={related.title} />
+                </span>
+                <span>
+                  <span class="a-cat">{related.subPage || related.category}</span>
+                  <span class="l-t">{related.title}</span>
+                  <span class="a-date">{related.date?.slice(0, 10)}</span>
+                </span>
+              </a>
+            ))
+          }
+        </div>
+      </>
+    )
+  }
+</div>

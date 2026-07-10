@@ -1,0 +1,174 @@
+---
+import { siteAuthor } from '../data/site-author';
+import { getAllPosts } from '../lib/notion';
+import { getCategoryCounts } from '../lib/category-counts';
+
+const categoryCounts = getCategoryCounts(await getAllPosts()).filter((cat) => cat.count > 0);
+---
+
+<aside>
+  <div class="sb" style="border-top:2px solid #0B2A4A">
+    <div class="sbh"><span class="sbt srf">關於我</span><span class="ovl">About</span></div>
+    <p class="sbp">{siteAuthor.bio}</p>
+    <a class="alink fs13" href={siteAuthor.aboutUrl} style="display:inline-block;margin-top:14px">了解更多 →</a>
+  </div>
+  <div class="sb">
+    <div class="sbh"><span class="sbt srf">聯絡我們</span><span class="ovl">Contact</span></div>
+    <p class="sbp">想知道什麼遊輪資訊，對於網站有什麼指教，都請不吝告訴我。</p>
+    <button type="button" class="obtn" data-contact-open style="margin-top:16px;border:none;cursor:pointer;font-family:inherit">聯絡我們</button>
+  </div>
+  <div class="sb">
+    <div class="sbh"><span class="sbt srf">訂閱電子報</span><span class="ovl">Newsletter</span></div>
+    <p class="sbp">分享皇家加勒比遊輪的搶船攻略、航線情報與旅人心得，千萬不可錯過。</p>
+    <div class="fx gap8" style="margin-top:16px">
+      <input id="home-newsletter-email" class="inp" type="email" placeholder="在這填入 Email" required />
+      <button id="home-newsletter-btn" class="btn" type="button">訂閱</button>
+    </div>
+    <p id="home-newsletter-msg" class="fs13 mt8" style="display:none"></p>
+  </div>
+  <div class="sb">
+    <div class="sbh"><span class="sbt srf">站內搜尋</span><span class="ovl">Search</span></div>
+    <div id="home-search" style="margin-top:16px">
+      <form class="fx gap8" action="/search" method="get" data-search-fallback>
+        <input class="inp" type="text" name="q" placeholder="輸入關鍵字…" />
+        <button class="btn" type="submit">搜尋</button>
+      </form>
+    </div>
+  </div>
+  <div class="sb">
+    <div class="sbh"><span class="sbt srf">文章分類</span><span class="ovl">Categories</span></div>
+    <div class="mt12">
+      {
+        categoryCounts.map(({ label, href, count }) => (
+          <a class="catrow" href={href}>
+            <span>{label}</span>
+            <span class="catn">{count}</span>
+          </a>
+        ))
+      }
+    </div>
+  </div>
+</aside>
+
+<link rel="stylesheet" href="/pagefind/pagefind-ui.css" />
+<script src="/pagefind/pagefind-ui.js" data-home-pagefind is:inline></script>
+
+<script>
+  const nlBtn = document.getElementById('home-newsletter-btn');
+  const nlInput = document.getElementById('home-newsletter-email') as HTMLInputElement | null;
+  const nlMsg = document.getElementById('home-newsletter-msg');
+
+  nlBtn?.addEventListener('click', async () => {
+    const email = nlInput?.value.trim() ?? '';
+    if (!email || !email.includes('@')) {
+      if (nlMsg) {
+        nlMsg.textContent = '請輸入有效的 Email';
+        nlMsg.style.display = 'block';
+        nlMsg.style.color = '#c82014';
+      }
+      return;
+    }
+
+    if (nlBtn) {
+      nlBtn.textContent = '送出中…';
+      nlBtn.setAttribute('disabled', 'true');
+    }
+    if (nlMsg) nlMsg.style.display = 'none';
+
+    try {
+      const formData = new FormData();
+      formData.append('email', email);
+      const res = await fetch('/api/newsletter', { method: 'POST', body: formData });
+      const data = await res.json();
+
+      if (!res.ok || !data.ok) {
+        if (nlMsg) {
+          nlMsg.textContent = data.error ?? '發生錯誤，請稍後再試';
+          nlMsg.style.display = 'block';
+          nlMsg.style.color = '#c82014';
+        }
+        if (nlBtn) nlBtn.textContent = '訂閱';
+        return;
+      }
+
+      if (nlMsg) {
+        nlMsg.textContent = data.message ?? '訂閱成功！感謝你的支持。';
+        nlMsg.style.display = 'block';
+        nlMsg.style.color = '#2A628F';
+      }
+      if (nlInput) nlInput.value = '';
+      if (nlBtn) nlBtn.textContent = '已訂閱';
+    } catch {
+      if (nlMsg) {
+        nlMsg.textContent = '網路連線異常，請確認網路後再試。';
+        nlMsg.style.display = 'block';
+        nlMsg.style.color = '#c82014';
+      }
+      if (nlBtn) nlBtn.textContent = '訂閱';
+    } finally {
+      nlBtn?.removeAttribute('disabled');
+    }
+  });
+</script>
+
+<script is:inline>
+  function initHomePagefind() {
+    if (!window.PagefindUI) return false;
+    const root = document.getElementById('home-search');
+    if (!root || root.dataset.pagefindInit === '1') return true;
+
+    root.innerHTML = '';
+    new window.PagefindUI({
+      element: '#home-search',
+      showImages: false,
+      translations: {
+        placeholder: '輸入關鍵字…',
+        zero_results: '找不到相關文章',
+      },
+    });
+    root.dataset.pagefindInit = '1';
+    return true;
+  }
+
+  function bootHomePagefind() {
+    if (initHomePagefind()) return;
+    const script = document.querySelector('script[data-home-pagefind]');
+    if (!script || script.dataset.bound === '1') return;
+    script.dataset.bound = '1';
+    script.addEventListener('load', () => initHomePagefind());
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', bootHomePagefind);
+  } else {
+    bootHomePagefind();
+  }
+</script>
+
+<style is:global>
+  #home-search .pagefind-ui {
+    width: 100%;
+  }
+  #home-search .pagefind-ui__form {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+  }
+  #home-search .pagefind-ui__search-input {
+    flex: 1;
+    min-width: 0;
+    border: 1px solid rgba(11, 42, 74, 0.3);
+    padding: 10px 14px;
+    font-size: 13px;
+    background: transparent;
+    font-family: inherit;
+    color: #0b2a4a;
+    outline: none;
+  }
+  #home-search .pagefind-ui__search-input:focus {
+    border-color: #0b2a4a;
+  }
+  #home-search .pagefind-ui__search-input::placeholder {
+    color: #8aa3b9;
+  }
+</style>

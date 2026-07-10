@@ -1,5 +1,7 @@
 ---
-import PostLayout from '../../layouts/PostLayout.astro';
+import NewLayout from '../../layouts/NewLayout.astro';
+import NewArticleView from '../../components/NewArticleView.astro';
+import { categoryEntries } from '../../data/new-layout-nav';
 import { getAllPosts, getPostById } from '../../lib/notion';
 
 export async function getStaticPaths() {
@@ -12,25 +14,21 @@ export async function getStaticPaths() {
 
 const { id } = Astro.params;
 const { post: staticPost } = Astro.props;
-
-// Use prop from getStaticPaths, or fetch individually as fallback
 const post = staticPost ?? (await getPostById(id!));
 
 if (!post) {
   return Astro.redirect('/');
 }
+
+const navEntry = categoryEntries.find(
+  (e) => e.subPage === post.subPage || e.subPage === post.category,
+);
 ---
 
-<PostLayout
-  id={post.id}
-  category={post.category}
-  title={post.title}
-  excerpt={post.excerpt}
-  image={post.image}
-  date={post.date}
-  author={post.author}
-  comments={post.comments}
-  likes={post.likes}
-  body={post.body}
-  showTOC={post.showTOC}
-/>
+<NewLayout
+  title={`${post.title} — 皇家旅人`}
+  description={post.excerpt}
+  navActive={navEntry?.navActiveKey ?? ''}
+>
+  <NewArticleView post={post} />
+</NewLayout>

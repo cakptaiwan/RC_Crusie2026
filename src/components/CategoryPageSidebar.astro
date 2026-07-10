@@ -1,0 +1,58 @@
+---
+import { siteAuthor } from '../data/site-author';
+import { getAllPosts } from '../lib/notion';
+import { getCategoryCounts } from '../lib/category-counts';
+
+interface Props {
+  currentSlug?: string;
+}
+
+const { currentSlug } = Astro.props;
+const categoryCounts = getCategoryCounts(await getAllPosts()).filter((cat) => cat.count > 0);
+---
+
+<aside>
+  <div class="sb" style="border-top:2px solid #0B2A4A">
+    <div class="sbh"><span class="sbt srf">關於我</span><span class="ovl">About</span></div>
+    <p class="sbp">{siteAuthor.bio}</p>
+    <a class="alink fs13" href={siteAuthor.aboutUrl} style="display:inline-block;margin-top:14px">了解更多 →</a>
+  </div>
+  <div class="sb">
+    <div class="sbh"><span class="sbt srf">聯絡我們</span><span class="ovl">Contact</span></div>
+    <p class="sbp">想知道什麼遊輪資訊，對於網站有什麼指教，都請不吝告訴我。</p>
+    <button type="button" class="obtn" data-contact-open style="margin-top:16px;border:none;cursor:pointer;font-family:inherit">聯絡我們</button>
+  </div>
+  <div class="sb">
+    <div class="sbh"><span class="sbt srf">訂閱電子報</span><span class="ovl">Newsletter</span></div>
+    <p class="sbp">分享皇家加勒比遊輪的搶船攻略、航線情報與旅人心得，千萬不可錯過。</p>
+    <form class="fx gap8" style="margin-top:16px" action="/newsletter" method="get">
+      <input class="inp" type="email" name="email" placeholder="在這填入 Email" required />
+      <button class="btn" type="submit">訂閱</button>
+    </form>
+  </div>
+  <div class="sb">
+    <div class="sbh"><span class="sbt srf">站內搜尋</span><span class="ovl">Search</span></div>
+    <form class="fx gap8" style="margin-top:16px" action="/search" method="get">
+      <input class="inp" type="text" name="q" placeholder="輸入關鍵字…" />
+      <button class="btn" type="submit">搜尋</button>
+    </form>
+  </div>
+  <div class="sb">
+    <div class="sbh"><span class="sbt srf">文章分類</span><span class="ovl">Categories</span></div>
+    <div class="mt12">
+      {
+        categoryCounts.map(({ slug, label, href, count }) => (
+          <a
+            class="catrow"
+            href={href}
+            aria-current={slug === currentSlug ? 'page' : undefined}
+            style={slug === currentSlug ? 'color:#0B2A4A;font-weight:600' : undefined}
+          >
+            <span>{label}</span>
+            <span class="catn">{count}</span>
+          </a>
+        ))
+      }
+    </div>
+  </div>
+</aside>

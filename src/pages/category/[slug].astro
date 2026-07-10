@@ -1,0 +1,104 @@
+---
+import NewLayout from '../../layouts/NewLayout.astro';
+import CategoryPageSidebar from '../../components/CategoryPageSidebar.astro';
+import {
+  categoryEntries,
+  categoryOvlLabel,
+  type CategoryEntry,
+} from '../../data/new-layout-nav';
+import { getPosts } from '../../lib/notion';
+import { newArticleUrl, newHomeUrl } from '../../lib/new-article-url';
+
+export async function getStaticPaths() {
+  return categoryEntries.map((category) => ({
+    params: { slug: category.slug },
+    props: { category },
+  }));
+}
+
+interface Props {
+  category: CategoryEntry;
+}
+
+const { category } = Astro.props;
+const posts = await getPosts(category.page, category.subPage);
+const [leadPost, ...restPosts] = posts;
+
+const formatDate = (date: string) => (date ? date.slice(0, 10) : '');
+const postImage = (image: string | null) => image ?? '/assets/ships.png';
+const padNum = (n: number) => String(n).padStart(2, '0');
+---
+
+<NewLayout
+  title={`${category.label} — 皇家旅人`}
+  description={`${category.label}相關文章與皇家加勒比遊輪攻略。`}
+  navActive={category.navActiveKey}
+>
+  <div class="crumb">
+    <a href={newHomeUrl}>首頁</a><span>/</span><span>{category.label}</span>
+  </div>
+  <div class="main2" style="padding-top:26px">
+    <div>
+      <div class="sec-head" style="margin-top:0">
+        <div>
+          <div class="ovl">Category · {categoryOvlLabel(category.slug)}</div>
+          <h1 class="a-h2 srf">{category.label}</h1>
+        </div>
+        <span class="a-date" style="letter-spacing:.18em">共 {posts.length} 篇文章</span>
+      </div>
+
+      {
+        posts.length === 0 ? (
+          <p class="a-ex" style="margin-top:24px">尚無文章，敬請期待。</p>
+        ) : (
+          <>
+            <a class="t-lead" href={newArticleUrl(leadPost.id)}>
+              <span class="t-leadimg zi" style="display:block">
+                <img class="ph" src={postImage(leadPost.image)} alt={leadPost.title} />
+              </span>
+              <span>
+                <span class="fx ac gap12">
+                  <span class="a-cat">{category.label}</span>
+                  <span class="a-date">{formatDate(leadPost.date)}</span>
+                </span>
+                <span class="a-h3 srf" style="display:block;font-size:25px">{leadPost.title}</span>
+                {leadPost.excerpt && (
+                  <span class="a-ex" style="display:block">{leadPost.excerpt}</span>
+                )}
+                <span class="alink">閱讀全文 →</span>
+              </span>
+            </a>
+            {
+              restPosts.length > 0 && (
+                <div style="margin-top:36px">
+                  {
+                    restPosts.map((post, index) => (
+                      <a
+                        class="a-row"
+                        href={newArticleUrl(post.id)}
+                        style={index === restPosts.length - 1
+                          ? 'border-bottom:1px solid rgba(11,42,74,.16)'
+                          : undefined}
+                      >
+                        <span class="a-num srf">{padNum(index + 1)}</span>
+                        <span>
+                          <span class="a-cat">{category.label}</span>
+                          <span class="a-rt srf" style="display:block">{post.title}</span>
+                          <span class="a-date">{formatDate(post.date)}</span>
+                        </span>
+                        <span class="a-thumb zi">
+                          <img class="ph" src={postImage(post.image)} alt={post.title} />
+                        </span>
+                      </a>
+                    ))
+                  }
+                </div>
+              )
+            }
+          </>
+        )
+      }
+    </div>
+    <CategoryPageSidebar currentSlug={category.slug} />
+  </div>
+</NewLayout>
