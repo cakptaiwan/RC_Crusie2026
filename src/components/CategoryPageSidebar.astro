@@ -25,10 +25,11 @@ const categoryCounts = getCategoryCounts(await getAllPosts()).filter((cat) => ca
   <div class="sb">
     <div class="sbh"><span class="sbt srf">訂閱電子報</span><span class="ovl">Newsletter</span></div>
     <p class="sbp">分享皇家加勒比遊輪的搶船攻略、航線情報與旅人心得，千萬不可錯過。</p>
-    <form class="fx gap8" style="margin-top:16px" action="/newsletter" method="get">
-      <input class="inp" type="email" name="email" placeholder="在這填入 Email" required />
-      <button class="btn" type="submit">訂閱</button>
-    </form>
+    <div class="fx gap8" style="margin-top:16px">
+      <input id="category-newsletter-email" class="inp" type="email" placeholder="在這填入 Email" required />
+      <button id="category-newsletter-btn" class="btn" type="button">訂閱</button>
+    </div>
+    <p id="category-newsletter-msg" class="fs13 mt8" style="display:none"></p>
   </div>
   <div class="sb">
     <div class="sbh"><span class="sbt srf">站內搜尋</span><span class="ovl">Search</span></div>
@@ -56,3 +57,61 @@ const categoryCounts = getCategoryCounts(await getAllPosts()).filter((cat) => ca
     </div>
   </div>
 </aside>
+
+<script>
+  const nlBtn = document.getElementById('category-newsletter-btn');
+  const nlInput = document.getElementById('category-newsletter-email') as HTMLInputElement | null;
+  const nlMsg = document.getElementById('category-newsletter-msg');
+
+  nlBtn?.addEventListener('click', async () => {
+    const email = nlInput?.value.trim() ?? '';
+    if (!email || !email.includes('@')) {
+      if (nlMsg) {
+        nlMsg.textContent = '請輸入有效的 Email';
+        nlMsg.style.display = 'block';
+        nlMsg.style.color = '#c82014';
+      }
+      return;
+    }
+
+    if (nlBtn) {
+      nlBtn.textContent = '送出中…';
+      nlBtn.setAttribute('disabled', 'true');
+    }
+    if (nlMsg) nlMsg.style.display = 'none';
+
+    try {
+      const formData = new FormData();
+      formData.append('email', email);
+      const res = await fetch('/api/newsletter', { method: 'POST', body: formData });
+      const data = await res.json();
+
+      if (!res.ok || !data.ok) {
+        if (nlMsg) {
+          nlMsg.textContent = data.error ?? '發生錯誤，請稍後再試';
+          nlMsg.style.display = 'block';
+          nlMsg.style.color = '#c82014';
+        }
+        if (nlBtn) nlBtn.textContent = '訂閱';
+        return;
+      }
+
+      if (nlMsg) {
+        nlMsg.textContent = data.message ?? '訂閱成功！感謝你的支持。';
+        nlMsg.style.display = 'block';
+        nlMsg.style.color = '#2A628F';
+      }
+      if (nlInput) nlInput.value = '';
+      if (nlBtn) nlBtn.textContent = '已訂閱';
+    } catch {
+      if (nlMsg) {
+        nlMsg.textContent = '網路連線異常，請確認網路後再試。';
+        nlMsg.style.display = 'block';
+        nlMsg.style.color = '#c82014';
+      }
+      if (nlBtn) nlBtn.textContent = '訂閱';
+    } finally {
+      nlBtn?.removeAttribute('disabled');
+    }
+  });
+</script>
