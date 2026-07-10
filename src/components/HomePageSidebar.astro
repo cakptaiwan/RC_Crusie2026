@@ -146,23 +146,37 @@ const categoryCounts = getCategoryCounts(await getAllPosts()).filter((cat) => ca
 </script>
 
 <style is:global>
+  /* Pagefind 側欄搜尋框 — 對齊 NewLayout .inp 配色，覆寫 pagefind-ui reset */
   #home-search .pagefind-ui {
     width: 100%;
+    --pagefind-ui-text: #0b2a4a;
+    --pagefind-ui-background: #ffffff;
+    --pagefind-ui-scale: 1;
   }
   #home-search .pagefind-ui__form {
     display: flex;
     gap: 8px;
     width: 100%;
   }
+  #home-search .pagefind-ui__form::before {
+    display: none;
+  }
+  #home-search .pagefind-ui.pagefind-ui--reset .pagefind-ui__search-input,
   #home-search .pagefind-ui__search-input {
     flex: 1;
     min-width: 0;
+    box-sizing: border-box;
     border: 1px solid rgba(11, 42, 74, 0.3);
     padding: 10px 14px;
+    height: auto;
+    min-height: 0;
     font-size: 13px;
-    background: transparent;
+    font-weight: 500;
+    background-color: #fff;
     font-family: inherit;
     color: #0b2a4a;
+    -webkit-text-fill-color: #0b2a4a;
+    caret-color: #0b2a4a;
     outline: none;
   }
   #home-search .pagefind-ui__search-input:focus {
@@ -170,5 +184,6 @@ const categoryCounts = getCategoryCounts(await getAllPosts()).filter((cat) => ca
   }
   #home-search .pagefind-ui__search-input::placeholder {
     color: #8aa3b9;
+    opacity: 1;
   }
 </style>
