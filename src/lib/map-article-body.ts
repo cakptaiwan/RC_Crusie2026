@@ -51,6 +51,8 @@ export function mapArticleBodyHtml(rawHtml: string): string {
   out = out.replace(/<table(\s[^>]*)?>/gi, '<table class="tbl rev">');
   out = out.replace(/<th(\s[^>]*)?>/gi, '<th class="th">');
   out = out.replace(/<td(\s[^>]*)?>/gi, '<td class="td">');
+  out = out.replace(/<table class="tbl rev">/gi, '<div class="tbl-scroll rev"><table class="tbl rev">');
+  out = out.replace(/<\/table>/gi, '</table></div>');
 
   // quote → tip
   out = out.replace(/<blockquote(\s[^>]*)?>([\s\S]*?)<\/blockquote>/gi, '<div class="tip rev">$2</div>');
