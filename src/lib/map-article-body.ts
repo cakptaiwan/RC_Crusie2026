@@ -1,4 +1,5 @@
 import { sanitizeBodyHtml } from './sanitize-body';
+import { optimizeCloudinaryInHtml } from './cloudinary-image';
 
 /**
  * Notion Block（marked HTML）→ design handoff 文章內文 class 對應層。
@@ -64,6 +65,9 @@ export function mapArticleBodyHtml(rawHtml: string): string {
   // lists（callout 內已處理 .kul/.kli，其餘 ul/li 補 class）
   out = out.replace(/<ul(\s[^>]*)?>/gi, (tag) => (tag.includes('class=') ? tag : '<ul class="kul">'));
   out = out.replace(/<li(?![^>]*class=)/gi, '<li class="kli"');
+
+  out = optimizeCloudinaryInHtml(out, 800);
+  out = out.replace(/<img(?![^>]*\bloading=)/gi, '<img loading="lazy"');
 
   return out;
 }

@@ -3,6 +3,7 @@ import NewLayout from '../layouts/NewLayout.astro';
 import HomePageSidebar from '../components/HomePageSidebar.astro';
 import { getCategoryHrefBySubPage } from '../data/new-layout-nav';
 import { newArticleUrl } from '../lib/new-article-url';
+import { postImage } from '../lib/cloudinary-image';
 import { getAllPosts, getFeaturedPosts, getPosts } from '../lib/notion';
 import type { Post } from '../lib/notion';
 
@@ -31,7 +32,6 @@ const featuredViewAll = featuredLead
   : '/category/onboard-activities';
 
 const formatDate = (date: string) => (date ? date.slice(0, 10) : '');
-const postImage = (image: string | null) => image ?? '/assets/ships.png';
 const padNum = (n: number) => String(n).padStart(2, '0');
 ---
 
@@ -46,7 +46,10 @@ const padNum = (n: number) => String(n).padStart(2, '0');
         <div class="tmain">
           <div class="tkhd"><span>BOARDING PASS · 登船證</span><span style="opacity:.65">ROYAL CRUISER</span></div>
           <div class="tbody">
-            <img class="tship" src="/assets/ship-blueprint.png" alt="皇家加勒比遊輪藍圖線稿" />
+            <picture>
+              <source srcset="/assets/ship-blueprint.webp" type="image/webp" />
+              <img class="tship" src="/assets/ship-blueprint.png" alt="皇家加勒比遊輪藍圖線稿" fetchpriority="high" />
+            </picture>
             <div class="tin">
               <div class="coderow" style="gap:44px">
                 <span><span class="codelbl">PASSENGER</span><span class="codeval" style="display:block">每一位喜愛遊輪的華人旅人</span></span>
@@ -119,7 +122,7 @@ const padNum = (n: number) => String(n).padStart(2, '0');
         <div class="a-grid">
           <a class="a-lead" href={newArticleUrl(featuredLead.id)} style="text-decoration:none;color:inherit">
             <div class="a-leadimg zi rev rev-l">
-              <img class="ph" src={postImage(featuredLead.image)} alt={featuredLead.title} />
+              <img class="ph" src={postImage(featuredLead.image, 'lead')} alt={featuredLead.title} />
             </div>
             <div class="lead-body rev">
               <div class="fx ac gap12">
@@ -149,7 +152,7 @@ const padNum = (n: number) => String(n).padStart(2, '0');
                     <span class="a-date">{formatDate(post.date)}</span>
                   </span>
                   <span class="a-thumb zi">
-                    <img class="ph" src={postImage(post.image)} alt={post.title} />
+                    <img class="ph" src={postImage(post.image, 'thumb')} alt={post.title} loading="lazy" />
                   </span>
                 </a>
               ))
@@ -177,7 +180,7 @@ const padNum = (n: number) => String(n).padStart(2, '0');
           <>
             <a class="t-lead" href={newArticleUrl(trendingLead.id)}>
               <span class="t-leadimg zi rev rev-l" style="display:block">
-                <img class="ph" src={postImage(trendingLead.image)} alt={trendingLead.title} />
+                <img class="ph" src={postImage(trendingLead.image, 'lead')} alt={trendingLead.title} loading="lazy" />
               </span>
               <span class="lead-body rev">
                 <span class="fx ac gap12">
@@ -201,7 +204,7 @@ const padNum = (n: number) => String(n).padStart(2, '0');
                           <span class="a-date">{formatDate(post.date)}</span>
                         </span>
                         <span class="t-thumb zi">
-                          <img class="ph" src={postImage(post.image)} alt={post.title} />
+                          <img class="ph" src={postImage(post.image, 'thumb')} alt={post.title} loading="lazy" />
                         </span>
                       </a>
                     ))
@@ -234,7 +237,7 @@ const padNum = (n: number) => String(n).padStart(2, '0');
                   style={index < 2 ? 'border-top:none;padding-top:0' : undefined}
                 >
                   <span class="l-thumb zi">
-                    <img class="ph" src={postImage(post.image)} alt={post.title} />
+                    <img class="ph" src={postImage(post.image, 'thumb')} alt={post.title} loading="lazy" />
                   </span>
                   <span>
                     <span class="a-cat">{post.subPage || post.category}</span>

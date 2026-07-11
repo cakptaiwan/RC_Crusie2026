@@ -8,6 +8,7 @@ import {
   type CategoryEntry,
 } from '../../data/new-layout-nav';
 import { getPosts } from '../../lib/notion';
+import { postImage } from '../../lib/cloudinary-image';
 import { newArticleUrl, newHomeUrl } from '../../lib/new-article-url';
 
 export async function getStaticPaths() {
@@ -31,7 +32,6 @@ const pageDescription = isTravelerStories
   : `${category.label}相關文章與皇家加勒比遊輪攻略。`;
 
 const formatDate = (date: string) => (date ? date.slice(0, 10) : '');
-const postImage = (image: string | null) => image ?? '/assets/ships.png';
 const padNum = (n: number) => String(n).padStart(2, '0');
 ---
 
@@ -74,7 +74,7 @@ const padNum = (n: number) => String(n).padStart(2, '0');
             }
             <a class="t-lead" href={newArticleUrl(leadPost.id)}>
               <span class="t-leadimg zi rev rev-l" style="display:block">
-                <img class="ph" src={postImage(leadPost.image)} alt={leadPost.title} />
+                <img class="ph" src={postImage(leadPost.image, 'lead')} alt={leadPost.title} />
               </span>
               <span class="lead-body rev">
                 <span class="fx ac gap12">
@@ -107,7 +107,7 @@ const padNum = (n: number) => String(n).padStart(2, '0');
                           <span class="a-date">{formatDate(post.date)}</span>
                         </span>
                         <span class="a-thumb zi">
-                          <img class="ph" src={postImage(post.image)} alt={post.title} />
+                          <img class="ph" src={postImage(post.image, 'thumb')} alt={post.title} loading="lazy" />
                         </span>
                       </a>
                     ))

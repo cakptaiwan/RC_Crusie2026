@@ -260,7 +260,7 @@ html,body{overflow-x:hidden}
 <div class="art">
 <nav class="a-nav">
 <input type="checkbox" id="nav-toggle" class="nav-toggle" aria-hidden="true">
-<a href={newHomeUrl} class="brand" style="text-decoration:none;color:inherit"><img class="logo" src="/assets/logo.png" alt="皇家旅人 Logo"><div class="wm srf"><span class="wm1">皇家旅人</span><span class="wm2">ROYAL CRUISER</span></div></a>
+<a href={newHomeUrl} class="brand" style="text-decoration:none;color:inherit"><picture><source srcset="/assets/logo.webp" type="image/webp" /><img class="logo" src="/assets/logo.png" alt="皇家旅人 Logo" width="42" height="42" /></picture><div class="wm srf"><span class="wm1">皇家旅人</span><span class="wm2">ROYAL CRUISER</span></div></a>
 <div class="a-links">
 {
   newLayoutNavSections.map((section) => (
@@ -302,7 +302,7 @@ html,body{overflow-x:hidden}
 <div class="ftgrid">
 <div class="ftc"><h4 class="fth">{footerCol1.label}</h4>{footerCol1.children.map((child) => <a class="ftl" href={categoryHref(child.slug)}>{child.label}</a>)}</div>
 <div class="ftc"><h4 class="fth">{footerCol2.label}</h4>{footerCol2.children.map((child) => <a class="ftl" href={categoryHref(child.slug)}>{child.label}</a>)}</div>
-<div class="ftbrand"><img class="logo" src="/assets/logo.png" alt="皇家旅人 Logo" style="width:56px;height:56px"><div class="wm srf" style="margin-top:14px"><span class="wm1">皇家旅人</span><span class="wm2" style="opacity:.75">ROYAL CRUISER</span></div><p class="wex fs13 mt12" style="line-height:1.9;max-width:280px">喜愛皇家加勒比遊輪的社群，寫給全球華人的航線情報、實戰攻略與海上生活。</p>
+<div class="ftbrand"><picture><source srcset="/assets/logo.webp" type="image/webp" /><img class="logo" src="/assets/logo.png" alt="皇家旅人 Logo" width="56" height="56" loading="lazy" /></picture><div class="wm srf" style="margin-top:14px"><span class="wm1">皇家旅人</span><span class="wm2" style="opacity:.75">ROYAL CRUISER</span></div><p class="wex fs13 mt12" style="line-height:1.9;max-width:280px">喜愛皇家加勒比遊輪的社群，寫給全球華人的航線情報、實戰攻略與海上生活。</p>
 <div class="fx ac gap10 mt16" style="color:#fff">
 <a href={fbLink.href} class="soc wsoc" target="_blank" rel="noopener noreferrer" aria-label={fbLink.label} style="text-decoration:none">
 <svg width="15" height="15" viewBox="0 0 24 24"><use href="#ic-fb"></use></svg>

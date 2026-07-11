@@ -2,6 +2,7 @@
 import { siteAuthor } from '../data/site-author';
 import { getCategoryHrefBySubPage } from '../data/new-layout-nav';
 import { mapArticleBodyHtml, estimateReadMinutes } from '../lib/map-article-body';
+import { postImage } from '../lib/cloudinary-image';
 import { newArticleUrl, newHomeUrl } from '../lib/new-article-url';
 import { getPosts } from '../lib/notion';
 import type { Post } from '../lib/notion';
@@ -14,7 +15,7 @@ const { post } = Astro.props;
 const mappedBody = mapArticleBodyHtml(post.body);
 const readMinutes = estimateReadMinutes(post.excerpt, post.body);
 const categoryHref = getCategoryHrefBySubPage(post.subPage || post.category);
-const postImage = post.image ?? '/assets/ships.png';
+const postImageUrl = postImage(post.image, 'hero');
 
 const formattedDate = post.date
   ? new Date(post.date).toLocaleDateString('zh-TW', { year: 'numeric', month: '2-digit', day: '2-digit' })
@@ -44,7 +45,7 @@ const relatedPosts = allPosts
 
 {post.image && (
   <div class="aheroimg zi rev">
-    <img class="ph" src={postImage} alt={post.title} />
+    <img class="ph" src={postImageUrl} alt={post.title} />
   </div>
 )}
 
@@ -83,7 +84,7 @@ const relatedPosts = allPosts
                 style={index < 2 ? 'border-top:none;padding-top:0' : undefined}
               >
                 <span class="l-thumb zi">
-                  <img class="ph" src={related.image ?? '/assets/ships.png'} alt={related.title} />
+                  <img class="ph" src={postImage(related.image, 'thumb')} alt={related.title} loading="lazy" />
                 </span>
                 <span>
                   <span class="a-cat">{related.subPage || related.category}</span>
