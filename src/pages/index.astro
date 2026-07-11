@@ -122,7 +122,7 @@ const padNum = (n: number) => String(n).padStart(2, '0');
         <div class="a-grid">
           <a class="a-lead" href={newArticleUrl(featuredLead.id)} style="text-decoration:none;color:inherit">
             <div class="a-leadimg zi rev rev-l">
-              <img class="ph" src={postImage(featuredLead.image, 'lead')} alt={featuredLead.title} />
+              <img class="ph" src={postImage(featuredLead.image, 'lead')} alt={featuredLead.title} fetchpriority="high" />
             </div>
             <div class="lead-body rev">
               <div class="fx ac gap12">

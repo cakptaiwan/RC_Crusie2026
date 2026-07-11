@@ -74,7 +74,7 @@ const padNum = (n: number) => String(n).padStart(2, '0');
             }
             <a class="t-lead" href={newArticleUrl(leadPost.id)}>
               <span class="t-leadimg zi rev rev-l" style="display:block">
-                <img class="ph" src={postImage(leadPost.image, 'lead')} alt={leadPost.title} />
+                <img class="ph" src={postImage(leadPost.image, 'lead')} alt={leadPost.title} fetchpriority="high" />
               </span>
               <span class="lead-body rev">
                 <span class="fx ac gap12">

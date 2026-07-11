@@ -200,7 +200,7 @@ const relatedPosts = allPosts
               {relatedPosts.map((p) => (
                 <a href={p.url} class="group block rounded-lg border border-canvas-ceramic bg-white p-4 transition hover:border-blue-accent hover:shadow-sm">
                   {p.image && (
-                    <img src={p.image} alt={p.title} class="mb-3 h-32 w-full rounded object-cover" />
+                    <img src={p.image} alt={p.title} class="mb-3 h-32 w-full rounded object-cover" loading="lazy" />
                   )}
                   <p class="text-[13px] font-semibold text-ink group-hover:text-blue-accent line-clamp-2">{p.title}</p>
                   <p class="mt-1 text-[12px] text-ink-soft">{p.date}</p>

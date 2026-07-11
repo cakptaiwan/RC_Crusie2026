@@ -45,7 +45,7 @@ const relatedPosts = allPosts
 
 {post.image && (
   <div class="aheroimg zi rev">
-    <img class="ph" src={postImageUrl} alt={post.title} />
+    <img class="ph" src={postImageUrl} alt={post.title} fetchpriority="high" />
   </div>
 )}
 
