@@ -72,11 +72,11 @@ const padNum = (n: number) => String(n).padStart(2, '0');
                 </div>
               )
             }
-            <a class="t-lead rev-l" href={newArticleUrl(leadPost.id)}>
-              <span class="t-leadimg zi" style="display:block">
+            <a class="t-lead" href={newArticleUrl(leadPost.id)}>
+              <span class="t-leadimg zi rev rev-l" style="display:block">
                 <img class="ph" src={postImage(leadPost.image)} alt={leadPost.title} />
               </span>
-              <span>
+              <span class="lead-body rev">
                 <span class="fx ac gap12">
                   <span class="a-cat">{category.label}</span>
                   <span class="a-date">{formatDate(leadPost.date)}</span>
@@ -90,7 +90,7 @@ const padNum = (n: number) => String(n).padStart(2, '0');
             </a>
             {
               restPosts.length > 0 && (
-                <div class="rev-r" style="margin-top:36px">
+                <div class="rev rev-r" style="margin-top:36px">
                   {
                     restPosts.map((post, index) => (
                       <a

@@ -58,7 +58,7 @@ export function mapArticleBodyHtml(rawHtml: string): string {
   out = out.replace(/<blockquote(\s[^>]*)?>([\s\S]*?)<\/blockquote>/gi, '<div class="tip rev">$2</div>');
 
   // headings
-  out = out.replace(/<h2(\s[^>]*)?>/gi, '<h2 class="bh2 srf rev-l">');
+  out = out.replace(/<h2(\s[^>]*)?>/gi, '<h2 class="bh2 srf rev rev-l">');
   out = out.replace(/<h3(\s[^>]*)?>/gi, '<h3 class="bh3 srf">');
 
   // lists（callout 內已處理 .kul/.kli，其餘 ul/li 補 class）

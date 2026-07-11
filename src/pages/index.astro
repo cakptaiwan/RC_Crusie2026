@@ -117,19 +117,21 @@ const padNum = (n: number) => String(n).padStart(2, '0');
     {
       featuredLead ? (
         <div class="a-grid">
-          <a class="rev-l" href={newArticleUrl(featuredLead.id)} style="text-decoration:none;color:inherit">
-            <div class="a-leadimg zi">
+          <a class="a-lead" href={newArticleUrl(featuredLead.id)} style="text-decoration:none;color:inherit">
+            <div class="a-leadimg zi rev rev-l">
               <img class="ph" src={postImage(featuredLead.image)} alt={featuredLead.title} />
             </div>
-            <div class="fx ac gap12">
-              <span class="a-cat">{featuredLead.subPage || featuredLead.category}</span>
-              <span class="a-date">{formatDate(featuredLead.date)}</span>
+            <div class="lead-body rev">
+              <div class="fx ac gap12">
+                <span class="a-cat">{featuredLead.subPage || featuredLead.category}</span>
+                <span class="a-date">{formatDate(featuredLead.date)}</span>
+              </div>
+              <h3 class="a-h3 srf">{featuredLead.title}</h3>
+              {featuredLead.excerpt && <p class="a-ex">{featuredLead.excerpt}</p>}
+              <span class="alink">閱讀全文 →</span>
             </div>
-            <h3 class="a-h3 srf">{featuredLead.title}</h3>
-            {featuredLead.excerpt && <p class="a-ex">{featuredLead.excerpt}</p>}
-            <span class="alink">閱讀全文 →</span>
           </a>
-          <div class="rev-r">
+          <div class="rev rev-r">
             {
               featuredRows.map((post, index) => (
                 <a
@@ -173,11 +175,11 @@ const padNum = (n: number) => String(n).padStart(2, '0');
       {
         trendingLead ? (
           <>
-            <a class="t-lead rev-l" href={newArticleUrl(trendingLead.id)}>
-              <span class="t-leadimg zi" style="display:block">
+            <a class="t-lead" href={newArticleUrl(trendingLead.id)}>
+              <span class="t-leadimg zi rev rev-l" style="display:block">
                 <img class="ph" src={postImage(trendingLead.image)} alt={trendingLead.title} />
               </span>
-              <span>
+              <span class="lead-body rev">
                 <span class="fx ac gap12">
                   <span class="a-cat">Trending · {trendingLead.subPage || trendingLead.category}</span>
                   <span class="a-date">{formatDate(trendingLead.date)}</span>
@@ -189,7 +191,7 @@ const padNum = (n: number) => String(n).padStart(2, '0');
             </a>
             {
               trendingCells.length > 0 && (
-                <div class="t-grid rev-r" style="margin-top:36px">
+                <div class="t-grid rev rev-r" style="margin-top:36px">
                   {
                     trendingCells.map((post) => (
                       <a class="t-cell" href={newArticleUrl(post.id)}>
