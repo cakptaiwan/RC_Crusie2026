@@ -1,6 +1,7 @@
 ---
 import NewLayout from '../../layouts/NewLayout.astro';
 import CategoryPageSidebar from '../../components/CategoryPageSidebar.astro';
+import TravelerStoriesContent from '../../components/TravelerStoriesContent.astro';
 import {
   categoryEntries,
   categoryOvlLabel,
@@ -21,8 +22,13 @@ interface Props {
 }
 
 const { category } = Astro.props;
+const isTravelerStories = category.slug === 'traveler-stories';
 const posts = await getPosts(category.page, category.subPage);
 const [leadPost, ...restPosts] = posts;
+
+const pageDescription = isTravelerStories
+  ? '皇家旅人的旅人故事與理念——一個無可救藥愛上皇家加勒比遊輪的台灣旅人。'
+  : `${category.label}相關文章與皇家加勒比遊輪攻略。`;
 
 const formatDate = (date: string) => (date ? date.slice(0, 10) : '');
 const postImage = (image: string | null) => image ?? '/assets/ships.png';
@@ -31,7 +37,7 @@ const padNum = (n: number) => String(n).padStart(2, '0');
 
 <NewLayout
   title={`${category.label} — 皇家旅人`}
-  description={`${category.label}相關文章與皇家加勒比遊輪攻略。`}
+  description={pageDescription}
   navActive={category.navActiveKey}
 >
   <div class="crumb">
@@ -44,14 +50,28 @@ const padNum = (n: number) => String(n).padStart(2, '0');
           <div class="ovl">Category · {categoryOvlLabel(category.slug)}</div>
           <h1 class="a-h2 srf">{category.label}</h1>
         </div>
-        <span class="a-date" style="letter-spacing:.18em">共 {posts.length} 篇文章</span>
+        {
+          posts.length > 0 && (
+            <span class="a-date" style="letter-spacing:.18em">共 {posts.length} 篇文章</span>
+          )
+        }
       </div>
 
+      {isTravelerStories && <TravelerStoriesContent />}
+
       {
-        posts.length === 0 ? (
-          <p class="a-ex" style="margin-top:24px">尚無文章，敬請期待。</p>
-        ) : (
+        posts.length > 0 && (
           <>
+            {
+              isTravelerStories && (
+                <div class="sec-head rev" style="margin-top:64px">
+                  <div>
+                    <div class="ovl">Related · 延伸閱讀</div>
+                    <h2 class="a-h2 srf" style="font-size:32px">相關文章</h2>
+                  </div>
+                </div>
+              )
+            }
             <a class="t-lead rev-l" href={newArticleUrl(leadPost.id)}>
               <span class="t-leadimg zi" style="display:block">
                 <img class="ph" src={postImage(leadPost.image)} alt={leadPost.title} />
@@ -96,6 +116,12 @@ const padNum = (n: number) => String(n).padStart(2, '0');
               )
             }
           </>
+        )
+      }
+
+      {
+        !isTravelerStories && posts.length === 0 && (
+          <p class="a-ex" style="margin-top:24px">尚無文章，敬請期待。</p>
         )
       }
     </div>

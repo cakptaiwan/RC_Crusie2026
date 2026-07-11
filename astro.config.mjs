@@ -46,6 +46,7 @@ export default defineConfig({
     '/latest-news': '/category/latest-news',
     '/route-news': '/category/route-news',
     '/resources': '/category/resources',
+    '/about-rc': '/category/traveler-stories',
   },
   integrations: [
     tailwind({ applyBaseStyles: false }),
