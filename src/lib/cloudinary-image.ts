@@ -23,7 +23,7 @@ export type PostImageSize = 'lead' | 'thumb' | 'hero';
 const WIDTH_BY_SIZE: Record<PostImageSize, number> = {
   lead: 800,
   thumb: 200,
-  hero: 980,
+  hero: 1200,
 };
 
 const FALLBACK_IMAGE = '/assets/ships.png';
