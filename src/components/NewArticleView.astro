@@ -51,6 +51,14 @@ const relatedPosts = allPosts
 
 <div class="abody">
   {post.excerpt && <p>{post.excerpt}</p>}
+
+  {post.showTOC && (
+    <details class="tocbox rev" open>
+      <summary class="toch">本文目錄 · CONTENTS</summary>
+      <ol id="toc-list" class="toclist"></ol>
+    </details>
+  )}
+
   {mappedBody && <div set:html={mappedBody} />}
 
   <div class="tagrow rev">
@@ -99,3 +107,28 @@ const relatedPosts = allPosts
     )
   }
 </div>
+
+{post.showTOC && (
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const tocList = document.getElementById('toc-list');
+      if (!tocList) return;
+      const headings = document.querySelectorAll('.abody h2.bh2');
+      if (headings.length === 0) {
+        tocList.closest('.tocbox')?.remove();
+        return;
+      }
+      headings.forEach((h, i) => {
+        const id = `heading-${i}`;
+        h.id = id;
+        const li = document.createElement('li');
+        li.className = 'tocli';
+        const a = document.createElement('a');
+        a.href = `#${id}`;
+        a.textContent = h.textContent ?? '';
+        li.appendChild(a);
+        tocList.appendChild(li);
+      });
+    });
+  </script>
+)}

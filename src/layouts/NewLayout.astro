@@ -137,7 +137,7 @@ a:hover{opacity:.75}
 .ah1{font-size:40px;line-height:1.45;font-weight:900;margin:16px 0 16px}
 .ameta{display:flex;gap:10px;align-items:center;color:#8AA3B9;font-size:13px;letter-spacing:.04em}
 .aheroimg{aspect-ratio:3/2;margin:34px auto 0;max-width:980px;box-sizing:border-box}
-.abody{color:#33506B;font-size:16px;line-height:2.05;max-width:980px;margin-left:auto;margin-right:auto;box-sizing:border-box;padding:38px 56px 0}
+.abody{color:#33506B;font-size:16px;line-height:2.05;max-width:980px;margin-left:auto;margin-right:auto;box-sizing:border-box;padding:38px 56px 64px}
 .abody p{margin:0 0 26px}
 .abody a{color:#3E6C97;text-decoration:underline}
 .abody strong{color:#0B2A4A;font-weight:700}
@@ -148,6 +148,14 @@ a:hover{opacity:.75}
 .bh3{font-size:20px;line-height:1.5;font-weight:900;color:#0B2A4A;margin:32px 0 14px}
 .stamp{font-size:11px;font-weight:700;letter-spacing:.14em;color:#3E6C97;border:1px solid rgba(62,108,151,.35);padding:5px 12px;display:inline-block}
 .kbox{border:2px dashed #B9CFE2;background:#F4F9FD;padding:24px 30px;margin:8px 0 34px}
+.tocbox{border:2px dashed #B9CFE2;background:#F4F9FD;padding:24px 30px;margin:0 0 34px}
+.toch{cursor:pointer;list-style:none;font-size:12px;letter-spacing:.24em;color:#3E6C97;font-weight:700}
+.toch::-webkit-details-marker{display:none}
+.toch::marker{display:none}
+.toclist{margin:14px 0 0;padding-left:22px}
+.tocli{margin:7px 0;font-size:15px;line-height:1.9}
+.tocli a{color:#33506B;text-decoration:none;transition:color .2s}
+.tocli a:hover{color:#0B2A4A;text-decoration:underline}
 .kh{font-size:12px;letter-spacing:.24em;color:#3E6C97;font-weight:700;margin-bottom:12px}
 .kul{margin:0;padding-left:22px}
 .kli{margin:7px 0;font-size:15px;line-height:1.9}
@@ -198,7 +206,7 @@ html,body{overflow-x:hidden}
 .ah{padding:16px 16px 0}
 .ah1{font-size:26px;line-height:1.4}
 .aheroimg{margin:20px auto 0;padding:0 16px;max-width:100%}
-.abody{padding:24px 16px 0;max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.abody{padding:24px 16px 48px;max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
 .ft{padding:48px 16px 0}
 .a-h2{font-size:30px}
 .a-h3{font-size:22px}
@@ -245,6 +253,7 @@ html,body{overflow-x:hidden}
 .abody .tbl{display:table;max-width:none;margin:0}
 .abody .tbl-scroll{margin:20px 0}
 .kbox{padding:16px 18px;margin:8px 0 24px}
+.tocbox{padding:16px 18px;margin:0 0 24px}
 .tip{padding:16px 18px;border-left-width:4px}
 .authbox{flex-direction:column;gap:16px;padding:18px 20px}
 .ftbar{flex-direction:column;gap:12px;text-align:center}
