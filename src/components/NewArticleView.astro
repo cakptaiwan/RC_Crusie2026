@@ -53,9 +53,19 @@ const relatedPosts = allPosts
   {post.excerpt && <p>{post.excerpt}</p>}
 
   {post.showTOC && (
-    <details class="tocbox rev" open>
-      <summary class="toch">本文目錄 · CONTENTS</summary>
-      <ol id="toc-list" class="toclist"></ol>
+    <details class="tocbox rev">
+      <summary class="toch">
+        <span class="toch-label">
+          <span class="toch-icon" aria-hidden="true">📑</span>
+          本文目錄 · CONTENTS
+        </span>
+        <span class="toch-chev" aria-hidden="true"></span>
+      </summary>
+      <div class="toc-panel">
+        <div class="toc-panel-inner">
+          <ol id="toc-list" class="toclist"></ol>
+        </div>
+      </div>
     </details>
   )}
 
