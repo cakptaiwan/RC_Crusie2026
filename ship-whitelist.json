@@ -1,48 +1,217 @@
 {
-  "updated": "2026-07-13",
-  "source": "官方英文船隊頁 royalcaribbean.com/cruise-ships 交叉核對維基百科繁中條目、皇家加勒比港澳台官網、旅行社官方頁面（金怡假期/永安旅遊/東瀛遊/鳳凰旅遊/wingontravel）",
-  "note": "v1 涵蓋 Icon/Quantum/Oasis/Freedom/Voyager 五大船級共21艘（皆為現役且經多來源交叉確認）。Radiance/Vision 舊船級（Radiance, Brilliance, Serenade, Jewel, Grandeur, Rhapsody, Vision, Enchantment）尚未逐一核對中文譯名，暫不列入白名單，待後續更新；Utopia of the Seas、Star of the Seas 中文譯名亦待確認。新船下水／更名時需人工更新此表，嚴禁由 AI 憑記憶生成譯名。",
+  "updated": "2026-07-16",
+  "count": 30,
+  "note": "皇家加勒比現役船隊白名單，共 30 艘已確認船名（原 20 艘 + 烏托邦 1 艘 + 本次 9 艘）。Discovery 級為第八船級框架，船名待官方公布。Check Agent 規則1 以此為準。",
   "confusion_warnings": [
-    "Anthem of the Seas（海洋聖歌號）與 Ovation of the Seas（海洋贊禮號）為不同船，勿混淆",
-    "Freedom of the Seas（海洋自由號）、Liberty of the Seas（海洋自主號）、Independence of the Seas（海洋獨立號）為三艘不同船，勿混淆",
-    "「海洋交響樂號」為 Symphony of the Seas（海洋交響號）之常見異體寫法；若指 Anthem of the Seas，正確譯名為「海洋聖歌號」，切勿誤用「海洋交響樂號」"
+    "海洋幻麗號（Enchantment of the Seas）與海洋魅麗號（Allure of the Seas）為不同船，勿混淆（注意「幻」與「魅」字形相近）"
   ],
   "ships": [
-    {"zh": "海洋標誌號", "en": "Icon of the Seas", "class": "Icon"},
-    {"zh": "海洋神話號", "en": "Legend of the Seas", "class": "Icon", "note": "2026年7月首航"},
-
-    {"zh": "海洋量子號", "en": "Quantum of the Seas", "class": "Quantum"},
-    {"zh": "海洋聖歌號", "en": "Anthem of the Seas", "class": "Quantum", "warning": "常見混淆：「海洋交響樂號」為錯誤譯名（誤將 Anthem 當成交響樂），正確為「海洋聖歌號」；不得與 Ovation of the Seas（海洋贊禮號）或 Symphony of the Seas（海洋交響號）混淆"},
-    {"zh": "海洋贊禮號", "en": "Ovation of the Seas", "class": "Quantum", "warning": "常見混淆：與 Anthem of the Seas（海洋聖歌號）為不同船，勿混淆"},
-    {"zh": "海洋光譜號", "en": "Spectrum of the Seas", "class": "Quantum Ultra"},
-    {"zh": "海洋奧德賽號", "en": "Odyssey of the Seas", "class": "Quantum Ultra"},
-
-    {"zh": "海洋綠洲號", "en": "Oasis of the Seas", "class": "Oasis"},
-    {"zh": "海洋魅麗號", "en": "Allure of the Seas", "class": "Oasis", "alt_zh": ["海洋魅力號"]},
-    {"zh": "海洋和諧號", "en": "Harmony of the Seas", "class": "Oasis", "alt_zh": ["海洋和悅號"]},
-    {"zh": "海洋交響號", "en": "Symphony of the Seas", "class": "Oasis", "alt_zh": ["海洋交響樂號"], "warning": "「海洋交響樂號」為本船（Symphony）之常見異體寫法，切勿誤用於 Anthem of the Seas（正確譯名：海洋聖歌號）"},
-    {"zh": "海洋奇蹟號", "en": "Wonder of the Seas", "class": "Oasis"},
-
-    {"zh": "海洋自由號", "en": "Freedom of the Seas", "class": "Freedom", "warning": "常見混淆：與 Liberty of the Seas（海洋自主號）、Independence of the Seas（海洋獨立號）為三艘不同船，勿混淆"},
-    {"zh": "海洋自主號", "en": "Liberty of the Seas", "class": "Freedom", "warning": "常見混淆：與 Freedom of the Seas（海洋自由號）、Independence of the Seas（海洋獨立號）為三艘不同船，勿混淆"},
-    {"zh": "海洋獨立號", "en": "Independence of the Seas", "class": "Freedom", "warning": "常見混淆：與 Freedom of the Seas（海洋自由號）、Liberty of the Seas（海洋自主號）為三艘不同船，勿混淆"},
-
-    {"zh": "海洋航行者號", "en": "Voyager of the Seas", "class": "Voyager"},
-    {"zh": "海洋探險者號", "en": "Explorer of the Seas", "class": "Voyager"},
-    {"zh": "海洋冒險者號", "en": "Adventure of the Seas", "class": "Voyager"},
-    {"zh": "海洋領航者號", "en": "Navigator of the Seas", "class": "Voyager"},
-    {"zh": "海洋水手號", "en": "Mariner of the Seas", "class": "Voyager"}
+    {
+      "zh": "海洋標誌號",
+      "en": "Icon of the Seas",
+      "class": "Icon",
+      "note": "Icon Class 首艘、2024年1月首航"
+    },
+    {
+      "zh": "海洋神話號",
+      "en": "Legend of the Seas",
+      "class": "Icon",
+      "note": "Icon Class 第二艘、2026年11月首航"
+    },
+    {
+      "zh": "海洋英雄號",
+      "en": "Hero of the Seas",
+      "class": "Icon",
+      "note": "Icon Class 第三艘、2027年首航",
+      "warning": "未首航"
+    },
+    {
+      "zh": "海洋量子號",
+      "en": "Quantum of the Seas",
+      "class": "Quantum",
+      "note": "Quantum Class 首艘、2014年11月首航"
+    },
+    {
+      "zh": "海洋聖歌號",
+      "en": "Anthem of the Seas",
+      "class": "Quantum",
+      "note": "Quantum Class 第二艘、2015年4月首航"
+    },
+    {
+      "zh": "海洋贊禮號",
+      "en": "Ovation of the Seas",
+      "class": "Quantum",
+      "note": "Quantum Class 第三艘、2016年4月首航"
+    },
+    {
+      "zh": "海洋光譜號",
+      "en": "Spectrum of the Seas",
+      "class": "Quantum",
+      "note": "Quantum Class 第四艘、2019年6月首航"
+    },
+    {
+      "zh": "海洋奧德賽號",
+      "en": "Odyssey of the Seas",
+      "class": "Quantum",
+      "note": "Quantum Class 第五艘、2021年7月首航"
+    },
+    {
+      "zh": "海洋綠洲號",
+      "en": "Oasis of the Seas",
+      "class": "Oasis",
+      "note": "Oasis Class 首艘、2009年12月首航"
+    },
+    {
+      "zh": "海洋魅麗號",
+      "en": "Allure of the Seas",
+      "class": "Oasis",
+      "note": "Oasis Class 第二艘、2010年12月首航"
+    },
+    {
+      "zh": "海洋和諧號",
+      "en": "Harmony of the Seas",
+      "class": "Oasis",
+      "note": "Oasis Class 第三艘、2016年5月首航"
+    },
+    {
+      "zh": "海洋交響號",
+      "en": "Symphony of the Seas",
+      "class": "Oasis",
+      "note": "Oasis Class 第四艘、2018年3月首航"
+    },
+    {
+      "zh": "海洋奇蹟號",
+      "en": "Wonder of the Seas",
+      "class": "Oasis",
+      "note": "Oasis Class 第五艘、2022年3月首航"
+    },
+    {
+      "zh": "海洋烏托邦號",
+      "en": "Utopia of the Seas",
+      "class": "Oasis",
+      "note": "Oasis Class 第六艘、2024年7月首航",
+      "warning": "烏託邦錯字警示"
+    },
+    {
+      "zh": "海洋自由號",
+      "en": "Freedom of the Seas",
+      "class": "Freedom",
+      "note": "Freedom Class 首艘、2006年6月首航"
+    },
+    {
+      "zh": "海洋自主號",
+      "en": "Liberty of the Seas",
+      "class": "Freedom",
+      "note": "Freedom Class 第二艘、2007年5月首航"
+    },
+    {
+      "zh": "海洋獨立號",
+      "en": "Independence of the Seas",
+      "class": "Freedom",
+      "note": "Freedom Class 第三艘、2008年5月首航"
+    },
+    {
+      "zh": "海洋航行者號",
+      "en": "Voyager of the Seas",
+      "class": "Voyager",
+      "note": "Voyager Class 首艘、1999年11月首航"
+    },
+    {
+      "zh": "海洋探險者號",
+      "en": "Explorer of the Seas",
+      "class": "Voyager",
+      "note": "Voyager Class 第二艘、2000年11月首航"
+    },
+    {
+      "zh": "海洋冒險者號",
+      "en": "Adventure of the Seas",
+      "class": "Voyager",
+      "note": "Voyager Class 第三艘、2001年11月首航"
+    },
+    {
+      "zh": "海洋領航者號",
+      "en": "Navigator of the Seas",
+      "class": "Voyager",
+      "note": "Voyager Class 第四艘、2002年11月首航"
+    },
+    {
+      "zh": "海洋水手號",
+      "en": "Mariner of the Seas",
+      "class": "Voyager",
+      "note": "Voyager Class 第五艘、2003年11月首航"
+    },
+    {
+      "zh": "海洋燦爛號",
+      "en": "Radiance of the Seas",
+      "class": "Radiance",
+      "note": "Radiance Class 首艘、2001年3月首航"
+    },
+    {
+      "zh": "海洋輝煌號",
+      "en": "Brilliance of the Seas",
+      "class": "Radiance",
+      "note": "Radiance Class 第二艘、2002年7月首航"
+    },
+    {
+      "zh": "海洋小夜曲號",
+      "en": "Serenade of the Seas",
+      "class": "Radiance",
+      "note": "Radiance Class 第三艘、2003年8月首航"
+    },
+    {
+      "zh": "海洋寶石號",
+      "en": "Jewel of the Seas",
+      "class": "Radiance",
+      "note": "Radiance Class 第四艘、2004年5月首航"
+    },
+    {
+      "zh": "海洋壯麗號",
+      "en": "Grandeur of the Seas",
+      "class": "Vision",
+      "note": "Vision Class 首艘、1999年11月首航"
+    },
+    {
+      "zh": "海洋幻麗號",
+      "en": "Enchantment of the Seas",
+      "class": "Vision",
+      "note": "Vision Class 第二艘、1997年7月首航"
+    },
+    {
+      "zh": "海洋狂想曲號",
+      "en": "Rhapsody of the Seas",
+      "class": "Vision",
+      "note": "Vision Class 第三艘、1997年5月首航"
+    },
+    {
+      "zh": "海洋視野號",
+      "en": "Vision of the Seas",
+      "class": "Vision",
+      "note": "Vision Class 第四艘、1998年11月首航"
+    }
+  ],
+  "pending_classes": [
+    {
+      "class": "Discovery",
+      "class_zh": "Discovery級",
+      "note": "船名未定，待官方公布後補入",
+      "planned": [
+        {
+          "codename": "Discovery 1",
+          "expected": "2029",
+          "warning": "暫稱，不得當作正式船名寫入文章"
+        },
+        {
+          "codename": "Discovery 2",
+          "expected": "2032",
+          "warning": "暫稱，不得當作正式船名寫入文章"
+        }
+      ]
+    }
   ],
   "pending_verification": [
-    "Utopia of the Seas",
-    "Star of the Seas",
-    "Radiance of the Seas",
-    "Brilliance of the Seas",
-    "Serenade of the Seas",
-    "Jewel of the Seas",
-    "Grandeur of the Seas",
-    "Rhapsody of the Seas",
-    "Vision of the Seas",
-    "Enchantment of the Seas"
+    {
+      "en": "Star of the Seas",
+      "note": "2025年8月宣布的 Icon Class 第四艘，中文譯名待確認"
+    }
   ]
 }
