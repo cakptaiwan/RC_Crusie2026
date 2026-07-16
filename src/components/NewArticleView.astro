@@ -1,7 +1,7 @@
 ---
 import { siteAuthor } from '../data/site-author';
 import { getCategoryHrefBySubPage } from '../data/new-layout-nav';
-import { mapArticleBodyHtml, estimateReadMinutes } from '../lib/map-article-body';
+import { mapArticleBodyHtml, estimateReadMinutes, countArticleHeading2 } from '../lib/map-article-body';
 import { postImage } from '../lib/cloudinary-image';
 import { newArticleUrl, newHomeUrl } from '../lib/new-article-url';
 import { getPosts } from '../lib/notion';
@@ -13,6 +13,8 @@ interface Props {
 
 const { post } = Astro.props;
 const mappedBody = mapArticleBodyHtml(post.body);
+const heading2Count = countArticleHeading2(post.body);
+const showTOC = post.showTOC || heading2Count >= 6;
 const readMinutes = estimateReadMinutes(post.excerpt, post.body);
 const categoryHref = getCategoryHrefBySubPage(post.subPage || post.category);
 const postImageUrl = postImage(post.image, 'hero');
@@ -52,7 +54,7 @@ const relatedPosts = allPosts
 <div class="abody">
   {post.excerpt && <p>{post.excerpt}</p>}
 
-  {post.showTOC && (
+  {showTOC && (
     <details class="tocbox rev">
       <summary class="toch">
         <span class="toch-label">
@@ -118,7 +120,7 @@ const relatedPosts = allPosts
   }
 </div>
 
-{post.showTOC && (
+{showTOC && (
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const tocList = document.getElementById('toc-list');

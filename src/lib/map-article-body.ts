@@ -72,6 +72,13 @@ export function mapArticleBodyHtml(rawHtml: string): string {
   return out;
 }
 
+/** 計算文章正文 heading_2 數量（Notion body HTML） */
+export function countArticleHeading2(rawHtml: string): number {
+  if (!rawHtml) return 0;
+  const html = sanitizeBodyHtml(rawHtml);
+  return (html.match(/<h2[\s>]/gi) ?? []).length;
+}
+
 /** 依字數估算閱讀時間（約 400 字/分鐘） */
 export function estimateReadMinutes(excerpt: string, bodyHtml: string): number {
   const plain = `${excerpt} ${bodyHtml.replace(/<[^>]+>/g, ' ')}`.replace(/\s+/g, ' ').trim();
