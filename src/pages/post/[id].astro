@@ -24,15 +24,21 @@ const navEntry = categoryEntries.find(
   (e) => e.subPage === post.subPage || e.subPage === post.category,
 );
 
+// 補上時間與時區，符合 ISO 8601 完整格式（台灣時區 UTC+8）
+const isoDate = post.date
+  ? new Date(`${post.date}T00:00:00+08:00`).toISOString()
+  : undefined;
+
 const articleJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Article',
   headline: post.title,
-  datePublished: post.date,
-  dateModified: post.date,
+  datePublished: isoDate,
+  dateModified: isoDate,
   author: {
     '@type': 'Person',
     name: post.author || '皇家旅人',
+    url: 'https://royal-cruiser.com/category/traveler-stories/',
   },
   publisher: {
     '@type': 'Organization',
