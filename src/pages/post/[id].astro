@@ -23,12 +23,44 @@ if (!post) {
 const navEntry = categoryEntries.find(
   (e) => e.subPage === post.subPage || e.subPage === post.category,
 );
+
+const articleJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: post.title,
+  datePublished: post.date,
+  dateModified: post.date,
+  author: {
+    '@type': 'Person',
+    name: post.author || '皇家旅人',
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'Royal Cruiser 皇家旅人',
+    url: 'https://royal-cruiser.com',
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://royal-cruiser.com/logo.png',
+    },
+  },
+  image: post.image || 'https://royal-cruiser.com/og-default.jpg',
+  url: `https://royal-cruiser.com/post/${post.id}`,
+  inLanguage: 'zh-TW',
+  description: post.excerpt,
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': `https://royal-cruiser.com/post/${post.id}`,
+  },
+};
 ---
 
 <NewLayout
   title={`${post.title} — 皇家旅人`}
   description={post.excerpt}
   navActive={navEntry?.navActiveKey ?? ''}
+  image={post.image ?? undefined}
+  type="article"
+  jsonLd={articleJsonLd}
 >
   <NewArticleView post={post} />
 </NewLayout>

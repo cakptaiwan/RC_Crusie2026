@@ -3,14 +3,18 @@ import { categoryHref, newLayoutNavSections } from '../data/new-layout-nav';
 import { newHomeUrl } from '../lib/new-article-url';
 import { socialLinks } from '../data/social-links';
 import ContactPanel from '../components/ContactPanel.astro';
+import SEO from '../components/SEO.astro';
 
 export interface Props {
   title: string;
   description?: string;
   navActive?: string;
+  image?: string;
+  type?: 'website' | 'article';
+  jsonLd?: Record<string, unknown>;
 }
 
-const { title, description, navActive = '' } = Astro.props;
+const { title, description, navActive = '', image, type = 'website', jsonLd } = Astro.props;
 const fbLink = socialLinks[0];
 const [footerCol1, footerCol2, footerCol3, footerCol4] = newLayoutNavSections;
 const currentYear = new Date().getFullYear();
@@ -20,8 +24,7 @@ const currentYear = new Date().getFullYear();
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{title}</title>
-{description && <meta name="description" content={description} />}
+<SEO title={title} description={description ?? ''} image={image} type={type} jsonLd={jsonLd} />
 <link rel="icon" type="image/png" href="/assets/favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
