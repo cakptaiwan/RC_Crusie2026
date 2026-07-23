@@ -1,9 +1,10 @@
 {
-  "updated": "2026-07-16",
-  "count": 30,
-  "note": "皇家加勒比現役船隊白名單，共 30 艘已確認船名（原 20 艘 + 烏托邦 1 艘 + 本次 9 艘）。Discovery 級為第八船級框架，船名待官方公布。Check Agent 規則1 以此為準。",
+  "updated": "2026-07-23",
+  "count": 31,
+  "note": "皇家加勒比現役船隊白名單，共 31 艘已確認船名。Discovery 級為第八船級框架，船名待官方公布。Check Agent 規則1 以此為準。",
   "confusion_warnings": [
-    "海洋幻麗號（Enchantment of the Seas）與海洋魅麗號（Allure of the Seas）為不同船，勿混淆（注意「幻」與「魅」字形相近）"
+    "海洋幻麗號（Enchantment of the Seas）與海洋魅麗號（Allure of the Seas）為不同船，勿混淆（注意「幻」與「魅」字形相近）",
+    "「海洋之星號」為「海洋星際號」（Star of the Seas）的常見別譯寫法，非正式譯名，但應視為同一艘船，不視為捏造或誤植"
   ],
   "ships": [
     {
@@ -24,6 +25,14 @@
       "class": "Icon",
       "note": "Icon Class 第三艘、2027年首航",
       "warning": "未首航"
+    },
+    {
+      "zh": "海洋星際號",
+      "en": "Star of the Seas",
+      "class": "Icon",
+      "alt_zh": ["海洋之星號"],
+      "note": "Icon Class 第四艘、2025年8月宣布",
+      "warning": "「海洋之星號」為常見別譯，正式譯名為海洋星際號"
     },
     {
       "zh": "海洋量子號",
@@ -208,10 +217,5 @@
       ]
     }
   ],
-  "pending_verification": [
-    {
-      "en": "Star of the Seas",
-      "note": "2025年8月宣布的 Icon Class 第四艘，中文譯名待確認"
-    }
-  ]
+  "pending_verification": []
 }
