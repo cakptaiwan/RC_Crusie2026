@@ -1,9 +1,16 @@
 {
-  "updated": "2026-07-23",
+  "updated": "2026-07-24",
   "count": 31,
   "note": "皇家加勒比現役船隊白名單，共 31 艘已確認船名。Discovery 級為第八船級框架，船名待官方公布。Check Agent 規則1 以此為準。",
   "confusion_warnings": [
+    "海洋烏托邦號（Utopia of the Seas）與海洋奇蹟號（Wonder of the Seas）為不同船，勿誤植配對",
+    "海洋領航者號（Navigator of the Seas）與海洋水手號（Mariner of the Seas）為不同船，勿混淆",
+    "海洋燦爛號（Radiance of the Seas）與海洋輝煌號（Brilliance of the Seas）為不同船，勿混淆",
+    "海洋狂想曲號（Rhapsody of the Seas）與海洋小夜曲號（Serenade of the Seas）為不同船，勿混淆",
+    "Legend of the Seas（海洋傳奇號）現有兩個世代：2026 年 Icon 級現役新船與 1995 年 Vision 級已退役舊船（現名 Marella Discovery 2），兩者英文與中文譯名相同但物理上是不同船，提及時應依文章上下文判斷所指世代",
     "海洋幻麗號（Enchantment of the Seas）與海洋魅麗號（Allure of the Seas）為不同船，勿混淆（注意「幻」與「魅」字形相近）",
+    "海洋聖歌號（Anthem of the Seas）與海洋贊禮號（Ovation of the Seas）為不同船，勿混淆",
+    "Freedom Class 三姊妹為不同船：海洋自由號（Freedom of the Seas）、海洋自主號（Liberty of the Seas）、海洋獨立號（Independence of the Seas），勿混淆",
     "「海洋之星號」為「海洋星際號」（Star of the Seas）的常見別譯寫法，非正式譯名，但應視為同一艘船，不視為捏造或誤植",
     "「海洋神話號」曾為 Legend of the Seas 舊有稱呼/別譯，正式譯名為「海洋傳奇號」，勿與其他船混淆"
   ],
