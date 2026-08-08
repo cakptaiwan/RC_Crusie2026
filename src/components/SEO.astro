@@ -5,8 +5,9 @@ export interface Props {
   image?: string;
   type?: 'website' | 'article';
   jsonLd?: Record<string, unknown>;
+  noindex?: boolean;
 }
-const { title, description, image = 'https://images.pexels.com/photos/1430676/pexels-photo-1430676.jpeg?auto=compress&cs=tinysrgb&w=1200', type = 'website', jsonLd } = Astro.props;
+const { title, description, image = 'https://images.pexels.com/photos/1430676/pexels-photo-1430676.jpeg?auto=compress&cs=tinysrgb&w=1200', type = 'website', jsonLd, noindex = false } = Astro.props;
 const siteUrl = 'https://royal-cruiser.com';
 const canonicalUrl = new URL(Astro.url.pathname, siteUrl).toString();
 const baseJsonLd = {
@@ -21,6 +22,7 @@ const baseJsonLd = {
 const mergedJsonLd = jsonLd ?? baseJsonLd;
 ---
 <title>{title} | Royal Cruiser 皇家旅人</title>
+{noindex && <meta name="robots" content="noindex, follow" />}
 <meta name="description" content={description} />
 <link rel="canonical" href={canonicalUrl} />
 <meta property="og:title" content={title} />
