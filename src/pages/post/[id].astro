@@ -1,7 +1,7 @@
 ---
 import NewLayout from '../../layouts/NewLayout.astro';
 import NewArticleView from '../../components/NewArticleView.astro';
-import { categoryEntries } from '../../data/new-layout-nav';
+import { categoryEntries, getCategoryHrefBySubPage } from '../../data/new-layout-nav';
 import { getAllPosts, getPostById } from '../../lib/notion';
 
 export async function getStaticPaths() {
@@ -23,6 +23,13 @@ if (!post) {
 const navEntry = categoryEntries.find(
   (e) => e.subPage === post.subPage || e.subPage === post.category,
 );
+
+const categoryHref = getCategoryHrefBySubPage(post.subPage || post.category);
+const breadcrumbItems = [
+  { name: '首頁', url: 'https://royal-cruiser.com/' },
+  { name: post.subPage || post.category, url: `https://royal-cruiser.com${categoryHref}` },
+  { name: post.title, url: `https://royal-cruiser.com/post/${post.id}/` },
+];
 
 // 補上時間與時區，符合 ISO 8601 完整格式（台灣時區 UTC+8）
 const isoDate = post.date
@@ -67,6 +74,7 @@ const articleJsonLd = {
   image={post.image ?? undefined}
   type="article"
   jsonLd={articleJsonLd}
+  breadcrumb={breadcrumbItems}
 >
   <NewArticleView post={post} />
 </NewLayout>

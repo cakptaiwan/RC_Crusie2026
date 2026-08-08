@@ -13,9 +13,10 @@ export interface Props {
   type?: 'website' | 'article';
   jsonLd?: Record<string, unknown>;
   noindex?: boolean;
+  breadcrumb?: Array<{ name: string; url: string }>;
 }
 
-const { title, description, navActive = '', image, type = 'website', jsonLd, noindex = false } = Astro.props;
+const { title, description, navActive = '', image, type = 'website', jsonLd, noindex = false, breadcrumb } = Astro.props;
 const fbLink = socialLinks[0];
 const [footerCol1, footerCol2, footerCol3, footerCol4] = newLayoutNavSections;
 const currentYear = new Date().getFullYear();
@@ -25,7 +26,7 @@ const currentYear = new Date().getFullYear();
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<SEO title={title} description={description ?? ''} image={image} type={type} jsonLd={jsonLd} noindex={noindex} />
+<SEO title={title} description={description ?? ''} image={image} type={type} jsonLd={jsonLd} noindex={noindex} breadcrumb={breadcrumb} />
 <link rel="icon" type="image/png" href="/assets/favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
