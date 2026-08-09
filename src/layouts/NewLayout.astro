@@ -14,9 +14,11 @@ export interface Props {
   jsonLd?: Record<string, unknown>;
   noindex?: boolean;
   breadcrumb?: Array<{ name: string; url: string }>;
+  /** 首頁 LCP 圖 preload（WebP） */
+  lcpImage?: string;
 }
 
-const { title, description, navActive = '', image, type = 'website', jsonLd, noindex = false, breadcrumb } = Astro.props;
+const { title, description, navActive = '', image, type = 'website', jsonLd, noindex = false, breadcrumb, lcpImage } = Astro.props;
 const fbLink = socialLinks[0];
 const [footerCol1, footerCol2, footerCol3, footerCol4] = newLayoutNavSections;
 const currentYear = new Date().getFullYear();
@@ -31,6 +33,7 @@ const currentYear = new Date().getFullYear();
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@700;900&family=Noto+Sans+TC:wght@400;700&display=swap">
+{lcpImage && <link rel="preload" as="image" href={lcpImage} type="image/webp" fetchpriority="high" />}
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@700;900&family=Noto+Sans+TC:wght@400;700&display=swap" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@700;900&family=Noto+Sans+TC:wght@400;700&display=swap"></noscript>
 <link rel="stylesheet" href="/reveal/reveal-animation.css">
@@ -66,7 +69,9 @@ a:hover{opacity:.75}
 .a-num{font-size:26px;color:#9FB9CE;font-weight:700}
 .a-rt{font-size:18px;font-weight:700;color:#0B2A4A;line-height:1.55;margin:6px 0}
 .a-thumb{width:132px;aspect-ratio:3/2;height:auto}
-.c-hero{position:relative}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.hero-boarding-pass{display:block;width:70%;height:auto;margin:0 auto;border-radius:16px;box-shadow:0 26px 64px rgba(11,42,74,.18)}
+.c-hero{position:relative;perspective:1200px}
 .tband{background:#EAF3FA;border-radius:26px;padding:34px}
 .ticket{display:flex;align-items:stretch;background:#fff;border-radius:16px;box-shadow:0 26px 64px rgba(11,42,74,.18)}
 .tmain{flex:1;display:flex;flex-direction:column;min-width:0}

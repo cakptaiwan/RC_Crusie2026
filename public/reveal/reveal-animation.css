@@ -5,6 +5,9 @@
 .rise.d3{animation-delay:.45s}
 .rise.d4{animation-delay:.6s}
 
+.hero-boarding-enter{transform:translate3d(80px,32px,0) rotate(2.5deg) scale(.93);animation:hero-boarding-enter 1.05s cubic-bezier(.22,.85,.28,1) .15s forwards;transform-origin:center right}
+@keyframes hero-boarding-enter{to{transform:none}}
+
 .rev{opacity:0;transform:translateY(44px);transition:opacity .85s cubic-bezier(.2,.7,.2,1),transform .85s cubic-bezier(.2,.7,.2,1)}
 .rev.rev-l{transform:translateX(-64px)}
 .rev.rev-r{transform:translateX(64px)}
@@ -12,5 +15,6 @@
 
 @media (prefers-reduced-motion: reduce){
 .rise{animation:none!important;opacity:1!important}
+.hero-boarding-enter{animation:none!important;opacity:1!important;transform:none!important}
 .rev{opacity:1!important;transform:none!important;transition:none!important}
 }

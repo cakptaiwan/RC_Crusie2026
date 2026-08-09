@@ -38,74 +38,30 @@ const padNum = (n: number) => String(n).padStart(2, '0');
 <NewLayout
   title="皇家加勒比遊輪攻略｜新手入門到老手進階"
   description="皇家加勒比遊輪全攻略，從新手訂票入門到老手玩法進階，船上活動、岸上行程、聰明花費技巧一次掌握，實際搭乘經驗分享，給華人旅客最實用的皇家加勒比遊輪資訊。"
+  lcpImage="/assets/hero-boarding-pass-720.webp"
 >
   <!-- Hero 登船證：設計稿靜態品牌形象 -->
   <div class="c-hero" style="margin:40px 56px 0">
-    <div class="tband">
-      <div class="ticket">
-        <div class="tmain">
-          <div class="tkhd"><span>BOARDING PASS · 登船證</span><span style="opacity:.65">ROYAL CRUISER</span></div>
-          <div class="tbody">
-            <picture>
-              <source srcset="/assets/ship-blueprint.webp" type="image/webp" />
-              <img class="tship" src="/assets/ship-blueprint.png" alt="皇家加勒比遊輪藍圖線稿" fetchpriority="high" />
-            </picture>
-            <div class="tin">
-              <div class="coderow" style="gap:44px">
-                <span><span class="codelbl">PASSENGER</span><span class="codeval" style="display:block">每一位喜愛遊輪的華人旅人</span></span>
-                <span><span class="codelbl">CLASS</span><span class="codeval" style="display:block">海景陽台艙</span></span>
-              </div>
-              <h1 class="bph1" style="font-size:44px;margin:18px 0 24px">登船後，大海與悠閒是唯一的行程</h1>
-              <p class="hero-subtitle" style="font-size:16px;color:#5a6b7d;margin:0 0 24px;letter-spacing:.02em">皇家加勒比遊輪全攻略——航線情報、實戰攻略與海上生活，寫給全球華人旅人</p>
-              <div class="route" style="max-width:540px">
-                <span><span class="rl">FROM</span><span class="rc" style="display:block;font-size:30px">TAIWAN</span><span class="rsub">基隆 KEELUNG</span></span>
-                <span class="rline">
-                  <span class="rdot"></span><span class="rdash"></span>
-                  <svg width="42" height="28" viewBox="0 0 46 30" fill="none" aria-hidden="true">
-                    <path d="M6 20 L40 20 L35 27 L10 27 Z" fill="#0B2A4A"></path>
-                    <path d="M12 15 L32 15 L32 20 L12 20 Z" fill="#0B2A4A"></path>
-                    <path d="M16 10 L27 10 L27 15 L16 15 Z" fill="#0B2A4A"></path>
-                    <rect x="20" y="4" width="4" height="6" fill="#0B2A4A"></rect>
-                    <circle cx="15" cy="17.5" r="1.1" fill="#EDF4FA"></circle>
-                    <circle cx="20" cy="17.5" r="1.1" fill="#EDF4FA"></circle>
-                    <circle cx="25" cy="17.5" r="1.1" fill="#EDF4FA"></circle>
-                    <circle cx="30" cy="17.5" r="1.1" fill="#EDF4FA"></circle>
-                  </svg>
-                  <span class="rdash"></span><span class="rdot"></span>
-                </span>
-                <span style="text-align:right"><span class="rl">TO</span><span class="rc" style="display:block;font-size:30px">ALASKA</span><span class="rsub">阿拉斯加</span></span>
-              </div>
-            </div>
-          </div>
-          <div class="tfoot">
-            <div class="coderow" style="gap:40px">
-              <span><span class="codelbl">DECK</span><span class="codeval mono" style="display:block">05</span></span>
-              <span><span class="codelbl">GATE</span><span class="codeval mono" style="display:block">12</span></span>
-              <span><span class="codelbl">YEAR</span><span class="codeval mono" style="display:block">2026</span></span>
-            </div>
-            <span class="tnote">開航前 60 分鐘停止登船 · GATE CLOSES 60 MIN BEFORE DEPARTURE</span>
-            <span class="bar" style="width:180px;height:28px"></span>
-          </div>
-        </div>
-        <div class="tstub">
-          <span class="snotch" style="top:-16px"></span><span class="snotch" style="bottom:-16px"></span>
-          <div class="tkhd tkhd2"><span>JOURNAL</span><span style="opacity:.65">皇家旅人誌</span></div>
-          <div class="tsbody">
-            <span><span class="codelbl">PASSENGER</span><span class="codeval" style="display:block">華人旅人 CN TRAVELER</span></span>
-            <span class="fx gap24">
-              <span><span class="codelbl">FROM</span><span class="codeval" style="display:block">TAIWAN</span></span>
-              <span><span class="codelbl">TO</span><span class="codeval" style="display:block">ALASKA</span></span>
-            </span>
-            <span class="fx gap24">
-              <span><span class="codelbl">DECK</span><span class="codeval mono" style="display:block">05</span></span>
-              <span><span class="codelbl">GATE</span><span class="codeval mono" style="display:block">12</span></span>
-              <span><span class="codelbl">YEAR</span><span class="codeval mono" style="display:block">2026</span></span>
-            </span>
-            <span class="ex2" style="font-size:12.5px;margin-top:auto">專為全球華人而寫的皇家加勒比遊輪誌——航線情報、實戰攻略與海上生活。</span>
-            <span class="bar" style="height:30px;display:block"></span>
-          </div>
-        </div>
-      </div>
+    <div class="tband" style="padding:0;background:transparent">
+      <picture>
+        <source
+          srcset="/assets/hero-boarding-pass-480.webp 480w, /assets/hero-boarding-pass-720.webp 720w, /assets/hero-boarding-pass.webp 1024w"
+          sizes="70vw"
+          type="image/webp"
+        />
+        <img
+          class="hero-boarding-pass hero-boarding-enter"
+          src="/assets/hero-boarding-pass.png"
+          alt="皇家加勒比遊輪登船證——皇家加勒比遊輪全攻略，航線情報、實戰攻略與海上生活，寫給全球華人旅人"
+          width="1024"
+          height="463"
+          loading="eager"
+          decoding="async"
+          fetchpriority="high"
+          data-lcp
+        />
+      </picture>
+      <h1 class="sr-only">登船後，大海與悠閒是唯一的行程</h1>
     </div>
   </div>
 
@@ -123,7 +79,7 @@ const padNum = (n: number) => String(n).padStart(2, '0');
         <div class="a-grid">
           <a class="a-lead" href={newArticleUrl(featuredLead.id)} style="text-decoration:none;color:inherit">
             <div class="a-leadimg zi rev rev-l">
-              <img class="ph" src={postImage(featuredLead.image, 'lead')} alt={featuredLead.title} fetchpriority="high" />
+              <img class="ph" src={postImage(featuredLead.image, 'lead')} alt={featuredLead.title} loading="lazy" decoding="async" />
             </div>
             <div class="lead-body rev">
               <div class="fx ac gap12">
