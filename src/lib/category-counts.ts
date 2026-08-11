@@ -9,7 +9,7 @@ export type CategoryCount = {
 };
 
 /**
- * 依 getAllPosts() 單次查詢結果計算 17 個分類文章數。
+ * 依 getAllPosts() 單次查詢結果計算 16 個分類文章數。
  * 搭配 notion.ts 的 allPostsCache，同次 build 不會重複打 API。
  */
 export function getCategoryCounts(allPosts: Post[]): CategoryCount[] {

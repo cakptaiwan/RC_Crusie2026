@@ -44,7 +44,6 @@ export const newLayoutNavSections: readonly NavSection[] = [
       { label: '船上活動', slug: 'onboard-activities' },
       { label: '娛樂設施', slug: 'entertainment' },
       { label: '餐廳美食', slug: 'dining' },
-      { label: '小費文化', slug: 'tipping' },
       { label: '岸上行程', slug: 'shore-excursions' },
     ],
   },
@@ -72,7 +71,7 @@ export const newLayoutNavSections: readonly NavSection[] = [
   },
 ] as const;
 
-/** 17 組分類 slug 對照（getStaticPaths / 側欄計數用） */
+/** 16 組分類 slug 對照（getStaticPaths / 側欄計數用） */
 export const categoryEntries: readonly CategoryEntry[] = newLayoutNavSections.flatMap(
   (section) =>
     section.children.map((child) => ({

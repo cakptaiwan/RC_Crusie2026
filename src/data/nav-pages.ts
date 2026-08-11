@@ -31,7 +31,6 @@ export const navSections: NavSection[] = [
       { label: '船上活動', name: '船上活動', href: '/packing' },
       { label: '娛樂設施', name: '娛樂設施', href: '/entertainment' },
       { label: '餐廳美食', name: '餐廳美食', href: '/dining' },
-      { label: '小費文化', name: '小費文化', href: '/tipping' },
       { label: '岸上行程', name: '岸上行程', href: '/shore-excursions' },
     ],
   },
