@@ -29,6 +29,18 @@ const currentYear = new Date().getFullYear();
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <SEO title={title} description={description ?? ''} image={image} type={type} jsonLd={jsonLd} noindex={noindex} breadcrumb={breadcrumb} />
+<!-- Google Analytics -->
+{import.meta.env.PUBLIC_GA_ID && (
+  <>
+    <script async src={`https://www.googletagmanager.com/gtag/js?id=${import.meta.env.PUBLIC_GA_ID}`}></script>
+    <script define:vars={{ gaId: import.meta.env.PUBLIC_GA_ID }}>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', gaId);
+    </script>
+  </>
+)}
 <link rel="icon" type="image/png" href="/assets/favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
