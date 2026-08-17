@@ -39,7 +39,7 @@ const padNum = (n: number) => String(n).padStart(2, '0');
   title={category.label}
   description={pageDescription}
   navActive={category.navActiveKey}
-  noindex={posts.length === 0}
+  noindex={!isTravelerStories && posts.length === 0}
 >
   <div class="crumb">
     <a href={newHomeUrl}>首頁</a><span>/</span><span>{category.label}</span>
