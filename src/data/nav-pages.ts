@@ -50,8 +50,7 @@ export const navSections: NavSection[] = [
     children: [
       { label: '旅人故事', name: '旅人故事', href: '/category/traveler-stories' },
       { label: '最新資訊', name: '最新資訊', href: '/latest-news' },
-      { label: '航線快訊', name: '航線快訊', href: '/route-news' },
-      { label: '資源推薦', name: '資源推薦', href: '/resources' },
+      { label: '資源推薦', name: '資源推薦', href: '/category/resources' },
     ],
   },
 ];

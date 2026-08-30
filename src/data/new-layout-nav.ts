@@ -65,13 +65,12 @@ export const newLayoutNavSections: readonly NavSection[] = [
     children: [
       { label: '旅人故事', slug: 'traveler-stories' },
       { label: '最新資訊', slug: 'latest-news' },
-      { label: '航線快訊', slug: 'route-news' },
       { label: '資源推薦', slug: 'resources' },
     ],
   },
 ] as const;
 
-/** 16 組分類 slug 對照（getStaticPaths / 側欄計數用） */
+/** 15 組分類 slug 對照（getStaticPaths / 側欄計數用） */
 export const categoryEntries: readonly CategoryEntry[] = newLayoutNavSections.flatMap(
   (section) =>
     section.children.map((child) => ({

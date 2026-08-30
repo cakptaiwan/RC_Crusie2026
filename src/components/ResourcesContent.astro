@@ -1,0 +1,57 @@
+---
+import { resourceSections } from '../data/resources';
+
+const sqMarker =
+  'display:inline-block;width:7px;height:7px;background:#3E6C97;margin-right:8px;vertical-align:0.12em';
+---
+
+<div class="abody" style="padding:0;margin-top:28px">
+  <p class="rev">
+    規劃皇家加勒比郵輪行程時，除了本站文章，以下是我長期追蹤、實際用過的<strong>官方入口、論壇社群、比價工具與甲板規劃資源</strong>。依用途分類整理，方便行前查詢與比價；所有外部連結皆開新分頁，不影響你留在皇家旅人繼續閱讀。
+  </p>
+
+  {
+    resourceSections.map((section, sectionIndex) => (
+      <section class="rev">
+        <h2 class="bh2 srf" style={sectionIndex === 0 ? 'margin-top:32px' : undefined}>
+          {section.title}
+        </h2>
+        {section.items.map((item) => (
+          <article class="kbox" style="margin-top:0;margin-bottom:14px">
+            <h3 class="bh3 srf" style="margin-top:0;margin-bottom:10px">
+              <a
+                href={item.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                style="color:#0B2A4A;text-decoration:none;border-bottom:1px solid rgba(11,42,74,.25)"
+              >
+                {item.name}
+              </a>
+            </h3>
+            <p style="margin:0 0 8px;line-height:1.75">
+              <span style={sqMarker} aria-hidden="true"></span>
+              <span style="font-weight:700">亮點導讀：</span>
+              {item.highlight}
+            </p>
+            <p style="margin:0 0 10px;line-height:1.75">
+              <span style={sqMarker} aria-hidden="true"></span>
+              <span style="font-weight:700">使用時機：</span>
+              {item.whenToUse}
+            </p>
+            <p style="margin:0">
+              <a
+                class="alink"
+                href={item.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                style="text-decoration:none"
+              >
+                前往網站 →
+              </a>
+            </p>
+          </article>
+        ))}
+      </section>
+    ))
+  }
+</div>

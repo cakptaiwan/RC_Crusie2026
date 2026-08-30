@@ -2,6 +2,7 @@
 import NewLayout from '../../layouts/NewLayout.astro';
 import CategoryPageSidebar from '../../components/CategoryPageSidebar.astro';
 import TravelerStoriesContent from '../../components/TravelerStoriesContent.astro';
+import ResourcesContent from '../../components/ResourcesContent.astro';
 import {
   categoryEntries,
   categoryOvlLabel,
@@ -24,12 +25,16 @@ interface Props {
 
 const { category } = Astro.props;
 const isTravelerStories = category.slug === 'traveler-stories';
+const isResources = category.slug === 'resources';
+const isStaticJournalPage = isTravelerStories || isResources;
 const posts = await getPosts(category.page, category.subPage);
 const [leadPost, ...restPosts] = posts;
 
 const pageDescription = isTravelerStories
   ? '皇家旅人的旅人故事與理念——一個無可救藥愛上皇家加勒比遊輪的台灣旅人。'
-  : `${category.label}相關文章與皇家加勒比遊輪攻略。`;
+  : isResources
+    ? '皇家加勒比郵輪規劃必備資源：官方網站、論壇社群、比價 OTA、甲板圖工具與影音頻道，精選 16 個實用入口。'
+    : `${category.label}相關文章與皇家加勒比遊輪攻略。`;
 
 const formatDate = (date: string) => (date ? date.slice(0, 10) : '');
 const padNum = (n: number) => String(n).padStart(2, '0');
@@ -39,10 +44,17 @@ const padNum = (n: number) => String(n).padStart(2, '0');
   title={category.label}
   description={pageDescription}
   navActive={category.navActiveKey}
-  noindex={!isTravelerStories && posts.length === 0}
+  noindex={!isStaticJournalPage && posts.length === 0}
 >
   <div class="crumb">
-    <a href={newHomeUrl}>首頁</a><span>/</span><span>{category.label}</span>
+    <a href={newHomeUrl}>首頁</a><span>/</span>
+    {isResources ? (
+      <>
+        <span>旅人手記</span><span>/</span><span>{category.label}</span>
+      </>
+    ) : (
+      <span>{category.label}</span>
+    )}
   </div>
   <div class="main2" style="padding-top:26px">
     <div>
@@ -59,12 +71,13 @@ const padNum = (n: number) => String(n).padStart(2, '0');
       </div>
 
       {isTravelerStories && <TravelerStoriesContent />}
+      {isResources && <ResourcesContent />}
 
       {
         posts.length > 0 && (
           <>
             {
-              isTravelerStories && (
+              isStaticJournalPage && (
                 <div class="sec-head rev" style="margin-top:64px">
                   <div>
                     <div class="ovl">Related · 延伸閱讀</div>
@@ -121,7 +134,7 @@ const padNum = (n: number) => String(n).padStart(2, '0');
       }
 
       {
-        !isTravelerStories && posts.length === 0 && (
+        !isStaticJournalPage && posts.length === 0 && (
           <p class="a-ex" style="margin-top:24px">尚無文章，敬請期待。</p>
         )
       }
