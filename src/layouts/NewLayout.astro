@@ -44,14 +44,15 @@ const currentYear = new Date().getFullYear();
 <link rel="icon" type="image/png" href="/assets/favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@700;900&family=Noto+Sans+TC:wght@400;700&display=swap">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;800;900&display=swap">
 {lcpImage && <link rel="preload" as="image" href={lcpImage} type="image/webp" fetchpriority="high" />}
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@700;900&family=Noto+Sans+TC:wght@400;700&display=swap" media="print" onload="this.media='all'">
-<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@700;900&family=Noto+Sans+TC:wght@400;700&display=swap"></noscript>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;800;900&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;800;900&display=swap"></noscript>
 <link rel="stylesheet" href="/reveal/reveal-animation.css">
 <style is:global>
 body{margin:0;background:#EDF4FA;font-family:'Noto Sans TC',sans-serif}
-.srf{font-family:'Noto Serif TC',serif}
+.srf{font-family:'Noto Sans TC',sans-serif}
+.a-h2,.a-h3,.a-rt,.sbt,.bph1,.wm1{font-family:'Noto Sans TC',sans-serif}
 .mono{font-family:ui-monospace,'SF Mono',Menlo,monospace}
 .art{width:100%;background:#fff;position:relative}
 .ph{width:100%;height:100%;object-fit:cover;display:block;transition:transform .7s cubic-bezier(.2,.7,.2,1)}
@@ -158,31 +159,32 @@ a:hover{opacity:.75}
 .nl:hover::after{width:100%}
 .navon::after{width:100%}
 .ah{padding:30px 56px 0;color:#0B2A4A;max-width:980px;margin-left:auto;margin-right:auto;box-sizing:border-box;position:relative;z-index:1}
-.ah1{font-size:40px;line-height:1.45;font-weight:900;margin:16px 0 16px}
+.ah1{font-family:'Noto Sans TC',sans-serif;font-size:40px;line-height:1.45;font-weight:900;margin:16px 0 16px}
 .ameta{display:flex;gap:10px;align-items:center;color:#8AA3B9;font-size:13px;letter-spacing:.04em}
 .aheroimg{aspect-ratio:3/2;margin:34px auto 0;max-width:980px;box-sizing:border-box}
 .abody{color:#33506B;font-size:16px;line-height:2.05;max-width:980px;margin-left:auto;margin-right:auto;box-sizing:border-box;padding:38px 56px 64px}
 .abody p{margin:0 0 26px}
 .abody .tip p{margin:0}
-.abody p:has(+ .tip){margin-bottom:12px}
+.abody p:has(+ .tip){margin-bottom:20px}
+.abody .tip + p{margin-top:0}
 .abody a{color:#3E6C97;text-decoration:underline}
 .abody strong{color:#0B2A4A;font-weight:700}
 .abody img{max-width:100%;height:auto;border-radius:8px;margin:20px 0}
 .abody ol{margin:0 0 26px;padding-left:22px}
 .abody ol li{margin:7px 0;font-size:15px;line-height:1.9}
-.bh2{display:flex;align-items:center;gap:14px;font-size:26px;font-weight:900;color:#0B2A4A;margin:52px 0 22px}
-.bh3{font-size:20px;line-height:1.5;font-weight:900;color:#0B2A4A;margin:32px 0 14px}
+.bh2{display:flex;align-items:center;gap:14px;font-family:'Noto Sans TC',sans-serif;font-size:26px;font-weight:900;color:#0B2A4A;margin:52px 0 22px}
+.bh3{font-family:'Noto Sans TC',sans-serif;font-size:20px;line-height:1.5;font-weight:900;color:#0B2A4A;margin:32px 0 14px}
 .stamp{font-size:11px;font-weight:700;letter-spacing:.14em;color:#3E6C97;border:1px solid rgba(62,108,151,.35);padding:5px 12px;display:inline-block}
 .kbox{border:2px dashed #B9CFE2;background:#F4F9FD;padding:24px 30px;margin:8px 0 34px}
 .tocbox{background:#F5F5F5;border:none;border-left:4px solid #3E6C97;margin:0 0 34px;padding:0;overflow:hidden}
 .tocbox::details-content{block-size:0;overflow:hidden;transition:block-size .35s ease,content-visibility .35s allow-discrete;content-visibility:hidden}
 .tocbox[open]::details-content{block-size:auto;content-visibility:visible}
-.toch{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 22px;cursor:pointer;list-style:none;font-size:12px;letter-spacing:.24em;color:#3E6C97;font-weight:700;user-select:none}
+.toch{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 22px;cursor:pointer;list-style:none;font-size:16px;letter-spacing:.14em;color:#0B2A4A;font-weight:800;user-select:none}
 .toch::-webkit-details-marker{display:none}
 .toch::marker{display:none}
 .toch-label{display:flex;align-items:center;gap:8px}
-.toch-icon{font-size:15px;letter-spacing:0;line-height:1}
-.toch-chev{width:7px;height:7px;border-right:2px solid #3E6C97;border-bottom:2px solid #3E6C97;transform:rotate(-45deg);transition:transform .35s ease;flex-shrink:0}
+.toch-icon{font-size:18px;letter-spacing:0;line-height:1}
+.toch-chev{width:8px;height:8px;border-right:2px solid #0B2A4A;border-bottom:2px solid #0B2A4A;transform:rotate(-45deg);transition:transform .35s ease;flex-shrink:0}
 .tocbox[open] .toch-chev{transform:rotate(45deg)}
 .toc-panel{display:grid;grid-template-rows:0fr;transition:grid-template-rows .35s ease}
 .tocbox[open] .toc-panel{grid-template-rows:1fr}
@@ -191,10 +193,11 @@ a:hover{opacity:.75}
 .tocli{margin:7px 0;padding-left:0;font-size:15px;line-height:1.9;list-style:none}
 .tocli a{color:#33506B;text-decoration:none;transition:color .2s}
 .tocli a:hover{color:#0B2A4A;text-decoration:underline}
-.kh{font-size:12px;letter-spacing:.24em;color:#3E6C97;font-weight:700;margin-bottom:12px}
+.kh{font-size:16px;letter-spacing:.14em;color:#0B2A4A;font-weight:800;margin-bottom:14px}
 .kul{margin:0;padding-left:22px}
 .kli{margin:7px 0;font-size:15px;line-height:1.9}
-.tip{background:#FFFFFF;border:none;border-left:4px solid #3E6C97;padding:20px 28px;margin:0 0 12px;font-size:14.5px;line-height:2;color:#33506B}
+.tip{position:relative;background:#FFFFFF;border:none;padding:2px 0 2px 22px;margin:20px 0;font-size:14.5px;line-height:1.85;color:#33506B;display:inline-block;max-width:100%;vertical-align:top}
+.tip::before{content:'';position:absolute;left:0;top:0.15em;bottom:0.15em;width:4px;background:#3E6C97;border-radius:1px}
 .tbl{width:100%;border-collapse:collapse;margin:28px 0;font-size:14.5px}
 .tbl-scroll{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;margin:20px 0}
 .th{text-align:left;padding:12px 16px;background:#0B2A4A;color:#fff;font-weight:700;font-size:13px;letter-spacing:.08em}
@@ -293,8 +296,8 @@ html,body{overflow-x:hidden}
 .tocbox{margin:0 0 24px}
 .toch{padding:14px 16px}
 .toclist{padding:0 16px 14px 16px}
-.tip{padding:16px 18px;border-left-width:4px;margin:0 0 6px}
-.abody p:has(+ .tip){margin-bottom:6px}
+.tip{padding:2px 0 2px 18px;margin:16px 0}
+.abody p:has(+ .tip){margin-bottom:16px}
 .authbox{flex-direction:column;gap:16px;padding:18px 20px}
 .ftbar{flex-direction:column;gap:12px;text-align:center}
 .nowrap{white-space:normal}

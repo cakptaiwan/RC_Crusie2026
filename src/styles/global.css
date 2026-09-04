@@ -25,9 +25,9 @@
     letter-spacing: -0.01em;
   }
 
-  /* Page-level titles use Playfair Display for luxury editorial feel */
+  /* 全站標題與內文統一 Noto Sans TC */
   h1 {
-    font-family: 'Playfair Display', 'Iowan Old Style', Georgia, serif;
+    font-family: 'Noto Sans TC', 'PingFang TC', 'PingFang SC', sans-serif;
     font-size: 2.25rem;
     line-height: 1.2;
     font-weight: 700;
@@ -35,6 +35,7 @@
   }
 
   h2 {
+    font-family: 'Noto Sans TC', 'PingFang TC', 'PingFang SC', sans-serif;
     font-size: 1.25rem;
     line-height: 1.35;
     font-weight: 600;
@@ -42,6 +43,7 @@
   }
 
   h3 {
+    font-family: 'Noto Sans TC', 'PingFang TC', 'PingFang SC', sans-serif;
     font-size: 1rem;
     line-height: 1.4;
     font-weight: 600;
@@ -292,7 +294,7 @@
   }
 
   .sidebar-section-title {
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: 'Noto Sans TC', 'PingFang TC', sans-serif;
     font-size: 0.9375rem;   /* 15px — slightly larger for Playfair legibility */
     font-weight: 600;
     letter-spacing: 0;
@@ -388,7 +390,7 @@
   }
 
   .section-title {
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: 'Noto Sans TC', 'PingFang TC', sans-serif;
     font-size: clamp(1.625rem, 2.5vw + 0.75rem, 2.375rem);
     font-weight: 600;
     color: #061556;

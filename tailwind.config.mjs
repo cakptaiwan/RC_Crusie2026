@@ -53,7 +53,7 @@ export default {
       },
       fontFamily: {
         sans: ['"Noto Sans TC"', '"PingFang TC"', '"PingFang SC"', 'Inter', '"Helvetica Neue"', 'Helvetica', 'Arial', 'sans-serif'],
-        serif: ['"Playfair Display"', '"Iowan Old Style"', 'Georgia', 'serif'],
+        serif: ['"Noto Sans TC"', '"PingFang TC"', '"PingFang SC"', 'sans-serif'],
       },
       fontSize: {
         body: ['1rem', { lineHeight: '1.5', letterSpacing: '-0.01em' }],

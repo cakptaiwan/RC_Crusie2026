@@ -7,8 +7,8 @@ import { optimizeCloudinaryInHtml } from './cloudinary-image';
  * | Notion / marked 輸出        | design handoff class     | 備註 |
  * |-----------------------------|--------------------------|------|
  * | callout (.notion-callout)   | .kbox / .kh / .kul/.kli  | KEY POINTS 摘要框 |
- * | heading_2                   | .bh2.srf                 | 章節大標 |
- * | heading_3                   | .bh3.srf                 | 小節標（縮小版 bh2） |
+ * | heading_2                   | .bh2                     | 章節大標（與內文同 Noto Sans TC） |
+ * | heading_3                   | .bh3                     | 小節標（縮小版 bh2） |
  * | paragraph                   | .abody 內 <p>            | 沿用既有行距/色 |
  * | bulleted_list_item          | .kul / .kli              | 與 callout 清單共用 |
  * | numbered_list_item          | .abody 內 <ol><li>       | 設計稿無專用 class |
@@ -59,8 +59,8 @@ export function mapArticleBodyHtml(rawHtml: string): string {
   out = out.replace(/<blockquote(\s[^>]*)?>([\s\S]*?)<\/blockquote>/gi, '<div class="tip rev">$2</div>');
 
   // headings
-  out = out.replace(/<h2(\s[^>]*)?>/gi, '<h2 class="bh2 srf rev rev-l">');
-  out = out.replace(/<h3(\s[^>]*)?>/gi, '<h3 class="bh3 srf">');
+  out = out.replace(/<h2(\s[^>]*)?>/gi, '<h2 class="bh2 rev rev-l">');
+  out = out.replace(/<h3(\s[^>]*)?>/gi, '<h3 class="bh3">');
 
   // lists（callout 內已處理 .kul/.kli，其餘 ul/li 補 class）
   out = out.replace(/<ul(\s[^>]*)?>/gi, (tag) => (tag.includes('class=') ? tag : '<ul class="kul">'));
