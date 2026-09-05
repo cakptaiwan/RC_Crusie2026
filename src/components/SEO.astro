@@ -1,4 +1,6 @@
 ---
+import { socialLinks } from '../data/social-links';
+
 export interface Props {
   title: string;
   description: string;
@@ -29,6 +31,7 @@ const baseJsonLd = {
   logo: `${siteUrl}/logo.png`,
   description: '專業郵輪旅遊心得，提供真實體驗與實用攻略',
   contactPoint: { '@type': 'ContactPoint', contactType: 'customer service', availableLanguage: ['Chinese', 'English'] },
+  sameAs: socialLinks.map((link) => link.href),
 };
 const mergedJsonLd = jsonLd ?? baseJsonLd;
 ---
