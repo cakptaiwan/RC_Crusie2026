@@ -38,30 +38,44 @@ const padNum = (n: number) => String(n).padStart(2, '0');
 <NewLayout
   title="皇家加勒比遊輪攻略｜新手入門到老手進階"
   description="皇家加勒比遊輪全攻略，從新手訂票入門到老手玩法進階，船上活動、岸上行程、聰明花費技巧一次掌握，實際搭乘經驗分享，給華人旅客最實用的皇家加勒比遊輪資訊。"
-  lcpImage="/assets/hero-boarding-pass-720.webp"
+  lcpImage="/assets/paper-scene-1280.webp"
 >
-  <!-- Hero 登船證：設計稿靜態品牌形象 -->
-  <div class="c-hero" style="margin:40px 56px 0">
-    <div class="tband" style="padding:0;background:transparent">
-      <picture>
-        <source
-          srcset="/assets/hero-boarding-pass-480.webp 480w, /assets/hero-boarding-pass-720.webp 720w, /assets/hero-boarding-pass.webp 1024w"
-          sizes="(max-width: 900px) 100vw, 70vw"
-          type="image/webp"
-        />
+  <!-- Hero 紙雕場景：皇家加勒比郵輪航行於海灣與島嶼之間 -->
+  <div class="c-hero hero-rise hero-d1">
+    <div class="tband hero-paper-band">
+      <div class="hero-paper-wrap hero-paper-in">
+        <picture>
+          <source
+            srcset="/assets/paper-scene-640.webp 640w, /assets/paper-scene-960.webp 960w, /assets/paper-scene-1280.webp 1280w, /assets/paper-scene.webp 1920w"
+            sizes="(max-width: 900px) 100vw, 84vw"
+            type="image/webp"
+          />
+          <img
+            class="hero-paper-base"
+            src="/assets/paper-scene.png"
+            alt="紙雕風格插畫：皇家加勒比郵輪航行於藍色海灣，遠方可見熱帶島嶼與棕櫚樹"
+            width="1920"
+            height="1080"
+            loading="eager"
+            decoding="async"
+            fetchpriority="high"
+            data-lcp
+          />
+        </picture>
+        <span class="hero-paper-hullshadow" aria-hidden="true"></span>
         <img
-          class="hero-boarding-pass hero-boarding-enter"
-          src="/assets/hero-boarding-pass.png"
-          alt="皇家加勒比遊輪登船證——皇家加勒比遊輪全攻略，航線情報、實戰攻略與海上生活，寫給全球華人旅人"
-          width="1024"
-          height="463"
+          class="hero-paper-front"
+          src="/assets/paper-scene.webp"
+          alt=""
+          aria-hidden="true"
           loading="eager"
           decoding="async"
-          fetchpriority="high"
-          data-lcp
         />
-      </picture>
-      <h1 class="sr-only">登船後，大海與悠閒是唯一的行程</h1>
+        <div class="hero-paper-copy">
+          <span class="hero-paper-eyebrow">ROYAL CRUISER · 皇家旅人</span>
+          <h1 class="hero-paper-h1 hero-rise hero-d5">上船那一刻起，<br />假期才真正開始</h1>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -214,3 +228,41 @@ const padNum = (n: number) => String(n).padStart(2, '0');
     <HomePageSidebar />
   </div>
 </NewLayout>
+
+<style>
+  .hero-paper-band{padding:34px 90px;position:relative;overflow:visible}
+  .hero-paper-wrap{position:relative;width:100%;isolation:isolate}
+  .hero-paper-in{animation:heroPaperIn 1.35s cubic-bezier(.2,.7,.2,1) both;animation-delay:.25s}
+  @keyframes heroPaperIn{from{opacity:0;transform:translateY(34px) scale(.985)}to{opacity:1;transform:none}}
+
+  .hero-paper-base{display:block;width:100%;height:auto;border-radius:4px;
+    filter:drop-shadow(0 20px 26px rgba(11,42,74,.16)) drop-shadow(0 3px 0 rgba(255,255,255,.5))}
+
+  .hero-paper-hullshadow{position:absolute;left:38%;top:63%;width:46%;height:14%;
+    background:radial-gradient(ellipse at 50% 50%,rgba(6,26,48,.42),rgba(6,26,48,0) 72%);
+    filter:blur(6px);z-index:1;pointer-events:none}
+
+  .hero-paper-front{position:absolute;left:0;top:0;width:100%;height:auto;
+    clip-path:inset(89% 0 0 0);
+    filter:drop-shadow(0 -12px 16px rgba(11,42,74,.14))}
+
+  .hero-paper-copy{position:absolute;left:3%;top:15%;max-width:40%;z-index:3}
+  .hero-paper-eyebrow{font-family:'Noto Sans TC',sans-serif;font-size:12px;font-weight:800;letter-spacing:.34em;color:#51677C}
+  .hero-paper-h1{font-family:'Noto Serif TC',serif;font-size:52px;font-weight:900;color:#0B2A4A;line-height:1.35;margin:14px 0 22px}
+
+  .hero-rise{opacity:0;animation:heroPaperRise .9s cubic-bezier(.2,.7,.2,1) forwards}
+  @keyframes heroPaperRise{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
+  .hero-d1{animation-delay:.15s}
+  .hero-d5{animation-delay:.3s}
+
+  @media (prefers-reduced-motion: reduce){
+    .hero-rise,.hero-paper-in{animation:none;opacity:1}
+  }
+
+  @media (max-width:900px){
+    .hero-paper-band{padding:0}
+    .hero-paper-copy{max-width:62%;top:10%}
+    .hero-paper-eyebrow{font-size:10px}
+    .hero-paper-h1{font-size:28px;line-height:1.35;margin:14px 0 18px}
+  }
+</style>
