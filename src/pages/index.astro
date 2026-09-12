@@ -45,8 +45,8 @@ const padNum = (n: number) => String(n).padStart(2, '0');
     <div class="hero-paper-wrap">
       <picture>
         <source
-          srcset="/assets/hero-banner-640.webp 640w, /assets/hero-banner-960.webp 960w, /assets/hero-banner-1280.webp 1280w, /assets/hero-banner.webp 1536w"
-          sizes="(min-width: 1536px) 1536px, 100vw"
+          srcset="/assets/hero-banner-640.webp 640w, /assets/hero-banner-960.webp 960w, /assets/hero-banner-1280.webp 1280w, /assets/hero-banner.webp 1536w, /assets/hero-banner-1920.webp 1920w"
+          sizes="100vw"
           type="image/webp"
         />
         <img
@@ -217,8 +217,8 @@ const padNum = (n: number) => String(n).padStart(2, '0');
 
 <style>
   .hero-paper-band{position:relative;margin:0}
-  .hero-paper-wrap{position:relative;width:100%;max-width:1536px;margin:0 auto}
-  .hero-paper-base{display:block;width:100%;height:auto;border-radius:6px;
+  .hero-paper-wrap{position:relative;width:100%}
+  .hero-paper-base{display:block;width:100%;height:auto;
     filter:
       drop-shadow(0 2px 3px rgba(11,42,74,.10))
       drop-shadow(0 14px 20px rgba(11,42,74,.18))
