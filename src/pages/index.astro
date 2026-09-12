@@ -221,17 +221,17 @@ const padNum = (n: number) => String(n).padStart(2, '0');
 
 <style>
   .hero-paper-band{position:relative;overflow:visible;margin:0}
-  .hero-paper-wrap{position:relative;width:100%;isolation:isolate}
+  .hero-paper-wrap{position:relative;width:100%;isolation:isolate;overflow:hidden;height:clamp(300px, 46vh, 520px)}
   .hero-paper-in{animation:heroPaperIn 1.35s cubic-bezier(.2,.7,.2,1) both;animation-delay:.25s}
   @keyframes heroPaperIn{from{opacity:0;transform:translateY(34px) scale(.985)}to{opacity:1;transform:none}}
 
-  .hero-paper-base{display:block;width:100%;height:auto;
+  .hero-paper-base{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 42%;
     filter:
       drop-shadow(0 2px 3px rgba(11,42,74,.10))
       drop-shadow(0 14px 20px rgba(11,42,74,.20))
       drop-shadow(0 34px 46px rgba(11,42,74,.22))}
 
-  .hero-paper-hullshadow{position:absolute;left:38%;top:59%;width:46%;height:15%;
+  .hero-paper-hullshadow{position:absolute;left:38%;top:50%;width:46%;height:15%;
     background:radial-gradient(ellipse at 50% 50%,rgba(6,26,48,.42),rgba(6,26,48,0) 72%);
     filter:blur(6px);z-index:1;pointer-events:none}
 
