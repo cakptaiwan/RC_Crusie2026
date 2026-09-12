@@ -38,34 +38,30 @@ const padNum = (n: number) => String(n).padStart(2, '0');
 <NewLayout
   title="皇家加勒比遊輪攻略｜新手入門到老手進階"
   description="皇家加勒比遊輪全攻略，從新手訂票入門到老手玩法進階，船上活動、岸上行程、聰明花費技巧一次掌握，實際搭乘經驗分享，給華人旅客最實用的皇家加勒比遊輪資訊。"
-  lcpImage="/assets/paper-scene-1280.webp"
+  lcpImage="/assets/hero-banner-1280.webp"
 >
-  <!-- Hero 紙雕場景：皇家加勒比郵輪航行於海灣與島嶼之間（透明去背、滿版） -->
+  <!-- Hero 紙雕橫幅：Royal Cruiser 標題與標語已直接畫在圖片裡 -->
   <div class="hero-paper-band">
-    <div class="hero-paper-wrap hero-paper-in">
+    <div class="hero-paper-wrap">
       <picture>
         <source
-          srcset="/assets/paper-scene-640.webp 640w, /assets/paper-scene-960.webp 960w, /assets/paper-scene-1280.webp 1280w, /assets/paper-scene-1920.webp 1920w, /assets/paper-scene.webp 2400w"
-          sizes="(min-width: 1100px) 1100px, 100vw"
+          srcset="/assets/hero-banner-640.webp 640w, /assets/hero-banner-960.webp 960w, /assets/hero-banner-1280.webp 1280w, /assets/hero-banner.webp 1536w"
+          sizes="(min-width: 1536px) 1536px, 100vw"
           type="image/webp"
         />
         <img
           class="hero-paper-base"
-          src="/assets/paper-scene.png"
-          alt="紙雕風格插畫：皇家加勒比郵輪航行於藍色海灣，遠方可見熱帶島嶼與棕櫚樹"
-          width="2400"
-          height="1220"
+          src="/assets/hero-banner.png"
+          alt="皇家旅人 Royal Cruiser——紙雕風格插畫，皇家加勒比郵輪航行於海灣與熱帶島嶼之間，標語：上船那一刻起，假期才真正開始"
+          width="1536"
+          height="464"
           loading="eager"
           decoding="async"
           fetchpriority="high"
           data-lcp
         />
       </picture>
-      <span class="hero-paper-hullshadow" aria-hidden="true"></span>
-      <div class="hero-paper-copy">
-        <span class="hero-paper-eyebrow hero-rise hero-d1">ROYAL CRUISER · 皇家旅人</span>
-        <h1 class="hero-paper-h1 hero-rise hero-d5">上船那一刻起，<br />假期才真正開始</h1>
-      </div>
+      <h1 class="sr-only">皇家旅人 Royal Cruiser：上船那一刻起，假期才真正開始</h1>
     </div>
   </div>
 
@@ -220,41 +216,11 @@ const padNum = (n: number) => String(n).padStart(2, '0');
 </NewLayout>
 
 <style>
-  .hero-paper-band{position:relative;overflow:visible;margin:0}
-  .hero-paper-wrap{position:relative;width:100%;max-width:1100px;margin:0 auto;isolation:isolate}
-  .hero-paper-in{animation:heroPaperIn 1.35s cubic-bezier(.2,.7,.2,1) both;animation-delay:.25s}
-  @keyframes heroPaperIn{from{opacity:0;transform:translateY(34px) scale(.985)}to{opacity:1;transform:none}}
-
-  .hero-paper-base{display:block;width:100%;height:auto;
+  .hero-paper-band{position:relative;margin:0}
+  .hero-paper-wrap{position:relative;width:100%;max-width:1536px;margin:0 auto}
+  .hero-paper-base{display:block;width:100%;height:auto;border-radius:6px;
     filter:
       drop-shadow(0 2px 3px rgba(11,42,74,.10))
-      drop-shadow(0 14px 20px rgba(11,42,74,.20))
-      drop-shadow(0 34px 46px rgba(11,42,74,.22))}
-
-  .hero-paper-hullshadow{position:absolute;left:38%;top:59%;width:46%;height:15%;
-    background:radial-gradient(ellipse at 50% 50%,rgba(6,26,48,.42),rgba(6,26,48,0) 72%);
-    filter:blur(6px);z-index:1;pointer-events:none}
-
-  .hero-paper-copy{position:absolute;left:3%;top:6%;max-width:40%;z-index:3}
-  .hero-paper-eyebrow{display:block;font-family:'Noto Sans TC',sans-serif;font-size:12px;font-weight:800;letter-spacing:.34em;color:#51677C}
-  .hero-paper-h1{font-family:'Noto Serif TC',serif;font-size:52px;font-weight:900;color:#0B2A4A;line-height:1.35;margin:14px 0 0}
-
-  .hero-rise{opacity:0;animation:heroPaperRise .9s cubic-bezier(.2,.7,.2,1) forwards}
-  @keyframes heroPaperRise{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
-  .hero-d1{animation-delay:.15s}
-  .hero-d5{animation-delay:.3s}
-
-  @media (prefers-reduced-motion: reduce){
-    .hero-rise,.hero-paper-in{animation:none;opacity:1}
-  }
-
-  @media (max-width:900px){
-    .hero-paper-copy{max-width:60%;top:4%}
-    .hero-paper-eyebrow{font-size:10px}
-    .hero-paper-h1{font-size:28px;line-height:1.35;margin:10px 0 0}
-  }
-
-  @media (max-width:480px){
-    .hero-paper-copy{max-width:72%}
-  }
+      drop-shadow(0 14px 20px rgba(11,42,74,.18))
+      drop-shadow(0 28px 38px rgba(11,42,74,.16))}
 </style>
