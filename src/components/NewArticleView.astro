@@ -79,7 +79,12 @@ const relatedPosts = allPosts
   </div>
 
   <div class="authbox rev">
-    <span class="avat srf">{siteAuthor.name.slice(0, 1)}</span>
+    <span class="avat">
+      <picture>
+        <source srcset="/assets/logo.webp" type="image/webp" />
+        <img src="/assets/logo.png" alt="皇家旅人 Logo" width="56" height="56" loading="lazy" />
+      </picture>
+    </span>
     <span>
       <span class="fw7 fs15 navy">{siteAuthor.name} · {siteAuthor.tagline}</span>
       <span class="sbp" style="display:block;margin-top:8px">{siteAuthor.bio}</span>
