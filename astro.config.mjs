@@ -6,6 +6,9 @@ import cloudflare from '@astrojs/cloudflare';
 
 export default defineConfig({
   site: 'https://royal-cruiser.com',
+  // 正式輸出是 directory（/page/index.html）。always 跟這個格式、以及
+  // Cloudflare Pages 對 index.html 的 308 一致。never 會跟現有目錄輸出打架。
+  trailingSlash: 'always',
   adapter: cloudflare(),
   env: {
     schema: {
