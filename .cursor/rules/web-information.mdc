@@ -6,9 +6,9 @@ alwaysApply: false
 
 # WebInformation
 
-**專案**：Loyal to Royal 皇家旅人 — 皇家加勒比遊輪忠實粉絲社群（Astro + Tailwind v4）
+**專案**：皇家旅人 Royal Cruiser — 皇家加勒比遊輪中文資訊站（Astro 5 + Tailwind v3.4）
 **風格**：Premium Minimalist Ocean Luxury（皇家藍白 + 金色點綴）
-**更新**：2026-05-24
+**快照日期**：2026-05-24（導覽、字體、色彩 token、技術備註於 2026-09-28 校正；其餘細節以程式碼為準）
 
 > 設計與 Astro 規範詳見 `design-system.mdc`、`astro-best-practices.mdc`
 
@@ -23,35 +23,15 @@ alwaysApply: false
 | 頁尾 | `src/components/Footer.astro` | 深藍 `#061556`、置中緊湊版 |
 | 側欄 | `src/components/Sidebar.astro` | About Me 用 `/logo.png` 方形 LOGO |
 
-## 主選單（NavStrip — 4 欄 + 訂閱電子報 CTA）
+## 主選單（NavStrip）
 
-資料來源：`src/data/nav-pages.ts`（NavStrip、Footer、側欄分類共用）
+資料來源：`src/data/nav-pages.ts`（NavStrip、Footer、側欄分類共用），**以該檔為準**。2026-09-28 時為：
 
 ```
-新手出發
-  ├ 遊輪品牌          → /about-royal
-  ├ 訂票攻略          → /ticket-guide
-  ├ 認識遊輪          → /know-cruise
-  ├ 聰明花費          → /pricing
-  ├ 選艙須知          → /cabin-guide
-  └ 新手 FAQ          → /faq
-玩轉遊輪
-  ├ 行李打包          → /packing
-  ├ 娛樂設施          → /entertainment
-  ├ 餐廳美食          → /dining
-  ├ 小費怎麼給        → /tipping
-  └ 岸上行程          → /shore-excursions
-航線資訊
-  ├ 東南亞航線        → /southeast-asia
-  ├ 東北亞航線        → /northeast-asia
-  ├ 美洲航線          → /americas
-  └ 歐洲航線          → /europe
-旅人手記
-  ├ 品牌故事          → /about-rc（靜態頁 + 品牌故事分類文章）
-  ├ 最新資訊          → /latest-news
-  ├ 航線快訊          → /route-news
-  └ 資源推薦          → /resources
-訂閱電子報（CTA）    → /newsletter
+新手出發：遊輪品牌、訂票攻略、聰明花費、新手FAQ
+玩轉遊輪：船上活動、娛樂設施、餐廳美食、岸上行程
+航線資訊：東南亞航線、東北亞航線、美洲航線、歐洲航線
+旅人手記：旅人故事、最新資訊、資源推薦
 ```
 
 - 舊路徑 `/what-is-cruise` 301 轉址至 `/know-cruise`
@@ -84,19 +64,18 @@ alwaysApply: false
 ## 字體（全站統一）
 
 ```
-PingFang TC → PingFang SC → Noto Sans TC → Inter → system sans
+Noto Sans TC → PingFang TC → PingFang SC → Inter → system sans
 ```
 
-- 設定處：`tailwind.config.mjs`（fontFamily.sans）、`src/styles/global.css`（body）、NavStrip/Footer inline style
-- macOS/iOS 優先蘋方；Windows/其他 fallback Noto Sans TC（Google Fonts）
+- 設定處：`tailwind.config.mjs`（fontFamily.sans）、`src/styles/global.css`（body）
 
 ## 色彩 token
 
 | Token | 色碼 | 用途 |
 |-------|------|------|
-| Royal Navy | `#061556` | 主色、Footer、Hero overlay |
-| Royal Blue | `#0073BB` | 按鈕、badge、連結強調 |
-| Royal Gold | `#FEBD11` | 少量點綴（NavStrip 底線等） |
+| Royal Navy（`blue-brand`） | `#061556` | 主色、Footer、Hero overlay |
+| Royal Blue（`blue-accent`） | `#0073BB` | 按鈕、badge、連結強調 |
+| Royal Gold（`gold`） | `#FEBD11` | 少量點綴（NavStrip 底線等） |
 | Background | `#F8FAFC` | 頁面底色 |
 
 ## UI 慣例（本輪已定型）
@@ -115,7 +94,7 @@ PingFang TC → PingFang SC → Noto Sans TC → Inter → system sans
 ## 技術備註
 
 - NavStrip `<script>` 必須包 IIFE，避免 top-level `return` 建置錯誤
-- PowerShell 建置：`npm run build 2>&1 | Select-Object -Last 15`（勿用 `&&` / `tail`）
+- 建置（蝦仔 zsh）：`npm run build 2>&1 | tail -15`
 - 社群 icon 資料結構支援可選 `viewBox`：`viewBox={viewBox ?? '0 0 24 24'}`
 
 ## 待辦 / 未決

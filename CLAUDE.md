@@ -15,16 +15,10 @@ Astro 5.x + Tailwind CSS，內容來自 Notion（`@notionhq/client`），部署�
 這是解決建置逾時的修法。移除它、或把它「簡化」成看起來更直觀的寫法，會讓 Cloudflare Pages 建置超時。
 未來若要建第二個品牌站，這段要**逐字複製過去**，不要重寫。
 
-## 這個 repo 根目錄住著 Agent 要讀的資料
+## 白名單不在這個 repo
 
-- `ship-whitelist.json`（21 艘船，含中英文配對與易混淆警示）
-- `facility-whitelist.json`（餐廳與設施，四類）
-- `fee-whitelist.json`（WiFi／酒水套餐方案名稱，不含價格）
-- `content-rubric.md`
-
-**改這四個檔案等於改 Agent 的防幻覺行為，不只是改網站。**
-Agent 端（`check_agent.py`）透過 GitHub raw URL 讀取，本機路徑只是備援。
-所以這四個檔案 push 上去之後，Agent 那邊會立刻生效——不需要重新部署，但也代表改錯會立刻影響產文檢查。
+三份白名單（船名、設施、費用方案）與 `content-rubric.md` 已於 2026-09-22 搬到 RC-ArticleAgent 的 `whitelists/`。Agent 只讀那裡的本機檔案，不打 GitHub raw。
+**不要在這個 repo 新增或修改白名單**——改了不會生效。
 
 ## 圖片
 
@@ -45,9 +39,11 @@ Cloudinary。`BaseLayout.astro` 已內建自動補上 `f_auto,q_auto` 的邏輯�
 
 ## 導覽結構
 
+以 `src/data/nav-pages.ts` 為準（NavStrip、Footer、側欄共用）。2026-09-28 時為：
+
 - 新手出發：遊輪品牌、訂票攻略、聰明花費、新手FAQ
-- 玩轉遊輪：船上活動、娛樂設施、餐廳美食、小費文化、岸上行程
+- 玩轉遊輪：船上活動、娛樂設施、餐廳美食、岸上行程
 - 航線資訊：東南亞航線、東北亞航線、美洲航線、歐洲航線
 - 旅人手記：旅人故事、最新資訊、資源推薦
 
-分類的唯一依據是 Notion 的 `Subpage` 欄位（`Category` 欄位已刪除）。
+分類的唯一依據是 Notion 的 `Subpage` 欄位（`Category` 欄位已刪除），值須與 `nav-pages.ts` 的 `name` 完全一致。

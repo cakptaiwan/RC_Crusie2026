@@ -1,25 +1,15 @@
 ---
-description: Loyal to Royal Astro 5 最佳實務規則
-globs: ["**/*.astro", "**/*.ts", "**/*.js", "**/*.tsx"]
-alwaysApply: true
-priority: high
+description: 皇家旅人網站的 Astro 實務規則。修改 src 底下的 .astro 或 .ts 時使用。
+globs: ["src/**/*.astro", "src/**/*.ts"]
+alwaysApply: false
 ---
 
-# Loyal to Royal Astro Best Practices
+# 皇家旅人 Astro 實務
 
-你是 Loyal to Royal 專案的 Astro 專家，必須同時遵守 design-system.mdc 的皇家藍白海洋設計風格。
-
-## 核心原則
-- Static First、Performance 第一、Islands 架構
-- 所有 UI 必須符合 Premium Ocean Luxury 感覺
-
-## Tailwind v4 嚴格規範
-- **只允許使用 utility classes**，禁止自訂 CSS 檔案
-- 顏色必須使用 `royal-navy`、`royal-blue`、`royal-gold` 等設計 token
-
-## 其他規範
-- 圖片強制使用 `<Image>` 元件
-- SEO：每頁使用 `<SEO />` 元件 + Event JSON-LD
-- Notion 整合使用 `notion-astro-loader`
-
-**生成程式碼時必須同時符合 design-system.mdc 的設計規範。** 
+- Astro 5，靜態輸出為主；需要互動才加 client script
+- Tailwind CSS v3.4（`tailwind.config.mjs`）。以 utility classes 為主；全站共用樣式放 `src/styles/global.css`，不另開新的 CSS 檔
+- Notion 資料一律經過 `src/lib/notion.ts`（`@notionhq/client`）。這支檔的 Promise 快取是解決 Cloudflare Pages 建置逾時的修法（見 CLAUDE.md），不要改寫，也不要換成 notion-astro-loader 或其他 loader
+- 文章圖片是 Cloudinary URL：BaseLayout 會自動補 `f_auto,q_auto`，貼原始 URL 即可
+- 頁面 meta 用 `src/components/SEO.astro`
+- `astro.config.mjs` 設定 `trailingSlash: 'always'`，站內連結一律以 `/` 結尾
+- 畫面相關規範見 `design-system.mdc`
