@@ -31,10 +31,10 @@ const posts = await getPosts(category.page, category.subPage);
 const [leadPost, ...restPosts] = posts;
 
 const pageDescription = isTravelerStories
-  ? '皇家旅人的旅人故事與理念——一個無可救藥愛上皇家加勒比遊輪的台灣旅人。'
+  ? '皇家旅人的旅人故事與理念——一個無可救藥愛上皇家加勒比郵輪的台灣旅人。'
   : isResources
     ? '皇家加勒比郵輪規劃必備資源：官方網站、論壇社群、比價 OTA、甲板圖工具與影音頻道，精選 16 個實用入口。'
-    : `${category.label}相關文章與皇家加勒比遊輪攻略。`;
+    : `${category.label}相關文章與皇家加勒比郵輪攻略。`;
 
 const formatDate = (date: string) => (date ? date.slice(0, 10) : '');
 const padNum = (n: number) => String(n).padStart(2, '0');

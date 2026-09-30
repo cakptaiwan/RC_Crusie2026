@@ -1,0 +1,63 @@
+/*
+ * 全站行距原則：同一區塊內折行的行距收緊，區塊與區塊之間的間距拉開。
+ * 只動 line-height 與內文段距；字級、顏色、字重、標題上下間距一律沿用 NewLayout。
+ * 選擇器前綴 body，讓優先權高於 NewLayout 內的同名規則，不受樣式載入順序影響。
+ * 文章頁清單與 TOC（article-lists.css）、標題 500 字重規則不在這裡處理。
+ */
+
+/* 標題：折行密、上下間距不變 */
+body .ah1,
+body .a-h2,
+body .a-h3,
+body .bh2,
+body .abody h4,
+body .sbt {
+  line-height: 1.35;
+}
+body .bh3 {
+  line-height: 1.4;
+}
+
+/* 卡片與列表標題 */
+body .a-rt,
+body .l-t,
+body .fth {
+  line-height: 1.4;
+}
+
+/* 內文：行距 1.8，段與段 1.2em */
+body .abody {
+  line-height: 1.8;
+}
+body .abody p {
+  margin-bottom: 1.2em;
+}
+body .abody .td,
+body .abody .th {
+  line-height: 1.6;
+}
+body .abody .kh {
+  line-height: 1.4;
+}
+
+/* 引言框、卡片摘要、側欄說明、聯絡說明 */
+body .tip {
+  line-height: 1.65;
+}
+body .a-ex {
+  line-height: 1.75;
+}
+body .ex2,
+body .sbp,
+body .cp-intro {
+  line-height: 1.7;
+}
+
+/* 麵包屑、文章 meta、頁尾、側欄分類列 */
+body .crumb,
+body .ameta,
+body .ftl,
+body .ftbar,
+body .catrow {
+  line-height: 1.6;
+}
