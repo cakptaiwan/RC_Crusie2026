@@ -29,7 +29,7 @@ const categoryCounts = getCategoryCounts(await getAllPosts()).filter((cat) => ca
   <div class="sb rev">
     <div class="sbh"><span class="sbt srf">站內搜尋</span><span class="ovl">Search</span></div>
     <div id="home-search" style="margin-top:16px">
-      <form class="fx gap8" action="/search" method="get" data-search-fallback>
+      <form class="fx gap8" action="/search/" method="get" data-search-fallback>
         <input class="inp" type="text" name="q" placeholder="輸入關鍵字…" />
         <button class="btn" type="submit">搜尋</button>
       </form>
@@ -78,7 +78,7 @@ const categoryCounts = getCategoryCounts(await getAllPosts()).filter((cat) => ca
     try {
       const formData = new FormData();
       formData.append('email', email);
-      const res = await fetch('/api/newsletter', { method: 'POST', body: formData });
+      const res = await fetch('/api/newsletter/', { method: 'POST', body: formData });
       const data = await res.json();
 
       if (!res.ok || !data.ok) {

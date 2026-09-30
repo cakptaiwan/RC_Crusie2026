@@ -21,7 +21,7 @@ export type CategoryEntry = {
   navActiveKey: string;
 };
 
-export const categoryHref = (slug: string) => `/category/${slug}`;
+export const categoryHref = (slug: string) => `/category/${slug}/`;
 
 /** 新版 Layout 導覽：四大主選單 + 子分類 slug（對應 /category/{slug}） */
 export const newLayoutNavSections: readonly NavSection[] = [

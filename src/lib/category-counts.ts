@@ -1,4 +1,4 @@
-import { categoryEntries } from '../data/new-layout-nav';
+import { categoryEntries, categoryHref } from '../data/new-layout-nav';
 import type { Post } from './notion';
 
 export type CategoryCount = {
@@ -16,7 +16,7 @@ export function getCategoryCounts(allPosts: Post[]): CategoryCount[] {
   return categoryEntries.map((cat) => ({
     slug: cat.slug,
     label: cat.label,
-    href: `/category/${cat.slug}`,
+    href: categoryHref(cat.slug),
     count: allPosts.filter((p) => p.page === cat.page && p.subPage === cat.subPage).length,
   }));
 }
