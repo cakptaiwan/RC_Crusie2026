@@ -58,3 +58,17 @@
 .abody ol:not(.toclist) > li > ol {
   margin-top: 0.6em;
 }
+
+/*
+ * 內文標題取消粗體。只限文章內文的章節標題（.bh2／.bh3／h4），
+ * 「相關文章」的 .a-h2、TOC 標號、KEY POINTS 的 .kh 都不在選擇器內。
+ * 字級、顏色、間距沿用 NewLayout 的 .bh2／.bh3，這裡只改字重。
+ */
+.abody h2.bh2,
+.abody h3.bh3,
+.abody h4,
+.abody h2.bh2 :is(strong, b),
+.abody h3.bh3 :is(strong, b),
+.abody h4 :is(strong, b) {
+  font-weight: 400;
+}
