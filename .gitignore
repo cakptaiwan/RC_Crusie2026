@@ -25,3 +25,11 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# 暫存與分析產出（已搬到 ~/RoyalCruiser/_archive/RC_Crusie2026-untracked/）
+.tmp/
+.tmp-*
+lighthouse-*.json
+screenshots/
+*.bak
+design_handoff_astro/
