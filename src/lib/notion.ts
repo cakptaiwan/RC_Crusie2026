@@ -40,6 +40,7 @@ import type {
 } from '@notionhq/client/build/src/api-endpoints';
 
 import { normalizeNavName } from './nav-name-compat';
+import { isStrictMode, readEnv } from './build-mode';
 
 type NotionClient = Client;
 type DataSourceFilter = QueryDataSourceParameters['filter'];
@@ -96,6 +97,96 @@ function getNotionClient(token: string): NotionClient {
     });
   }
   return cachedNotionClient;
+}
+
+/** 離線測試用的注入點（正式程式不會設定）：替換 client、金鑰與資料庫 ID。 */
+interface NotionTestOverrides {
+  client?: unknown;
+  token?: string | null;
+  databaseId?: string | null;
+}
+let testOverrides: NotionTestOverrides | null = null;
+
+export function __setNotionTestOverrides(overrides: NotionTestOverrides | null): void {
+  testOverrides = overrides;
+  cachedNotionClient = null;
+  cachedDataSourceId = null;
+  resetNotionCaches();
+}
+
+function resolveClient(token: string): NotionClient {
+  return (testOverrides?.client as NotionClient | undefined) ?? getNotionClient(token);
+}
+
+interface NotionConfig {
+  token: string;
+  databaseId: string;
+}
+
+/** 讀取金鑰與資料庫 ID；缺少或仍是範本佔位值時回傳 null。 */
+function readNotionConfig(): NotionConfig | null {
+  const token = testOverrides ? testOverrides.token : import.meta.env.NOTION_TOKEN;
+  const databaseId = testOverrides ? testOverrides.databaseId : import.meta.env.DATABASE_ID;
+  if (
+    !token ||
+    token === 'your_notion_token_here' ||
+    !databaseId ||
+    databaseId === 'your_database_id_here'
+  ) {
+    return null;
+  }
+  return { token, databaseId };
+}
+
+/** 文章列表查詢的頁大小；NOTION_PAGE_SIZE 僅供測試縮小頁大小以驗證分頁。 */
+function readPageSize(): number {
+  const raw = readEnv('NOTION_PAGE_SIZE');
+  const n = raw ? Number.parseInt(raw, 10) : NaN;
+  return Number.isInteger(n) && n >= 1 && n <= 100 ? n : 100;
+}
+
+export class NotionReadError extends Error {}
+
+/** 把 Notion 錯誤整理成「哪個查詢、HTTP 狀態、錯誤代碼、訊息」，並遮掉金鑰。 */
+function describeNotionError(context: string, err: unknown): string {
+  const e = err as { status?: number; code?: string; message?: string; name?: string; cause?: unknown };
+  const status = typeof e?.status === 'number' ? `HTTP ${e.status}` : '無 HTTP 狀態（網路或用戶端錯誤）';
+  const code = e?.code ?? e?.name ?? 'unknown';
+  let message = e?.message ?? String(err);
+  const cause = e?.cause as { message?: string; code?: string } | undefined;
+  if (cause?.message && !message.includes(cause.message)) message += `（cause: ${cause.code ?? ''} ${cause.message}）`;
+  const token = readNotionConfig()?.token;
+  if (token) message = message.split(token).join('***');
+  return `[notion] ${context} 失敗：${status}，錯誤代碼 ${code}，訊息：${message}`;
+}
+
+const MOCK_WARNING =
+  '[notion] ⚠️⚠️ 使用 mock 假資料（僅限本機 dev 或 ALLOW_MOCK_FALLBACK=1；網頁不會顯示 Notion 最新內容）⚠️⚠️';
+
+/**
+ * 讀取失敗的統一出口：嚴格模式（astro build）直接拋錯讓建置失敗，
+ * 寬鬆模式（astro dev）才印警告並交給呼叫端提供的 fallback。
+ */
+function failOrFallback<T>(context: string, err: unknown, fallback: () => T): T {
+  const detail = describeNotionError(context, err);
+  if (isStrictMode()) {
+    throw new NotionReadError(detail, { cause: err });
+  }
+  logNotionFetchError(context, err);
+  console.warn(MOCK_WARNING);
+  return fallback();
+}
+
+/** 缺少金鑰或資料庫 ID：嚴格模式拋錯，寬鬆模式印警告後用 mock。 */
+function missingConfigOrFallback<T>(context: string, fallback: () => T): T {
+  if (isStrictMode()) {
+    throw new NotionReadError(
+      `[notion] ${context} 失敗：缺少 NOTION_TOKEN 或 DATABASE_ID（或仍是範本佔位值）。正式建置不得使用 mock 假資料。`
+    );
+  }
+  console.warn('[notion] NOTION_TOKEN / DATABASE_ID 未設定。');
+  console.warn(MOCK_WARNING);
+  return fallback();
 }
 
 export interface Post {
@@ -201,26 +292,42 @@ function resolvePostImage(
   return firstImageFromHtml(rawBody);
 }
 
+/** 讀完某個區塊底下的所有子區塊（has_more 為真就以 next_cursor 續讀，不只第一頁 100 個）。 */
+export async function listAllBlockChildren(notion: NotionClient, blockId: string) {
+  const results: Awaited<ReturnType<NotionClient['blocks']['children']['list']>>['results'] = [];
+  let cursor: string | undefined;
+  do {
+    const response = await notion.blocks.children.list({
+      block_id: blockId,
+      page_size: 100,
+      ...(cursor ? { start_cursor: cursor } : {}),
+    });
+    notionBuildStats.blockChildrenList += 1;
+    results.push(...response.results);
+    if (response.has_more && !response.next_cursor) {
+      throw new Error(`blocks.children.list 回報 has_more 但沒有 next_cursor（block ${blockId}）`);
+    }
+    cursor = response.has_more ? (response.next_cursor ?? undefined) : undefined;
+  } while (cursor);
+  return results;
+}
+
 /** 從 Notion 頁面區塊取第一張圖（Image 欄位為空時的備援） */
-async function fetchFirstBlockImage(
+export async function fetchFirstBlockImage(
   notion: NotionClient,
   pageId: string
 ): Promise<string | null> {
   try {
-    const response = await notion.blocks.children.list({
-      block_id: pageId,
-      page_size: 100,
-    });
-    notionBuildStats.blockChildrenList += 1;
+    const blocks = await listAllBlockChildren(notion, pageId);
 
-    for (const block of response.results) {
+    for (const block of blocks) {
       if (!('type' in block) || block.type !== 'image') continue;
       const image = block.image;
       if (image.type === 'external') return image.external.url;
       if (image.type === 'file') return image.file.url;
     }
-  } catch {
-    return null;
+  } catch (err) {
+    return failOrFallback(`fetchFirstBlockImage(${pageId})`, err, () => null);
   }
   return null;
 }
@@ -281,8 +388,7 @@ async function fetchPageContentHtml(
       // 直接呼叫 Notion API 抓子項目
       let childrenHtml = '';
       try {
-        const children = await notion.blocks.children.list({ block_id: block.id });
-        notionBuildStats.blockChildrenList += 1;
+        const children = { results: await listAllBlockChildren(notion, block.id) };
         const items = children.results
           .filter((c: any) => c?.type === 'bulleted_list_item')
           .map((c: any) => {
@@ -293,7 +399,9 @@ async function fetchPageContentHtml(
         if (items.length > 0) {
           childrenHtml = `<ul>${items.join('')}</ul>`;
         }
-      } catch (_) {}
+      } catch (err) {
+        failOrFallback(`fetchPageContentHtml callout 子項目(${block.id})`, err, () => undefined);
+      }
 
       // 若 title 含有 \n• 則拆成標題 + 條列
       let titleHtml = '';
@@ -322,8 +430,8 @@ async function fetchPageContentHtml(
     const html = await marked.parse(fixCjkBold(md));
     return sanitizeBodyHtml(typeof html === 'string' ? html : '');
   } catch (err) {
-    logNotionFetchError('fetchPageContentHtml', err);
-    return '';
+    if (err instanceof NotionReadError) throw err;
+    return failOrFallback(`fetchPageContentHtml(${pageId})`, err, () => '');
   }
 }
 
@@ -404,6 +512,12 @@ async function resolveDataSourceId(
   return dataSourceId;
 }
 
+interface QueryResult {
+  pages: PageObjectResponse[];
+  /** 實際送出的 dataSources.query 次數（分頁次數） */
+  requests: number;
+}
+
 async function queryDatabasePages(
   notion: NotionClient,
   databaseId: string,
@@ -411,9 +525,10 @@ async function queryDatabasePages(
     pageFilter?: string;
     subPageFilter?: string;
     featuredOnly?: boolean;
+    /** 只取前 N 筆（單次請求，不分頁）。未指定時讀完所有頁。 */
     pageSize?: number;
   }
-): Promise<PageObjectResponse[]> {
+): Promise<QueryResult> {
   const dataSourceId = await resolveDataSourceId(notion, databaseId);
 
   const filters: DataSourceFilter[] = [
@@ -434,18 +549,51 @@ async function queryDatabasePages(
 
   const sorts: DataSourceSort = [{ property: 'Date', direction: 'descending' }];
 
-  const response = await notion.dataSources.query({
-    data_source_id: dataSourceId,
-    filter,
-    sorts,
-    ...(options?.pageSize ? { page_size: options.pageSize } : {}),
-  });
-  notionBuildStats.dataSourceQuery += 1;
+  const pages: PageObjectResponse[] = [];
+  const limitedToFirstPage = Boolean(options?.pageSize);
+  const pageSize = options?.pageSize ?? readPageSize();
+  let cursor: string | undefined;
+  let requests = 0;
 
-  return response.results.filter(
-    (item): item is PageObjectResponse =>
-      item.object === 'page' && 'properties' in item
-  );
+  do {
+    const response = await notion.dataSources.query({
+      data_source_id: dataSourceId,
+      filter,
+      sorts,
+      page_size: pageSize,
+      ...(cursor ? { start_cursor: cursor } : {}),
+    });
+    notionBuildStats.dataSourceQuery += 1;
+    requests += 1;
+
+    for (const item of response.results) {
+      if (item.object === 'page' && 'properties' in item) pages.push(item as PageObjectResponse);
+    }
+
+    if (limitedToFirstPage || !response.has_more) break;
+    if (!response.next_cursor) {
+      throw new Error('dataSources.query 回報 has_more 但沒有 next_cursor，無法繼續分頁');
+    }
+    cursor = response.next_cursor;
+  } while (cursor);
+
+  return { pages, requests };
+}
+
+/** 讀取全部已發布文章（僅 Status=已發布）。嚴格模式下 0 篇視為讀取異常。 */
+async function queryAllPublishedPages(
+  notion: NotionClient,
+  databaseId: string,
+  label: string
+): Promise<PageObjectResponse[]> {
+  const { pages, requests } = await queryDatabasePages(notion, databaseId);
+  console.log(`[notion] ${label}：讀到已發布文章 ${pages.length} 篇，分頁 ${requests} 次（page_size=${readPageSize()}）`);
+  if (pages.length === 0 && isStrictMode()) {
+    throw new NotionReadError(
+      `[notion] ${label} 失敗：已發布文章數為 0，疑似 Notion 讀取異常。`
+    );
+  }
+  return pages;
 }
 
 export function parsePost(notionPage: PageObjectResponse): Post {
@@ -665,7 +813,7 @@ let featuredPostsCache: Promise<Post[]> | null = null;
 
 /**
  * Fetch all published posts, optionally filtered by page section.
- * Falls back to mock data when NOTION_TOKEN / DATABASE_ID is not configured.
+ * 嚴格模式（astro build）讀取失敗會拋錯；寬鬆模式（astro dev）才會改用 mock。
  */
 export async function getPosts(
   pageFilter?: string,
@@ -686,36 +834,32 @@ async function fetchPostsUncached(
   pageFilter?: string,
   subPageFilter?: string
 ): Promise<Post[]> {
-  const token = import.meta.env.NOTION_TOKEN;
-  const databaseId = import.meta.env.DATABASE_ID;
-
-  if (
-    !token ||
-    token === 'your_notion_token_here' ||
-    !databaseId ||
-    databaseId === 'your_database_id_here'
-  ) {
-    console.warn('[notion] NOTION_TOKEN / DATABASE_ID 未設定，使用 mock 資料。');
-    return getMockPosts(pageFilter, subPageFilter);
+  const config = readNotionConfig();
+  if (!config) {
+    return missingConfigOrFallback('getPosts', () => getMockPosts(pageFilter, subPageFilter));
   }
 
   try {
-    const notion = getNotionClient(token);
-    const pages = await queryDatabasePages(notion, databaseId, {
+    const notion = resolveClient(config.token);
+    const { pages } = await queryDatabasePages(notion, config.databaseId, {
       pageFilter,
       subPageFilter,
     });
+    if (pages.length === 0 && !pageFilter && isStrictMode()) {
+      throw new NotionReadError('[notion] getPosts 失敗：已發布文章數為 0，疑似 Notion 讀取異常。');
+    }
     const posts = await enrichPostsImages(
       notion,
       filterPostsByNav(pages.map(parsePost), pageFilter, subPageFilter)
     );
-    return posts.length > 0
-      ? posts
-      : getMockPosts(pageFilter, subPageFilter);
+    if (posts.length === 0 && !isStrictMode()) {
+      console.warn(MOCK_WARNING);
+      return getMockPosts(pageFilter, subPageFilter);
+    }
+    return posts;
   } catch (err) {
-    logNotionFetchError('getPosts', err);
-    console.warn('[notion] 已改為使用 mock 資料（網頁不會顯示 Notion 最新內容）。');
-    return getMockPosts(pageFilter, subPageFilter);
+    if (err instanceof NotionReadError) throw err;
+    return failOrFallback('getPosts', err, () => getMockPosts(pageFilter, subPageFilter));
   }
 }
 
@@ -732,29 +876,25 @@ export async function getAllPosts(): Promise<Post[]> {
 }
 
 async function fetchAllPostsUncached(): Promise<Post[]> {
-  const token = import.meta.env.NOTION_TOKEN;
-  const databaseId = import.meta.env.DATABASE_ID;
-
-  if (
-    !token ||
-    token === 'your_notion_token_here' ||
-    !databaseId ||
-    databaseId === 'your_database_id_here'
-  ) {
-    return getMockPosts();
+  const config = readNotionConfig();
+  if (!config) {
+    return missingConfigOrFallback('getAllPosts', () => getMockPosts());
   }
 
   try {
-    const notion = getNotionClient(token);
-    const pages = await queryDatabasePages(notion, databaseId);
+    const notion = resolveClient(config.token);
+    const pages = await queryAllPublishedPages(notion, config.databaseId, 'getAllPosts');
     const withImages = await enrichPostsImages(notion, pages.map(parsePost));
     const posts = await enrichPostsBodies(notion, withImages);
     logNotionBuildStats('getAllPosts');
-    return posts.length > 0 ? posts : getMockPosts();
+    if (posts.length === 0 && !isStrictMode()) {
+      console.warn(MOCK_WARNING);
+      return getMockPosts();
+    }
+    return posts;
   } catch (err) {
-    logNotionFetchError('getAllPosts', err);
-    console.warn('[notion] 已改為使用 mock 資料。');
-    return getMockPosts();
+    if (err instanceof NotionReadError) throw err;
+    return failOrFallback('getAllPosts', err, () => getMockPosts());
   }
 }
 
@@ -762,34 +902,28 @@ async function fetchAllPostsUncached(): Promise<Post[]> {
  * Fetch a single post by ID.
  */
 export async function getPostById(id: string): Promise<Post | undefined> {
-  const token = import.meta.env.NOTION_TOKEN;
-  const databaseId = import.meta.env.DATABASE_ID;
-
-  if (
-    !token ||
-    token === 'your_notion_token_here' ||
-    !databaseId ||
-    databaseId === 'your_database_id_here'
-  ) {
-    return getMockPostById(id);
+  const config = readNotionConfig();
+  if (!config) {
+    return missingConfigOrFallback('getPostById', () => getMockPostById(id));
   }
 
   try {
     notionBuildStats.getPostById += 1;
-    const notion = getNotionClient(token);
+    const notion = resolveClient(config.token);
     const page = (await notion.pages.retrieve({ page_id: id })) as PageObjectResponse;
     notionBuildStats.pageRetrieve += 1;
     const post = parsePost(page);
     const withImage = await enrichPostImage(notion, post);
     return enrichPostBody(notion, withImage);
   } catch (err) {
-    logNotionFetchError('getPostById', err);
-    return getMockPostById(id);
+    if (err instanceof NotionReadError) throw err;
+    return failOrFallback(`getPostById(${id})`, err, () => getMockPostById(id));
   }
 }
 
 /**
  * Fetch featured posts (Featured = true) for the home hero and featured grid.
+ * 只取前 4 筆（單次請求，刻意不分頁）。
  */
 export async function getFeaturedPosts(): Promise<Post[]> {
   if (featuredPostsCache) {
@@ -801,33 +935,33 @@ export async function getFeaturedPosts(): Promise<Post[]> {
 }
 
 async function fetchFeaturedPostsUncached(): Promise<Post[]> {
-  const token = import.meta.env.NOTION_TOKEN;
-  const databaseId = import.meta.env.DATABASE_ID;
-
-  if (
-    !token ||
-    token === 'your_notion_token_here' ||
-    !databaseId ||
-    databaseId === 'your_database_id_here'
-  ) {
-    return getMockPosts('HOME')
-      .filter((p) => p.featured)
-      .slice(0, 3);
+  const mockFeatured = () => getMockPosts('HOME').filter((p) => p.featured).slice(0, 3);
+  const config = readNotionConfig();
+  if (!config) {
+    return missingConfigOrFallback('getFeaturedPosts', mockFeatured);
   }
 
   try {
-    const notion = getNotionClient(token);
-    const pages = await queryDatabasePages(notion, databaseId, {
+    const notion = resolveClient(config.token);
+    const { pages } = await queryDatabasePages(notion, config.databaseId, {
       featuredOnly: true,
       pageSize: 4,
     });
     const posts = await enrichPostsImages(notion, pages.map(parsePost));
-    return posts.length > 0
-      ? posts
-      : getMockPosts('HOME').filter((p) => p.featured).slice(0, 3);
+    if (posts.length === 0 && !isStrictMode()) {
+      console.warn(MOCK_WARNING);
+      return mockFeatured();
+    }
+    return posts;
   } catch (err) {
-    logNotionFetchError('getFeaturedPosts', err);
-    console.warn('[notion] 已改為使用 mock 資料。');
-    return getMockPosts('HOME').filter((p) => p.featured).slice(0, 3);
+    if (err instanceof NotionReadError) throw err;
+    return failOrFallback('getFeaturedPosts', err, mockFeatured);
   }
+}
+
+/** 清掉 build 期間的記憶體快取（離線測試用）。 */
+function resetNotionCaches(): void {
+  postsCache.clear();
+  allPostsCache = null;
+  featuredPostsCache = null;
 }
