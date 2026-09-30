@@ -27,8 +27,14 @@ export const POST: APIRoute = async ({ request }) => {
 
   let email: string;
   try {
-    const formData = await request.formData();
-    email = formData.get('email')?.toString().trim() ?? '';
+    const contentType = request.headers.get('content-type') ?? '';
+    if (contentType.includes('application/json')) {
+      const body = (await request.json()) as { email?: unknown };
+      email = typeof body?.email === 'string' ? body.email.trim() : '';
+    } else {
+      const formData = await request.formData();
+      email = formData.get('email')?.toString().trim() ?? '';
+    }
   } catch {
     return jsonResponse({ ok: false, error: '送出格式不正確，請重新整理後再試。' }, 400);
   }
