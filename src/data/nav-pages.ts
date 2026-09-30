@@ -18,15 +18,15 @@ export const navSections: NavSection[] = [
     label: '新手出發',
     page: '新手出發',
     children: [
-      { label: '遊輪品牌', name: '遊輪品牌', href: '/about-royal/' },
+      { label: '郵輪品牌', name: '郵輪品牌', href: '/about-royal/' },
       { label: '訂票攻略', name: '訂票攻略', href: '/ticket-guide/' },
       { label: '聰明花費', name: '聰明花費', href: '/pricing/' },
       { label: '新手 FAQ', name: '新手FAQ', href: '/faq/' },
     ],
   },
   {
-    label: '玩轉遊輪',
-    page: '玩轉遊輪',
+    label: '玩轉郵輪',
+    page: '玩轉郵輪',
     children: [
       { label: '船上活動', name: '船上活動', href: '/packing/' },
       { label: '娛樂設施', name: '娛樂設施', href: '/entertainment/' },

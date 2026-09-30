@@ -30,15 +30,15 @@ export const newLayoutNavSections: readonly NavSection[] = [
     page: '新手出發',
     navActiveKey: 'beginner',
     children: [
-      { label: '遊輪品牌', slug: 'brand' },
+      { label: '郵輪品牌', slug: 'brand' },
       { label: '訂票攻略', slug: 'booking-guide' },
       { label: '聰明花費', slug: 'smart-spending' },
       { label: '新手FAQ', slug: 'faq' },
     ],
   },
   {
-    label: '玩轉遊輪',
-    page: '玩轉遊輪',
+    label: '玩轉郵輪',
+    page: '玩轉郵輪',
     navActiveKey: 'cruise',
     children: [
       { label: '船上活動', slug: 'onboard-activities' },

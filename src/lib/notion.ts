@@ -39,6 +39,8 @@ import type {
   RichTextItemResponse,
 } from '@notionhq/client/build/src/api-endpoints';
 
+import { normalizeNavName } from './nav-name-compat';
+
 type NotionClient = Client;
 type DataSourceFilter = QueryDataSourceParameters['filter'];
 type DataSourceSort = QueryDataSourceParameters['sorts'];
@@ -419,11 +421,6 @@ async function queryDatabasePages(
   ];
   if (options?.pageFilter === 'HOME') {
     filters.push({ property: 'ShowOnHome', checkbox: { equals: true } });
-  } else if (options?.pageFilter) {
-    filters.push({ property: 'Page', select: { equals: options.pageFilter } });
-    if (options.subPageFilter) {
-      filters.push({ property: 'Subpage', select: { equals: options.subPageFilter } });
-    }
   }
   if (options?.featuredOnly) {
     filters.push({ property: 'Featured', checkbox: { equals: true } });
@@ -451,14 +448,14 @@ async function queryDatabasePages(
   );
 }
 
-function parsePost(notionPage: PageObjectResponse): Post {
+export function parsePost(notionPage: PageObjectResponse): Post {
   const props = notionPage.properties as Record<string, any>;
 
   const title =
     props['Name']?.title?.map((t: RichTextItemResponse) => t.plain_text).join('') ??
     '(無標題)';
 
-  const category = props['Subpage']?.select?.name ?? '未分類';
+  const category = normalizeNavName(props['Subpage']?.select?.name ?? '未分類');
   const excerpt = props['Excerpt']?.rich_text
     ? richTextToString(props['Excerpt'].rich_text)
     : '';
@@ -475,8 +472,10 @@ function parsePost(notionPage: PageObjectResponse): Post {
   const likes = props['Likes']?.number ?? 0;
   const featured = props['Featured']?.checkbox ?? false;
   const status = props['Status']?.select?.name ?? '';
-  const pg = props['Page']?.select?.name ?? 'HOME';
-  const subPage = props['Subpage']?.select?.name ?? props['SubPage']?.select?.name ?? '';
+  const pg = normalizeNavName(props['Page']?.select?.name ?? 'HOME');
+  const subPage = normalizeNavName(
+    props['Subpage']?.select?.name ?? props['SubPage']?.select?.name ?? ''
+  );
   const showOnHome = props['ShowOnHome']?.checkbox ?? false;
   const showTOC = props['ShowTOC']?.checkbox ?? false;
 
@@ -499,6 +498,18 @@ function parsePost(notionPage: PageObjectResponse): Post {
     showTOC,
     body,
   };
+}
+
+/**
+ * 依 Page／Subpage 篩選文章（比對的是 parsePost 正規化後的新名稱）。
+ * 不交給 Notion 伺服器端篩選：Notion 對不存在的 select 選項會回 400，
+ * 新舊選項在轉換期間不一定同時存在，伺服器端 equals 會整筆失敗而被 mock 資料取代。
+ */
+export function filterPostsByNav(posts: Post[], pageFilter?: string, subPageFilter?: string): Post[] {
+  if (!pageFilter || pageFilter === 'HOME') return posts;
+  const page = normalizeNavName(pageFilter);
+  const subPage = subPageFilter ? normalizeNavName(subPageFilter) : undefined;
+  return posts.filter((p) => p.page === page && (!subPage || p.subPage === subPage));
 }
 
 // ─── Mock data fallback ────────────────────────────────────────────────────────
@@ -630,11 +641,7 @@ export function getMockPosts(pageFilter?: string, subPageFilter?: string): Post[
     },
   ];
 
-  if (!pageFilter || pageFilter === 'HOME') return all;
-  return all.filter(
-    (p) =>
-      p.page === pageFilter && (!subPageFilter || p.subPage === subPageFilter)
-  );
+  return filterPostsByNav(all, pageFilter, subPageFilter);
 }
 
 export function getMockPostById(id: string): Post | undefined {
@@ -700,7 +707,7 @@ async function fetchPostsUncached(
     });
     const posts = await enrichPostsImages(
       notion,
-      pages.map(parsePost)
+      filterPostsByNav(pages.map(parsePost), pageFilter, subPageFilter)
     );
     return posts.length > 0
       ? posts
