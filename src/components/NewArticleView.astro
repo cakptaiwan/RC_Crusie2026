@@ -6,6 +6,7 @@ import { postImage } from '../lib/cloudinary-image';
 import { newArticleUrl, newHomeUrl } from '../lib/new-article-url';
 import { getPosts } from '../lib/notion';
 import type { Post } from '../lib/notion';
+import '../styles/article-lists.css';
 
 interface Props {
   post: Post;
@@ -135,17 +136,33 @@ const relatedPosts = allPosts
         tocList.closest('.tocbox')?.remove();
         return;
       }
+      // 開頭的「一、」「十二、」「1.」「（一）」視為標號；擷取不到或標號後沒有文字時整段當標題。
+      const NUM_RE = /^\s*([一二三四五六七八九十百零〇]+、|\d+[.．](?!\d)|\d+、|[（(][一二三四五六七八九十百零〇\d]+[)）])\s*(\S[\s\S]*)$/;
+      let maxNumLen = 0;
       headings.forEach((h, i) => {
         const id = `heading-${i}`;
         h.id = id;
+        const full = (h.textContent ?? '').trim();
+        const m = NUM_RE.exec(full);
         const li = document.createElement('li');
         li.className = 'tocli';
         const a = document.createElement('a');
         a.href = `#${id}`;
-        a.textContent = h.textContent ?? '';
+        if (m) {
+          const num = document.createElement('span');
+          num.className = 'toc-num';
+          num.textContent = m[1];
+          a.appendChild(num);
+          maxNumLen = Math.max(maxNumLen, m[1].length);
+        }
+        const txt = document.createElement('span');
+        txt.className = 'toc-txt';
+        txt.textContent = m ? m[2] : full;
+        a.appendChild(txt);
         li.appendChild(a);
         tocList.appendChild(li);
       });
+      if (maxNumLen > 0) tocList.style.setProperty('--toc-num-ch', String(maxNumLen));
     });
   </script>
 )}

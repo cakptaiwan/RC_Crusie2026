@@ -1,0 +1,60 @@
+/*
+ * 文章頁「本文目錄」與清單的排版層次。
+ * 選擇器刻意多包一層 .abody，蓋過 NewLayout.astro 內的 .kli／.tocli／.abody ol li，
+ * 不用動 NewLayout（那支有其他進行中的變更）。全部用 em／無單位行距，沒有固定 px。
+ */
+
+/* 本文目錄：標號與標題兩欄，折行後對齊標題文字起點 */
+.abody .toclist .tocli {
+  margin: 0 0 0.7em;
+  line-height: 1.6;
+}
+.abody .toclist .tocli:last-child {
+  margin-bottom: 0;
+}
+.abody .toclist .tocli a {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5em;
+  text-decoration: none;
+}
+.abody .toclist .tocli a:hover {
+  text-decoration: none;
+}
+.abody .toclist .tocli a:hover .toc-txt {
+  text-decoration: underline;
+}
+.abody .toclist .toc-num {
+  flex: 0 0 auto;
+  min-width: calc(var(--toc-num-ch, 2) * 1em);
+  color: #3e6c97;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.abody .toclist .toc-txt {
+  flex: 1 1 0;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* 內文清單（含「本文重點」）：bullet 內行距收緊、bullet 之間拉開，圓點在文字欄外側 */
+.abody ul.kul,
+.abody ol:not(.toclist) {
+  list-style-position: outside;
+}
+.abody ul.kul > li,
+.abody ol:not(.toclist) > li {
+  margin: 0;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+.abody ul.kul > li + li,
+.abody ol:not(.toclist) > li + li {
+  margin-top: 1.1em;
+}
+.abody ul.kul > li > ul,
+.abody ul.kul > li > ol,
+.abody ol:not(.toclist) > li > ul,
+.abody ol:not(.toclist) > li > ol {
+  margin-top: 0.6em;
+}
