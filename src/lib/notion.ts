@@ -41,6 +41,7 @@ import type {
 
 import { normalizeNavName } from './nav-name-compat';
 import { isStrictMode, readEnv } from './build-mode';
+import { registerBuildTimePosts } from './seo/sitemap-lastmod';
 
 type NotionClient = Client;
 type DataSourceFilter = QueryDataSourceParameters['filter'];
@@ -241,6 +242,10 @@ export interface Post {
   excerpt: string;
   image: string | null;
   date: string;
+  /** Notion Updated_Date（YYYY-MM-DD），可空 */
+  updatedDate: string;
+  /** Notion Keywords 原文 */
+  keywords: string;
   author: string;
   comments: number;
   likes: number;
@@ -423,6 +428,24 @@ async function fetchPageContentHtml(
 ): Promise<string> {
   try {
     const n2m = new NotionToMarkdown({ notionClient: notion });
+
+    n2m.setCustomTransformer('image', async (block) => {
+      const b = block as {
+        image?: {
+          type?: string;
+          external?: { url?: string };
+          file?: { url?: string };
+          caption?: Array<{ plain_text?: string }>;
+        };
+      };
+      const img = b.image;
+      if (!img) return '';
+      const url = img.type === 'external' ? img.external?.url : img.file?.url;
+      if (!url) return '';
+      const caption = (img.caption ?? []).map((t) => t.plain_text ?? '').join('').trim();
+      const alt = caption.replace(/[\[\]()]/g, '');
+      return `![${alt}](${url})\n\n`;
+    });
 
     n2m.setCustomTransformer('callout', async (block) => {
       const b = block as any;
@@ -658,6 +681,10 @@ export function parsePost(notionPage: PageObjectResponse): Post {
   const image = resolvePostImage(props, notionPage.cover, rawBody);
 
   const date = props['Date']?.date?.start ?? '';
+  const updatedDate = props['Updated_Date']?.date?.start ?? '';
+  const keywords = props['Keywords']?.rich_text
+    ? richTextToString(props['Keywords'].rich_text)
+    : '';
   const author = props['Author']?.rich_text
     ? richTextToString(props['Author'].rich_text)
     : '皇家旅人';
@@ -679,6 +706,8 @@ export function parsePost(notionPage: PageObjectResponse): Post {
     excerpt,
     image,
     date,
+    updatedDate,
+    keywords,
     author,
     comments,
     likes,
@@ -718,6 +747,8 @@ export function getMockPosts(pageFilter?: string, subPageFilter?: string): Post[
       image:
         'https://images.pexels.com/photos/1654698/pexels-photo-1654698.jpeg?auto=compress&cs=tinysrgb&w=700',
       date: '2024-03-15',
+      updatedDate: '',
+      keywords: '',
       author: '皇家旅人',
       comments: 12,
       likes: 52,
@@ -738,6 +769,8 @@ export function getMockPosts(pageFilter?: string, subPageFilter?: string): Post[
         '第一次搭乘郵輪，面對龐大的船隻和複雜的規則，許多人感到不知所措。本文整理了訂房、行李準備、登船、艙房選擇等15個關鍵技巧...',
       image: null,
       date: '2024-03-10',
+      updatedDate: '',
+      keywords: '',
       author: '皇家旅人',
       comments: 8,
       likes: 45,
@@ -758,6 +791,8 @@ export function getMockPosts(pageFilter?: string, subPageFilter?: string): Post[
         '郵輪上的餐飲選擇琳瑯滿目，從每日自助早餐到米其林主廚特別設計的晚宴菜單，如何規劃才能讓每一餐都成為難忘的美食體驗？',
       image: null,
       date: '2024-03-05',
+      updatedDate: '',
+      keywords: '',
       author: '皇家旅人',
       comments: 15,
       likes: 63,
@@ -779,6 +814,8 @@ export function getMockPosts(pageFilter?: string, subPageFilter?: string): Post[
       image:
         'https://images.pexels.com/photos/2662116/pexels-photo-2662116.jpeg?auto=compress&cs=tinysrgb&w=700',
       date: '2024-02-28',
+      updatedDate: '',
+      keywords: '',
       author: '皇家旅人',
       comments: 9,
       likes: 38,
@@ -799,6 +836,8 @@ export function getMockPosts(pageFilter?: string, subPageFilter?: string): Post[
         '很多郵輪旅客都在考慮要不要升等套房。本文從實際入住體驗出發，分析兩種艙房在空間、設施、服務和性價比上的真實差異...',
       image: null,
       date: '2024-02-20',
+      updatedDate: '',
+      keywords: '',
       author: '皇家旅人',
       comments: 21,
       likes: 77,
@@ -820,6 +859,8 @@ export function getMockPosts(pageFilter?: string, subPageFilter?: string): Post[
       image:
         'https://images.pexels.com/photos/2044434/pexels-photo-2044434.jpeg?auto=compress&cs=tinysrgb&w=700',
       date: '2024-02-15',
+      updatedDate: '',
+      keywords: '',
       author: '皇家旅人',
       comments: 6,
       likes: 29,
@@ -932,6 +973,7 @@ async function fetchAllPostsUncached(): Promise<Post[]> {
     const withImages = await enrichPostsImages(notion, pages.map(parsePost));
     const posts = await enrichPostsBodies(notion, withImages);
     logNotionBuildStats('getAllPosts');
+    registerBuildTimePosts(posts);
     if (posts.length === 0 && !isStrictMode()) {
       console.warn(MOCK_WARNING);
       return getMockPosts();

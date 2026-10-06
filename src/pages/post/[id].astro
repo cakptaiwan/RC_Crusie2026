@@ -3,6 +3,9 @@ import NewLayout from '../../layouts/NewLayout.astro';
 import NewArticleView from '../../components/NewArticleView.astro';
 import { categoryEntries, getCategoryHrefBySubPage } from '../../data/new-layout-nav';
 import { getAllPosts, getPostById } from '../../lib/notion';
+import { absoluteSiteUrl } from '../../lib/seo/site-url';
+import { buildArticleJsonLd } from '../../lib/seo/jsonld';
+import { postImage } from '../../lib/cloudinary-image';
 
 export async function getStaticPaths() {
   const posts = await getAllPosts();
@@ -25,53 +28,22 @@ const navEntry = categoryEntries.find(
 );
 
 const categoryHref = getCategoryHrefBySubPage(post.subPage || post.category);
+const displayTitle = post.title.trim();
 const breadcrumbItems = [
-  { name: '首頁', url: 'https://royal-cruiser.com/' },
-  { name: post.subPage || post.category, url: `https://royal-cruiser.com${categoryHref}` },
-  { name: post.title, url: `https://royal-cruiser.com/post/${post.id}/` },
+  { name: '首頁', url: absoluteSiteUrl('/') },
+  { name: post.subPage || post.category, url: absoluteSiteUrl(categoryHref) },
+  { name: displayTitle, url: absoluteSiteUrl(`/post/${post.id}/`) },
 ];
 
-// 補上時間與時區，符合 ISO 8601 完整格式（台灣時區 UTC+8）
-const isoDate = post.date
-  ? new Date(`${post.date}T00:00:00+08:00`).toISOString()
-  : undefined;
-
-const articleJsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'Article',
-  headline: post.title,
-  datePublished: isoDate,
-  dateModified: isoDate,
-  author: {
-    '@type': 'Person',
-    name: post.author || '皇家旅人',
-    url: 'https://royal-cruiser.com/category/traveler-stories/',
-  },
-  publisher: {
-    '@type': 'Organization',
-    name: 'Royal Cruiser 皇家旅人',
-    url: 'https://royal-cruiser.com',
-    logo: {
-      '@type': 'ImageObject',
-      url: 'https://royal-cruiser.com/logo.png',
-    },
-  },
-  image: post.image || 'https://royal-cruiser.com/og-default.jpg',
-  url: `https://royal-cruiser.com/post/${post.id}/`,
-  inLanguage: 'zh-TW',
-  description: post.excerpt,
-  mainEntityOfPage: {
-    '@type': 'WebPage',
-    '@id': `https://royal-cruiser.com/post/${post.id}/`,
-  },
-};
+const articleJsonLd = buildArticleJsonLd(post);
+const ogImage = post.image ? postImage(post.image, 'hero') : undefined;
 ---
 
 <NewLayout
   title={post.title}
   description={post.excerpt}
   navActive={navEntry?.navActiveKey ?? ''}
-  image={post.image ?? undefined}
+  image={ogImage}
   type="article"
   jsonLd={articleJsonLd}
   breadcrumb={breadcrumbItems}

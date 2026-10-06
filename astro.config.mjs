@@ -3,6 +3,7 @@ import { defineConfig, envField } from 'astro/config';
 import tailwind from '@astrojs/tailwind';
 import sitemap from '@astrojs/sitemap';
 import cloudflare from '@astrojs/cloudflare';
+import { sitemapLastmodPatchIntegration } from './src/integrations/sitemap-lastmod-patch.ts';
 
 export default defineConfig({
   site: 'https://royal-cruiser.com',
@@ -32,6 +33,7 @@ export default defineConfig({
   integrations: [
     tailwind({ applyBaseStyles: false }),
     sitemap(),
+    sitemapLastmodPatchIntegration(),
   ],
   image: {
     /* Allow Astro Image to process external images from these hosts at build time */

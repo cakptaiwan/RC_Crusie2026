@@ -5,12 +5,14 @@ import TravelerStoriesContent from '../../components/TravelerStoriesContent.astr
 import ResourcesContent from '../../components/ResourcesContent.astro';
 import {
   categoryEntries,
+  categoryHref,
   categoryOvlLabel,
   type CategoryEntry,
 } from '../../data/new-layout-nav';
 import { getPosts } from '../../lib/notion';
 import { postImage } from '../../lib/cloudinary-image';
 import { newArticleUrl, newHomeUrl } from '../../lib/new-article-url';
+import { absoluteSiteUrl } from '../../lib/seo/site-url';
 
 export async function getStaticPaths() {
   return categoryEntries.map((category) => ({
@@ -38,6 +40,14 @@ const pageDescription = isTravelerStories
 
 const formatDate = (date: string) => (date ? date.slice(0, 10) : '');
 const padNum = (n: number) => String(n).padStart(2, '0');
+
+/** 資源推薦中間層「旅人手記」無獨立 URL → 不輸出 BreadcrumbList */
+const breadcrumbJsonLdItems = isResources
+  ? undefined
+  : [
+      { name: '首頁', url: absoluteSiteUrl('/') },
+      { name: category.label, url: absoluteSiteUrl(categoryHref(category.slug)) },
+    ];
 ---
 
 <NewLayout
@@ -45,6 +55,7 @@ const padNum = (n: number) => String(n).padStart(2, '0');
   description={pageDescription}
   navActive={category.navActiveKey}
   noindex={!isStaticJournalPage && posts.length === 0}
+  breadcrumb={breadcrumbJsonLdItems}
 >
   <div class="crumb">
     <a href={newHomeUrl}>首頁</a><span>/</span>

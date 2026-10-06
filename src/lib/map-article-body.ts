@@ -1,5 +1,6 @@
 import { sanitizeBodyHtml } from './sanitize-body';
 import { optimizeCloudinaryInHtml } from './cloudinary-image';
+import { enrichBodyImageAlts } from './seo/body-image-alt';
 
 /**
  * Notion Block（marked HTML）→ design handoff 文章內文 class 對應層。
@@ -19,7 +20,7 @@ import { optimizeCloudinaryInHtml } from './cloudinary-image';
  * | code / pre                  | 原樣保留                 | 設計稿無範例，不新增樣式 |
  * | link                        | .abody 內 <a>            | 沿用連結色 |
  */
-export function mapArticleBodyHtml(rawHtml: string): string {
+export function mapArticleBodyHtml(rawHtml: string, articleTitle = ''): string {
   const html = sanitizeBodyHtml(rawHtml);
   if (!html) return '';
 
@@ -68,6 +69,10 @@ export function mapArticleBodyHtml(rawHtml: string): string {
 
   out = optimizeCloudinaryInHtml(out, 800);
   out = out.replace(/<img(?![^>]*\bloading=)/gi, '<img loading="lazy"');
+
+  if (articleTitle) {
+    out = enrichBodyImageAlts(out, articleTitle);
+  }
 
   return out;
 }
