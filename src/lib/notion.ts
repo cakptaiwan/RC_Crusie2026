@@ -74,26 +74,71 @@ function sleep(ms: number): Promise<void> {
 /** 逐篇補圖/補內文之間的固定間隔（毫秒），主動避免觸發 Notion API 429 */
 const REQUEST_PACING_MS = 350;
 
+/** HTTP 層 429／5xx 退避：最多再試 6 次（共 7 次請求），指數退避上限 60 秒 */
+const NOTION_HTTP_MAX_RETRIES = 6;
+const NOTION_HTTP_BACKOFF_CAP_MS = 60_000;
+const NOTION_HTTP_BACKOFF_BASE_MS = 2_000;
+const NOTION_HTTP_RETRY_JITTER_MS = 400;
+
+function parseRetryAfterMs(headers: Headers): number | undefined {
+  const raw = headers.get('retry-after') ?? headers.get('Retry-After');
+  if (!raw) return undefined;
+  const seconds = Number.parseInt(raw, 10);
+  if (Number.isInteger(seconds) && seconds >= 0) return seconds * 1000;
+  const dateMs = Date.parse(raw);
+  if (!Number.isNaN(dateMs)) {
+    const delay = dateMs - Date.now();
+    return delay > 0 ? delay : 0;
+  }
+  return undefined;
+}
+
+function notionHttpBackoffMs(attempt: number, headers: Headers): number {
+  const fromHeader = parseRetryAfterMs(headers);
+  const exponential = NOTION_HTTP_BACKOFF_BASE_MS * 2 ** attempt;
+  let waitMs = fromHeader ?? exponential;
+  waitMs = Math.min(waitMs, NOTION_HTTP_BACKOFF_CAP_MS);
+  waitMs += Math.random() * NOTION_HTTP_RETRY_JITTER_MS;
+  return waitMs;
+}
+
+function isRetryableNotionHttpStatus(status: number): boolean {
+  return status === 429 || (status >= 500 && status < 600);
+}
+
+/**
+ * 建置期 Notion API 的 fetch：429／5xx 時加長退避重試；401／404 等立即回傳。
+ * 用盡重試仍失敗時交還最後的 Response，由 SDK 拋錯（嚴格模式建置失敗）。
+ */
+function createNotionFetchWithRetry(baseFetch: typeof fetch): typeof fetch {
+  return async (input, init) => {
+    for (let attempt = 0; attempt <= NOTION_HTTP_MAX_RETRIES; attempt++) {
+      const response = await baseFetch(input, init);
+      if (!isRetryableNotionHttpStatus(response.status) || attempt === NOTION_HTTP_MAX_RETRIES) {
+        return response;
+      }
+      const waitMs = notionHttpBackoffMs(attempt, response.headers);
+      const waitSec = (waitMs / 1000).toFixed(1);
+      console.log(
+        `[notion] 重試 ${attempt + 1}/${NOTION_HTTP_MAX_RETRIES}，等待 ${waitSec} 秒（HTTP ${response.status}）`,
+      );
+      await sleep(waitMs);
+    }
+    return baseFetch(input, init);
+  };
+}
+
 /**
  * 共用的 Notion Client（build 全程只建立一次）。
- *
- * 客製化重試策略：Notion 429 回應常帶有很長的 retry-after 建議值
- * （實測曾遇到 339 秒），若照 SDK 預設上限（60 秒）等待，逐篇補圖／
- * 補內文的迴圈中只要撞到幾次限流，整個 build 就會被拖到停滯不前。
- * 這裡改用短間隔（最多等 3 秒）＋ 有上限次數的重試（3 次），
- * 讓單一請求盡快失敗並交由呼叫端 fallback（例如保留空圖片、跳過內文），
- * 而不是被動枯等 retry-after 建議的長秒數卡住整批 build。
+ * HTTP 重試由自訂 fetch 處理；關閉 SDK 內建 retry，避免與短上限（3 秒）疊加。
  */
 let cachedNotionClient: NotionClient | null = null;
 function getNotionClient(token: string): NotionClient {
   if (!cachedNotionClient) {
     cachedNotionClient = new Client({
       auth: token,
-      retry: {
-        maxRetries: 3,
-        initialRetryDelayMs: 500,
-        maxRetryDelayMs: 3000,
-      },
+      retry: false,
+      fetch: createNotionFetchWithRetry(fetch.bind(globalThis)),
     });
   }
   return cachedNotionClient;
