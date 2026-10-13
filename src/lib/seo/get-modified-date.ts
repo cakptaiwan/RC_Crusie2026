@@ -51,5 +51,5 @@ export function getModifiedDate(
 }
 
 export function isoDateFromYmd(ymd: string): string {
-  return new Date(`${ymd}T00:00:00+08:00`).toISOString();
+  return `${ymd}T00:00:00+08:00`;
 }
