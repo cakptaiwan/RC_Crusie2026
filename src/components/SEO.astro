@@ -35,7 +35,7 @@ const breadcrumbJsonLd = breadcrumb
 const siteUrl = 'https://royal-cruiser.com';
 const canonicalUrl = new URL(Astro.url.pathname, siteUrl).toString();
 const organizationJsonLd = buildOrganizationJsonLd();
-const websiteJsonLd = Astro.url.pathname === '/' ? buildWebSiteJsonLd() : null;
+const websiteJsonLd = buildWebSiteJsonLd();
 const ogImage = image.startsWith('http') ? image : absoluteSiteUrl(image.startsWith('/') ? image : `/${image}`);
 ---
 <title>{title} | Royal Cruiser 皇家旅人</title>
@@ -54,9 +54,7 @@ const ogImage = image.startsWith('http') ? image : absoluteSiteUrl(image.startsW
 <meta name="twitter:description" content={description} />
 <meta name="twitter:image" content={ogImage} />
 <script type="application/ld+json" set:html={jsonLdScriptContent(organizationJsonLd)} />
-{websiteJsonLd && (
-  <script type="application/ld+json" set:html={jsonLdScriptContent(websiteJsonLd)} />
-)}
+<script type="application/ld+json" set:html={jsonLdScriptContent(websiteJsonLd)} />
 {jsonLd && (
   <script type="application/ld+json" set:html={jsonLdScriptContent(jsonLd)} />
 )}
