@@ -1,0 +1,23 @@
+---
+import NewLayout from '../layouts/NewLayout.astro';
+import { categoryHref, newLayoutNavSections } from '../data/new-layout-nav';
+
+/* 不存在的網址由 Cloudflare Pages 回這頁並帶 404 狀態（沒有 404.html 時會回首頁 200） */
+const mainLinks = newLayoutNavSections.map((section) => ({
+  label: section.label,
+  href: categoryHref(section.children[0].slug),
+}));
+---
+
+<NewLayout title="找不到頁面" description="這個網址不存在，請回首頁或從主要分類繼續瀏覽郵輪資訊。" noindex>
+  <section style="max-width:720px;margin:0 auto;padding:64px 20px;text-align:center">
+    <h1 style="font-size:28px;font-weight:800;margin-bottom:16px">找不到這個頁面</h1>
+    <p style="line-height:1.8;margin-bottom:28px">網址可能打錯了，或文章已經搬家。可以回首頁，或從下面的分類繼續看郵輪資訊。</p>
+    <p style="margin-bottom:24px"><a href="/" style="font-weight:700;text-decoration:underline">回首頁</a></p>
+    <ul style="display:flex;flex-wrap:wrap;justify-content:center;gap:12px 20px;list-style:none;padding:0">
+      {mainLinks.map((link) => (
+        <li><a href={link.href} style="text-decoration:underline">{link.label}</a></li>
+      ))}
+    </ul>
+  </section>
+</NewLayout>

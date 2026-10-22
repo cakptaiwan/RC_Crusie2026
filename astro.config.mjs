@@ -32,7 +32,8 @@ export default defineConfig({
   },
   integrations: [
     tailwind({ applyBaseStyles: false }),
-    sitemap(),
+    // 站內搜尋頁 noindex，不列入 sitemap
+    sitemap({ filter: (page) => page !== 'https://royal-cruiser.com/search/' }),
     sitemapLastmodPatchIntegration(),
   ],
   image: {

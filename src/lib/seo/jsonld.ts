@@ -1,7 +1,35 @@
 import type { Post } from '../notion';
 import { postImage } from '../cloudinary-image';
-import { absoluteSiteUrl, defaultOgImage, organizationId } from './site-url';
+import { socialLinks } from '../../data/social-links';
+import { absoluteSiteUrl, defaultOgImage, organizationId, websiteId } from './site-url';
 import { getModifiedDate, isoDateFromYmd } from './get-modified-date';
+
+/** 全站共用 Organization（每頁輸出一次，其他節點以 @id 引用） */
+export function buildOrganizationJsonLd(): Record<string, unknown> {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    '@id': organizationId,
+    name: 'Royal Cruiser 皇家旅人',
+    url: absoluteSiteUrl('/'),
+    logo: { '@type': 'ImageObject', url: defaultOgImage },
+    description: '專業郵輪旅遊心得，提供真實體驗與實用攻略',
+    sameAs: socialLinks.map((link) => link.href),
+  };
+}
+
+/** 首頁 WebSite */
+export function buildWebSiteJsonLd(): Record<string, unknown> {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    '@id': websiteId,
+    name: 'Royal Cruiser 皇家旅人',
+    url: absoluteSiteUrl('/'),
+    inLanguage: 'zh-TW',
+    publisher: { '@id': organizationId },
+  };
+}
 
 export function jsonLdScriptContent(value: unknown): string {
   return JSON.stringify(value).replace(/</g, '\\u003c');
@@ -37,11 +65,7 @@ export function buildArticleJsonLd(post: Post, buildDayYmd?: string): Record<str
     headline: post.title.trim(),
     datePublished: isoDateFromYmd(datePublishedYmd),
     dateModified: isoDateFromYmd(dateModifiedYmd),
-    author: {
-      '@type': 'Person',
-      name: post.author || '皇家旅人',
-      url: absoluteSiteUrl('/category/traveler-stories/'),
-    },
+    author: { '@id': organizationId },
     publisher: { '@id': organizationId },
     url: canonical,
     inLanguage: 'zh-TW',

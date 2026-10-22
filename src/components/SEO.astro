@@ -1,7 +1,6 @@
 ---
-import { socialLinks } from '../data/social-links';
-import { jsonLdScriptContent } from '../lib/seo/jsonld';
-import { absoluteSiteUrl, defaultOgImage, organizationId } from '../lib/seo/site-url';
+import { buildOrganizationJsonLd, buildWebSiteJsonLd, jsonLdScriptContent } from '../lib/seo/jsonld';
+import { absoluteSiteUrl, defaultOgImage } from '../lib/seo/site-url';
 
 export interface Props {
   title: string;
@@ -35,22 +34,8 @@ const breadcrumbJsonLd = breadcrumb
   : null;
 const siteUrl = 'https://royal-cruiser.com';
 const canonicalUrl = new URL(Astro.url.pathname, siteUrl).toString();
-const baseJsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'Organization',
-  '@id': organizationId,
-  name: 'Royal Cruiser 皇家旅人',
-  url: siteUrl,
-  logo: `${siteUrl}/logo.png`,
-  description: '專業郵輪旅遊心得，提供真實體驗與實用攻略',
-  contactPoint: {
-    '@type': 'ContactPoint',
-    contactType: 'customer service',
-    availableLanguage: ['Chinese', 'English'],
-  },
-  sameAs: socialLinks.map((link) => link.href),
-};
-const mergedJsonLd = jsonLd ?? baseJsonLd;
+const organizationJsonLd = buildOrganizationJsonLd();
+const websiteJsonLd = Astro.url.pathname === '/' ? buildWebSiteJsonLd() : null;
 const ogImage = image.startsWith('http') ? image : absoluteSiteUrl(image.startsWith('/') ? image : `/${image}`);
 ---
 <title>{title} | Royal Cruiser 皇家旅人</title>
@@ -68,7 +53,13 @@ const ogImage = image.startsWith('http') ? image : absoluteSiteUrl(image.startsW
 <meta name="twitter:title" content={title} />
 <meta name="twitter:description" content={description} />
 <meta name="twitter:image" content={ogImage} />
-<script type="application/ld+json" set:html={jsonLdScriptContent(mergedJsonLd)} />
+<script type="application/ld+json" set:html={jsonLdScriptContent(organizationJsonLd)} />
+{websiteJsonLd && (
+  <script type="application/ld+json" set:html={jsonLdScriptContent(websiteJsonLd)} />
+)}
+{jsonLd && (
+  <script type="application/ld+json" set:html={jsonLdScriptContent(jsonLd)} />
+)}
 {breadcrumbJsonLd && (
   <script type="application/ld+json" set:html={jsonLdScriptContent(breadcrumbJsonLd)} />
 )}

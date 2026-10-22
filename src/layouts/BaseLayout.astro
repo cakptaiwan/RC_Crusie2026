@@ -11,9 +11,10 @@ export interface Props {
   image?: string;
   type?: 'website' | 'article';
   jsonLd?: Record<string, unknown>;
+  noindex?: boolean;
 }
 
-const { title, description, image, type, jsonLd } = Astro.props;
+const { title, description, image, type, jsonLd, noindex } = Astro.props;
 ---
 
 <!doctype html>
@@ -30,7 +31,7 @@ const { title, description, image, type, jsonLd } = Astro.props;
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700;800;900&display=swap"
       rel="stylesheet"
     />
-    <SEO title={title} description={description} image={image} type={type} jsonLd={jsonLd} />
+    <SEO title={title} description={description} image={image} type={type} jsonLd={jsonLd} noindex={noindex} />
     <slot name="head" />
     <script is:inline>document.documentElement.classList.add('js');</script>
 

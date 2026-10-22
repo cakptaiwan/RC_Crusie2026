@@ -409,6 +409,19 @@ async function enrichPostsImages(
 }
 
 /**
+ * 修正「裸網址緊貼全形標點」被 marked 自動連結整段吃進去的問題
+ * （例如 https://example.gov.vn）→ 連結尾巴多了「）」而失效）。
+ * 把網址包成 <網址> 明確界定範圍，標點留在連結外。
+ * 已在 [文字](網址)、<網址> 或 HTML 屬性內的網址不處理。
+ */
+function fixCjkAutolink(md: string): string {
+  return md.replace(
+    /(?<![(<"'=\w/])(https?:\/\/[^\s<>()"'（）、，。；：！？「」【】]+)(?=[）、，。；：！？」】])/g,
+    '<$1>',
+  );
+}
+
+/**
  * 修正「粗體緊貼中文標點」導致 Markdown 粗體失效的問題。
  * 在中文標點與 ** 之間插入零寬字元（U+200B，不可見），
  * 讓 marked 的粗體開頭/收尾判定能成立。
@@ -495,7 +508,7 @@ async function fetchPageContentHtml(
     const md = n2m.toMarkdownString(mdBlocks).parent;
     if (!md || !md.trim()) return '';
 
-    const html = await marked.parse(fixCjkBold(md));
+    const html = await marked.parse(fixCjkBold(fixCjkAutolink(md)));
     return sanitizeBodyHtml(typeof html === 'string' ? html : '');
   } catch (err) {
     if (err instanceof NotionReadError) throw err;
