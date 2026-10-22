@@ -37,8 +37,11 @@ const canonicalUrl = new URL(Astro.url.pathname, siteUrl).toString();
 const organizationJsonLd = buildOrganizationJsonLd();
 const websiteJsonLd = buildWebSiteJsonLd();
 const ogImage = image.startsWith('http') ? image : absoluteSiteUrl(image.startsWith('/') ? image : `/${image}`);
+/* <title> 加後綴超過 60 字就只留頁面標題（只影響 <title>，不改 og:title） */
+const titleWithSuffix = `${title} | Royal Cruiser 皇家旅人`;
+const documentTitle = [...titleWithSuffix].length > 60 ? title : titleWithSuffix;
 ---
-<title>{title} | Royal Cruiser 皇家旅人</title>
+<title>{documentTitle}</title>
 {noindex && <meta name="robots" content="noindex, follow" />}
 <meta name="description" content={description} />
 <link rel="canonical" href={canonicalUrl} />

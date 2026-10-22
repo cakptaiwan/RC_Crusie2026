@@ -52,6 +52,20 @@ export function buildWebSiteJsonLd(): Record<string, unknown> {
   };
 }
 
+/** 分類頁 CollectionPage（isPartOf 指向每頁都有的 WebSite 節點） */
+export function buildCollectionPageJsonLd(name: string, description: string, url: string): Record<string, unknown> {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    '@id': `${url}#collectionpage`,
+    name,
+    description,
+    url,
+    inLanguage: 'zh-Hant',
+    isPartOf: { '@id': websiteId },
+  };
+}
+
 export function jsonLdScriptContent(value: unknown): string {
   return JSON.stringify(value).replace(/</g, '\\u003c');
 }

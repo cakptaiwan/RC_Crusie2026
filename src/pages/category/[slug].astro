@@ -13,6 +13,8 @@ import { getPosts } from '../../lib/notion';
 import { postImage } from '../../lib/cloudinary-image';
 import { newArticleUrl, newHomeUrl } from '../../lib/new-article-url';
 import { absoluteSiteUrl } from '../../lib/seo/site-url';
+import { buildCollectionPageJsonLd } from '../../lib/seo/jsonld';
+import { categoryIntros, categoryMetaDescription } from '../../data/category-intros';
 
 export async function getStaticPaths() {
   return categoryEntries.map((category) => ({
@@ -32,22 +34,22 @@ const isStaticJournalPage = isTravelerStories || isResources;
 const posts = await getPosts(category.page, category.subPage);
 const [leadPost, ...restPosts] = posts;
 
-const pageDescription = isTravelerStories
-  ? '皇家旅人的旅人故事與理念——一個無可救藥愛上皇家加勒比郵輪的台灣旅人。'
-  : isResources
-    ? '皇家加勒比郵輪規劃必備資源：官方網站、論壇社群、比價 OTA、甲板圖工具與影音頻道，精選 16 個實用入口。'
-    : `${category.label}相關文章與皇家加勒比郵輪攻略。`;
+const intro = categoryIntros[category.slug];
+if (!intro) {
+  throw new Error(`category-intros.ts 缺少分類導言：${category.slug}`);
+}
+const pageDescription = categoryMetaDescription(intro);
+const pageUrl = absoluteSiteUrl(categoryHref(category.slug));
+const collectionPageJsonLd = buildCollectionPageJsonLd(category.label, pageDescription, pageUrl);
 
 const formatDate = (date: string) => (date ? date.slice(0, 10) : '');
 const padNum = (n: number) => String(n).padStart(2, '0');
 
-/** 資源推薦中間層「旅人手記」無獨立 URL → 不輸出 BreadcrumbList */
-const breadcrumbJsonLdItems = isResources
-  ? undefined
-  : [
-      { name: '首頁', url: absoluteSiteUrl('/') },
-      { name: category.label, url: absoluteSiteUrl(categoryHref(category.slug)) },
-    ];
+/** 所有分類頁一致輸出「首頁 > 分類」（資源推薦畫面上的中間層「旅人手記」沒有獨立網址，JSON-LD 不列） */
+const breadcrumbJsonLdItems = [
+  { name: '首頁', url: absoluteSiteUrl('/') },
+  { name: category.label, url: pageUrl },
+];
 ---
 
 <NewLayout
@@ -56,6 +58,7 @@ const breadcrumbJsonLdItems = isResources
   navActive={category.navActiveKey}
   noindex={!isStaticJournalPage && posts.length === 0}
   breadcrumb={breadcrumbJsonLdItems}
+  jsonLd={collectionPageJsonLd}
 >
   <div class="crumb">
     <a href={newHomeUrl}>首頁</a><span>/</span>
@@ -80,6 +83,7 @@ const breadcrumbJsonLdItems = isResources
           )
         }
       </div>
+      <p class="a-ex rev" style="margin:0 0 32px">{intro}</p>
 
       {isTravelerStories && <TravelerStoriesContent />}
       {isResources && <ResourcesContent />}
