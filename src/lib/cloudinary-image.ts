@@ -11,6 +11,16 @@ export function optimizeCloudinaryUrl(url: string, width?: number): string {
 
   const afterUpload = url.slice(idx + uploadMarker.length);
   if (/^f_auto[,/]/.test(afterUpload) || afterUpload.startsWith('f_auto,')) {
+    // 已有 f_auto 的網址原樣保留；唯一例外：第一段轉換只有 f_／q_ 參數（沒有任何尺寸參數）時，
+    // 補上 w_*，否則瀏覽器會下載原圖（例如 5473×4000）。有裁切或其他參數的一律不動。
+    if (width) {
+      const slash = afterUpload.indexOf('/');
+      const firstSegment = slash === -1 ? afterUpload : afterUpload.slice(0, slash);
+      const onlyQuality = firstSegment.split(',').every((p) => /^(f|q)_[a-z0-9:]+$/i.test(p));
+      if (slash !== -1 && onlyQuality) {
+        return `${url.slice(0, idx + uploadMarker.length)}${firstSegment},w_${width}${afterUpload.slice(slash)}`;
+      }
+    }
     return url;
   }
 
