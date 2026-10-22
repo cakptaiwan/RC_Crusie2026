@@ -4,6 +4,7 @@ import tailwind from '@astrojs/tailwind';
 import sitemap from '@astrojs/sitemap';
 import cloudflare from '@astrojs/cloudflare';
 import { sitemapLastmodPatchIntegration } from './src/integrations/sitemap-lastmod-patch.ts';
+import { imageDimensionsIntegration } from './src/integrations/image-dimensions.ts';
 
 export default defineConfig({
   site: 'https://royal-cruiser.com',
@@ -35,6 +36,7 @@ export default defineConfig({
     // 站內搜尋頁 noindex，不列入 sitemap
     sitemap({ filter: (page) => page !== 'https://royal-cruiser.com/search/' }),
     sitemapLastmodPatchIntegration(),
+    imageDimensionsIntegration(),
   ],
   image: {
     /* Allow Astro Image to process external images from these hosts at build time */
