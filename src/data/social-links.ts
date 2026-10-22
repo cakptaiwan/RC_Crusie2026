@@ -9,7 +9,7 @@ const FB_PATH =
 const TH_PATH =
   'M18.2 8.9C17.4 6.2 15.2 4.7 12.2 4.7 8.3 4.7 5.9 7.5 5.9 12s2.4 7.3 6.3 7.3c2.8 0 4.8-1.4 4.8-3.7 0-2.2-1.9-3.4-4.2-3.4-1.8 0-2.9.8-2.9 1.9s1 1.9 2.4 1.9c2.1 0 3.1-1.6 3.1-4v-.8c0-1.8-1.2-2.8-3.1-2.8-1 0-1.8.3-2.3.9';
 const thSvg = (stroke: string) =>
-  `<svg class="h-full w-full" viewBox="0 0 24 24" aria-hidden="true"><path d="${TH_PATH}" fill="none" stroke="${stroke}" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  `<svg class="h-full w-full" viewBox="3.6 3.6 16.8 16.8" aria-hidden="true"><path d="${TH_PATH}" fill="none" stroke="${stroke}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 
 export const socialLinks = [
   {
