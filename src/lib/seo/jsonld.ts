@@ -14,7 +14,28 @@ export function buildOrganizationJsonLd(): Record<string, unknown> {
     url: absoluteSiteUrl('/'),
     logo: { '@type': 'ImageObject', url: defaultOgImage },
     description: '專業郵輪旅遊心得，提供真實體驗與實用攻略',
+    contactPoint: {
+      '@type': 'ContactPoint',
+      contactType: 'customer support',
+      email: 'service@royal-cruiser.com',
+    },
     sameAs: socialLinks.map((link) => link.href),
+  };
+}
+
+/** /about/ 的 AboutPage（不建立 Person） */
+export function buildAboutPageJsonLd(name: string, description: string): Record<string, unknown> {
+  const url = absoluteSiteUrl('/about/');
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'AboutPage',
+    '@id': `${url}#aboutpage`,
+    url,
+    name,
+    description,
+    inLanguage: 'zh-TW',
+    isPartOf: { '@id': websiteId },
+    publisher: { '@id': organizationId },
   };
 }
 

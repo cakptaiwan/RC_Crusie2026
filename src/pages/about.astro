@@ -1,0 +1,44 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { buildAboutPageJsonLd } from '../lib/seo/jsonld';
+import { absoluteSiteUrl } from '../lib/seo/site-url';
+
+const pageTitle = '關於皇家旅人';
+const description = '皇家旅人是以繁體中文撰寫的皇家加勒比郵輪資訊站，說明內容來源、製作方式、站方立場與更正管道。';
+const breadcrumb = [
+  { name: '首頁', url: absoluteSiteUrl('/') },
+  { name: pageTitle, url: absoluteSiteUrl('/about/') },
+];
+---
+
+<BaseLayout title={pageTitle} description={description} jsonLd={buildAboutPageJsonLd(pageTitle, description)} breadcrumb={breadcrumb}>
+  <div class="mx-auto max-w-content px-gutter-sm md:px-gutter-md lg:px-gutter-lg py-12">
+    <article class="prose max-w-none">
+      <h1 class="text-3xl font-semibold text-blue-brand mb-8">關於皇家旅人</h1>
+
+      <p class="text-ink-soft mb-6">皇家旅人（Royal Cruiser）是一個以繁體中文撰寫的皇家加勒比郵輪資訊站，主要讀者是台灣、香港、新加坡、馬來西亞與中國的華文旅客。</p>
+
+      <h2 class="text-xl font-semibold text-ink mt-8 mb-4">為什麼做這個網站</h2>
+      <p class="text-ink-soft mb-6">目前華文圈能查到的國際郵輪資訊，多半來自旅行社或旅遊從業人員，推薦時難免帶有立場。皇家旅人想補上這段資訊空隙：用旅客的角度，整理第一次訂票、第一次上船會遇到的問題。</p>
+
+      <h2 class="text-xl font-semibold text-ink mt-8 mb-4">內容怎麼來</h2>
+      <ul class="list-disc pl-5 text-ink-soft space-y-2 mb-6">
+        <li><strong>素材來源：</strong>彙整 Reddit、Facebook 相關社團的旅客分享，以及公開的郵輪新聞與官方資訊。</li>
+        <li><strong>製作方式：</strong>素材彙整後，由 AI 輔助翻譯與撰寫，再經人工審稿才發布。</li>
+        <li><strong>寫作原則：</strong>數字、規定、價格、船名等事實以素材為準；個人感受與場景是描寫，不夾帶未經查證的事實。</li>
+        <li><strong>時效提醒：</strong>簽證、票價、船上規定會變動，文章僅供參考，出發前請務必以官方網站公告為準。</li>
+      </ul>
+
+      <h2 class="text-xl font-semibold text-ink mt-8 mb-4">我們的立場</h2>
+      <ul class="list-disc pl-5 text-ink-soft space-y-2 mb-6">
+        <li>目前沒有業配，也沒有推薦碼或聯盟連結。</li>
+        <li>本站為獨立資訊站，與皇家加勒比集團無隸屬關係。</li>
+      </ul>
+
+      <h2 class="text-xl font-semibold text-ink mt-8 mb-4">更正與聯絡</h2>
+      <p class="text-ink-soft mb-6">發現內容有誤或資訊過時，歡迎來信 <a href="mailto:service@royal-cruiser.com" class="underline">service@royal-cruiser.com</a>，或透過 Facebook、Instagram、Threads 的「皇家旅人」頁面告訴我們，查證後會修正。</p>
+
+      <p class="text-ink-soft mt-10 text-right">皇家旅人編輯室</p>
+    </article>
+  </div>
+</BaseLayout>
