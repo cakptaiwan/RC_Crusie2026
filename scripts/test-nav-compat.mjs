@@ -43,14 +43,26 @@ const mk = (id, page, sub, extra = {}) => ({
     ...extra,
   },
 });
+// 第 4、5 欄是 Notion 的 Brand 與「新分類」（側欄與分類計數依這兩欄，與舊 Page／Subpage 無關）：
+//   皇家／品牌船隊 3 篇（達皇家門檻 3）、公主／船上活動 1 篇（公主門檻 1）、
+//   郵輪學堂／訂票選艙 1 篇（未達學堂門檻 3，不顯示）、Brand 空白 1 篇（不計入任何分區）
 const specs = [
-  ['a1', '新手出發', 'BRAND'], ['a2', '新手出發', 'BRAND'], ['a3', '新手出發', '訂票攻略'],
-  ['b1', 'PLAY', '船上活動'], ['b2', 'PLAY', '餐廳美食'], ['b3', '航線資訊', '東北亞航線'],
+  ['a1', '新手出發', 'BRAND', '皇家', '品牌船隊'], ['a2', '新手出發', 'BRAND', '皇家', '品牌船隊'],
+  ['a3', '新手出發', '訂票攻略', '皇家', '品牌船隊'],
+  ['b1', 'PLAY', '船上活動', '公主', '船上活動'], ['b2', 'PLAY', '餐廳美食', '郵輪學堂', '訂票選艙'],
+  ['b3', '航線資訊', '東北亞航線', '', ''],
 ];
-const build = (brand, play) => specs.map(([id, p, s]) => parsePost(mk(id, p === 'PLAY' ? play : p, s === 'BRAND' ? brand : s)));
+const brandProps = (brand, newCategory) => ({
+  Brand: { select: brand ? { name: brand } : null },
+  新分類: { select: newCategory ? { name: newCategory } : null },
+});
+const build = (brand, play) =>
+  specs.map(([id, p, s, b, nc]) => parsePost(mk(id, p === 'PLAY' ? play : p, s === 'BRAND' ? brand : s, brandProps(b, nc))));
 const oldPosts = build('遊輪品牌', '玩轉遊輪');
 const newPosts = build('郵輪品牌', '玩轉郵輪');
-const mixedPosts = specs.map(([id, p, s], i) => parsePost(mk(id, p === 'PLAY' ? (i % 2 ? '玩轉郵輪' : '玩轉遊輪') : p, s === 'BRAND' ? (i % 2 ? '郵輪品牌' : '遊輪品牌') : s)));
+const mixedPosts = specs.map(([id, p, s, b, nc], i) =>
+  parsePost(mk(id, p === 'PLAY' ? (i % 2 ? '玩轉郵輪' : '玩轉遊輪') : p, s === 'BRAND' ? (i % 2 ? '郵輪品牌' : '遊輪品牌') : s, brandProps(b, nc))),
+);
 
 t('parsePost：舊、新、混合輸入的 page／subPage／category 都收斂成新名稱', () => {
   for (const posts of [oldPosts, newPosts, mixedPosts]) {
@@ -72,16 +84,17 @@ const sideOf = (posts) => getSidebarCategories(posts).map((c) => [c.name, c.coun
 
 t('分類文章數：舊、新、混合輸入結果相同，且不是 0', () => {
   const base = countsOf(newPosts);
-  assert.equal(base.brand, 2);
-  assert.equal(base['onboard-activities'], 1);
-  assert.equal(base.dining, 1);
+  // 依 Brand＋新分類計數，slug 為「分區/分類」；未達分區門檻的分類與 Brand 空白的文章不列
+  assert.deepEqual(base, { 'royal/fleet': 3, 'princess/onboard': 1 });
+  assert.equal(base['guide/booking'], undefined);
+  assert.ok(Object.values(base).every((n) => n > 0));
   assert.deepEqual(countsOf(oldPosts), base);
   assert.deepEqual(countsOf(mixedPosts), base);
 });
 
 t('側欄文章分類：舊、新、混合輸入結果相同，名稱為新名稱', () => {
   const base = sideOf(newPosts);
-  assert.ok(base.some(([n, c]) => n === '郵輪品牌' && c === 2));
+  assert.deepEqual(base, [['品牌船隊', 3], ['船上活動', 1]]);
   assert.ok(!base.some(([n]) => n.includes('遊輪')));
   assert.deepEqual(sideOf(oldPosts), base);
   assert.deepEqual(sideOf(mixedPosts), base);
