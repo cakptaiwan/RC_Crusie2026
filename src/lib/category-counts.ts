@@ -1,4 +1,4 @@
-import { categoryEntries, categoryHref } from '../data/new-layout-nav';
+import { getNavBrandMenus } from '../data/brand-nav';
 import type { Post } from './notion';
 
 export type CategoryCount = {
@@ -9,14 +9,16 @@ export type CategoryCount = {
 };
 
 /**
- * 依 getAllPosts() 單次查詢結果計算 16 個分類文章數。
- * 搭配 notion.ts 的 allPostsCache，同次 build 不會重複打 API。
+ * 側欄「文章分類」：選單上的品牌分區之可見分類（文章數 ≥ 該分區 minArticles），連到新分類頁。
+ * slug 為「分區/分類」。搭配 notion.ts 的 allPostsCache，同次 build 不會重複打 API。
  */
 export function getCategoryCounts(allPosts: Post[]): CategoryCount[] {
-  return categoryEntries.map((cat) => ({
-    slug: cat.slug,
-    label: cat.label,
-    href: categoryHref(cat.slug),
-    count: allPosts.filter((p) => p.page === cat.page && p.subPage === cat.subPage).length,
-  }));
+  return getNavBrandMenus(allPosts).flatMap((menu) =>
+    menu.categories.map((category) => ({
+      slug: `${menu.section.slug}/${category.slug}`,
+      label: category.label,
+      href: category.href,
+      count: category.count,
+    })),
+  );
 }

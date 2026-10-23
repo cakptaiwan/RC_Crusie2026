@@ -1,0 +1,9 @@
+---
+import FixedContentPage from '../../components/brand/FixedContentPage.astro';
+import ResourcesContent from '../../components/ResourcesContent.astro';
+import { categoryIntros } from '../../data/category-intros';
+---
+
+<FixedContentPage title="資源推薦" ovl="Resources" intro={categoryIntros.resources} path="/resources/">
+  <ResourcesContent />
+</FixedContentPage>

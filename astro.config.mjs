@@ -8,7 +8,11 @@ import { imageDimensionsIntegration } from './src/integrations/image-dimensions.
 import { BRAND_SECTIONS_INDEXABLE } from './src/data/brand-nav.ts';
 
 /** 品牌分區（BRAND_SECTIONS_INDEXABLE 為 false 時 noindex）不列入 sitemap */
-const BRAND_SECTION_PREFIXES = ['https://royal-cruiser.com/guide/', 'https://royal-cruiser.com/royal/'];
+const BRAND_SECTION_PREFIXES = [
+  'https://royal-cruiser.com/guide/',
+  'https://royal-cruiser.com/royal/',
+  'https://royal-cruiser.com/princess/',
+];
 
 export default defineConfig({
   site: 'https://royal-cruiser.com',

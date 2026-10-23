@@ -1,13 +1,18 @@
 ---
 import { socialLinks, navSocialLinkClass, navSocialGroupClass } from '../data/social-links';
-import { navSections } from '../data/nav-pages';
+import { footerFixedPages, getNavBrandMenus } from '../data/brand-nav';
+import { getAllPosts } from '../lib/notion';
 
 const currentYear = new Date().getFullYear();
 
-const linkColumns = navSections.map((section) => ({
-  heading: section.label,
-  links: section.children.map(({ label, href }) => ({ href, label })),
-}));
+/** 品牌分區（可見分類）＋固定頁，與 NewLayout 頁尾同一份資料 */
+const linkColumns = [
+  ...getNavBrandMenus(await getAllPosts()).map((menu) => ({
+    heading: menu.section.label,
+    links: menu.categories.map(({ label, href }) => ({ href, label })),
+  })),
+  { heading: '網站資訊', links: footerFixedPages.map(({ label, href }) => ({ href, label })) },
+];
 
 const legalLinks = [
   { href: '/about/', label: '關於我們' },
@@ -35,10 +40,10 @@ const legalLinks = [
     <!-- Brand + links row -->
     <div class="mb-8 flex flex-col items-center gap-8 md:flex-row md:items-start md:justify-center md:gap-14 md:pb-0 lg:mb-10">
       <div class="w-44 shrink-0 text-center md:text-left lg:w-52">
-        <a href="/" class="inline-block transition-opacity duration-300 hover:opacity-90" aria-label="Loyal to Royal 皇家旅人 — 首頁">
+        <a href="/" class="inline-block transition-opacity duration-300 hover:opacity-90" aria-label="Loyal to Royal 郵輪旅人 — 首頁">
           <img
             src="/logo.png"
-            alt="Loyal to Royal 皇家旅人"
+            alt="Loyal to Royal 郵輪旅人"
             width="64"
             height="64"
             loading="lazy"
@@ -46,7 +51,7 @@ const legalLinks = [
           />
         </a>
         <p class="mt-4 font-serif text-lg font-semibold text-white">
-          皇家旅人
+          郵輪旅人
         </p>
         <p class="mt-1 font-sans text-[13px] text-white/55">
           喜愛皇家加勒比郵輪的社群
@@ -54,7 +59,7 @@ const legalLinks = [
       </div>
 
       <!-- Link columns — left-aligned, compact -->
-      <div class="grid grid-cols-2 gap-x-10 gap-y-5 text-left sm:grid-cols-4 sm:gap-x-14">
+      <div class:list={['grid grid-cols-2 gap-x-10 gap-y-5 text-left sm:gap-x-14', linkColumns.length >= 4 ? 'sm:grid-cols-4' : 'sm:grid-cols-3']}>
         {linkColumns.map(({ heading, links }) => (
           <div>
             <h3 class="mb-3 border-b border-white/25 pb-2 font-serif text-lg font-semibold text-white">
@@ -87,7 +92,7 @@ const legalLinks = [
     <!-- Bottom bar -->
     <div class="flex flex-col items-center gap-8 md:flex-row md:items-center md:justify-between md:gap-6">
       <p class="order-2 font-sans text-[12px] tracking-wide text-white/35 md:order-1">
-        &copy; {currentYear} Loyal to Royal 皇家旅人 · All Rights Reserved
+        &copy; {currentYear} Loyal to Royal 郵輪旅人 · All Rights Reserved
       </p>
 
       <nav class="order-1 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 md:order-2" aria-label="法律連結">

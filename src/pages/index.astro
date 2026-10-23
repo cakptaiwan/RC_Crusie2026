@@ -2,6 +2,7 @@
 import NewLayout from '../layouts/NewLayout.astro';
 import HomePageSidebar from '../components/HomePageSidebar.astro';
 import { getCategoryHrefBySubPage } from '../data/new-layout-nav';
+import { brandCategoryHref, getBrandSection, getPostBrandCategory, getVisibleCategories } from '../data/brand-nav';
 import { newArticleUrl } from '../lib/new-article-url';
 import { postImage } from '../lib/cloudinary-image';
 import { getAllPosts, getFeaturedPosts, getPosts } from '../lib/notion';
@@ -27,9 +28,14 @@ const [trendingLead, ...trendingCells] = trending;
 /** 最新：全站依日期排序（getAllPosts 已 desc） */
 const latestPosts = allPosts.slice(0, 4);
 
+/** 「查看全部」優先指向新分類頁；文章沒有 Brand／新分類（或分類未達顯示門檻）時退回舊 /category/ */
 const featuredViewAll = featuredLead
-  ? getCategoryHrefBySubPage(featuredLead.subPage, 'onboard-activities')
+  ? getPostBrandCategory(featuredLead, allPosts)?.categoryHref ??
+    getCategoryHrefBySubPage(featuredLead.subPage, 'onboard-activities')
   : '/category/onboard-activities/';
+const royalSection = getBrandSection('royal');
+const royalNews = getVisibleCategories(royalSection, allPosts).find((c) => c.slug === 'news');
+const latestNewsHref = royalNews ? brandCategoryHref(royalSection, royalNews) : '/category/latest-news/';
 
 const formatDate = (date: string) => (date ? date.slice(0, 10) : '');
 const padNum = (n: number) => String(n).padStart(2, '0');
@@ -52,7 +58,7 @@ const padNum = (n: number) => String(n).padStart(2, '0');
         <img
           class="hero-paper-base"
           src="/assets/hero-banner.png"
-          alt="皇家旅人 Royal Cruiser——紙雕風格插畫，皇家加勒比郵輪航行於海灣與熱帶島嶼之間，標語：上船那一刻起，假期才真正開始"
+          alt="郵輪旅人 Royal Cruiser——紙雕風格插畫，皇家加勒比郵輪航行於海灣與熱帶島嶼之間，標語：上船那一刻起，假期才真正開始"
           width="1536"
           height="464"
           loading="eager"
@@ -61,7 +67,7 @@ const padNum = (n: number) => String(n).padStart(2, '0');
           data-lcp
         />
       </picture>
-      <h1 class="sr-only">皇家旅人 Royal Cruiser：上船那一刻起，假期才真正開始</h1>
+      <h1 class="sr-only">郵輪旅人 Royal Cruiser：上船那一刻起，假期才真正開始</h1>
     </div>
   </div>
 
@@ -130,7 +136,7 @@ const padNum = (n: number) => String(n).padStart(2, '0');
           <div class="ovl">Trending Now · 旅人們最近熱讀</div>
           <h2 class="a-h2 srf">熱門文章</h2>
         </div>
-        <a class="alink" href="/category/latest-news/">查看全部 →</a>
+        <a class="alink" href={latestNewsHref}>查看全部 →</a>
       </div>
       {
         trendingLead ? (
@@ -181,7 +187,7 @@ const padNum = (n: number) => String(n).padStart(2, '0');
           <div class="ovl">Latest Stories · 刷新的旅遊筆記</div>
           <h2 class="a-h2 srf">最新文章</h2>
         </div>
-        <a class="alink" href="/category/latest-news/">查看全部 →</a>
+        <a class="alink" href={latestNewsHref}>查看全部 →</a>
       </div>
       {
         latestPosts.length > 0 ? (

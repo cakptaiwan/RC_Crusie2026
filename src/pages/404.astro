@@ -1,11 +1,12 @@
 ---
 import NewLayout from '../layouts/NewLayout.astro';
-import { categoryHref, newLayoutNavSections } from '../data/new-layout-nav';
+import { getNavBrandMenus } from '../data/brand-nav';
+import { getAllPosts } from '../lib/notion';
 
 /* 不存在的網址由 Cloudflare Pages 回這頁並帶 404 狀態（沒有 404.html 時會回首頁 200） */
-const mainLinks = newLayoutNavSections.map((section) => ({
-  label: section.label,
-  href: categoryHref(section.children[0].slug),
+const mainLinks = getNavBrandMenus(await getAllPosts()).map((menu) => ({
+  label: menu.section.label,
+  href: menu.href,
 }));
 ---
 

@@ -1,0 +1,42 @@
+---
+/** 固定頁（/stories/、/resources/）：版面沿用舊分類頁的靜態頁，內容元件原樣使用 */
+import NewLayout from '../../layouts/NewLayout.astro';
+import CategoryPageSidebar from '../CategoryPageSidebar.astro';
+import { newHomeUrl } from '../../lib/new-article-url';
+import { absoluteSiteUrl } from '../../lib/seo/site-url';
+import { categoryMetaDescription } from '../../data/category-intros';
+
+interface Props {
+  title: string;
+  /** 英文小標，例：Traveler Stories */
+  ovl: string;
+  intro: string;
+  path: string;
+}
+
+const { title, ovl, intro, path } = Astro.props;
+const pageDescription = categoryMetaDescription(intro);
+const breadcrumbJsonLdItems = [
+  { name: '首頁', url: absoluteSiteUrl('/') },
+  { name: title, url: absoluteSiteUrl(path) },
+];
+---
+
+<NewLayout title={title} description={pageDescription} breadcrumb={breadcrumbJsonLdItems}>
+  <div class="crumb">
+    <a href={newHomeUrl}>首頁</a><span>/</span><span>{title}</span>
+  </div>
+  <div class="main2" style="padding-top:26px">
+    <div>
+      <div class="sec-head rev" style="margin-top:0">
+        <div>
+          <div class="ovl">{ovl}</div>
+          <h1 class="a-h2 srf">{title}</h1>
+        </div>
+      </div>
+      <p class="a-ex rev" style="margin:0 0 32px">{intro}</p>
+      <slot />
+    </div>
+    <CategoryPageSidebar />
+  </div>
+</NewLayout>

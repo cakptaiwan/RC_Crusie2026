@@ -1,0 +1,9 @@
+---
+import FixedContentPage from '../../components/brand/FixedContentPage.astro';
+import TravelerStoriesContent from '../../components/TravelerStoriesContent.astro';
+import { categoryIntros } from '../../data/category-intros';
+---
+
+<FixedContentPage title="旅人故事" ovl="Traveler Stories" intro={categoryIntros['traveler-stories']} path="/stories/">
+  <TravelerStoriesContent />
+</FixedContentPage>

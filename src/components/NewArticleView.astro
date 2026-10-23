@@ -1,10 +1,10 @@
 ---
 import { siteAuthor } from '../data/site-author';
-import { getCategoryHrefBySubPage } from '../data/new-layout-nav';
+import { getPostCrumbs } from '../lib/post-breadcrumb';
 import { mapArticleBodyHtml, estimateReadMinutes, countArticleHeading2 } from '../lib/map-article-body';
 import { postImage } from '../lib/cloudinary-image';
 import { newArticleUrl, newHomeUrl } from '../lib/new-article-url';
-import { getPosts } from '../lib/notion';
+import { getAllPosts, getPosts } from '../lib/notion';
 import type { Post } from '../lib/notion';
 import '../styles/article-lists.css';
 
@@ -17,7 +17,7 @@ const mappedBody = mapArticleBodyHtml(post.body, post.title);
 const heading2Count = countArticleHeading2(post.body);
 const showTOC = post.showTOC || heading2Count >= 6;
 const readMinutes = estimateReadMinutes(post.excerpt, post.body);
-const categoryHref = getCategoryHrefBySubPage(post.subPage || post.category);
+const crumbs = getPostCrumbs(post, await getAllPosts());
 const postImageUrl = postImage(post.image, 'hero');
 
 const formattedDate = post.date
@@ -32,7 +32,9 @@ const relatedPosts = allPosts
 
 <div class="crumb">
   <a href={newHomeUrl}>首頁</a><span>/</span>
-  <a href={categoryHref}>{post.subPage || post.category}</a><span>/</span>
+  {crumbs.map((crumb) => (
+    <><a href={crumb.href}>{crumb.name}</a><span>/</span></>
+  ))}
   <span class="crumb-title">{post.title}</span>
 </div>
 
@@ -83,7 +85,7 @@ const relatedPosts = allPosts
     <span class="avat">
       <picture>
         <source srcset="/assets/logo.webp" type="image/webp" />
-        <img src="/assets/logo.png" alt="皇家旅人 Royal Cruiser" width="56" height="56" loading="lazy" />
+        <img src="/assets/logo.png" alt="郵輪旅人 Royal Cruiser" width="56" height="56" loading="lazy" />
       </picture>
     </span>
     <span>

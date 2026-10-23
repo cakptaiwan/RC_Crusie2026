@@ -1,7 +1,8 @@
 ---
 import { socialLinks, navSocialLinkClass, navStripSocialLinkClass, navSocialGroupClass } from '../data/social-links';
 import { siteAuthor } from '../data/site-author';
-import { navSections } from '../data/nav-pages';
+import { getNavBrandMenus } from '../data/brand-nav';
+import { getAllPosts } from '../lib/notion';
 
 interface Props {
   /** Fixed transparent bar over hero — homepage only */
@@ -21,12 +22,14 @@ interface NavItem {
   children?: NavChild[];
 }
 
-const navItems: NavItem[] = [
-  ...navSections.map((section) => ({
-    label: section.label,
-    children: section.children.map(({ label, href }) => ({ label, href })),
-  })),
-];
+/** 品牌分區與其可見分類（與 NewLayout 同一份資料）；第一項是分區首頁 */
+const navItems: NavItem[] = getNavBrandMenus(await getAllPosts()).map((menu) => ({
+  label: menu.section.label,
+  children: [
+    { label: `${menu.section.label}首頁`, href: menu.href },
+    ...menu.categories.map(({ label, href }) => ({ label, href })),
+  ],
+}));
 
 const isItemActive = (item: NavItem) =>
   item.href
