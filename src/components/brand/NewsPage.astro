@@ -1,0 +1,105 @@
+---
+/** 最新資訊：彙整所有品牌「新分類＝最新消息」的文章。版型複製自 BrandCategoryPage，每篇標示所屬品牌 */
+import NewLayout from '../../layouts/NewLayout.astro';
+import CategoryPageSidebar from '../CategoryPageSidebar.astro';
+import { BRAND_SECTIONS_INDEXABLE, brandAuthorLabels, journalSection } from '../../data/brand-nav';
+import { postImage } from '../../lib/cloudinary-image';
+import { newArticleUrl, newHomeUrl } from '../../lib/new-article-url';
+import { absoluteSiteUrl } from '../../lib/seo/site-url';
+import { buildCollectionPageJsonLd } from '../../lib/seo/jsonld';
+import { categoryMetaDescription } from '../../data/category-intros';
+import type { Post } from '../../lib/notion';
+
+interface Props {
+  /** 已依日期新到舊排序的最新消息文章；空陣列顯示「內容籌備中」 */
+  posts: Post[];
+}
+
+const { posts } = Astro.props;
+const [leadPost, ...restPosts] = posts;
+
+const title = '最新資訊';
+const intro = '皇家加勒比、公主等各品牌的新船、新航線與政策變動，這裡彙整持續更新。';
+const pageDescription = categoryMetaDescription(intro);
+const pageUrl = absoluteSiteUrl('/news/');
+const collectionPageJsonLd = buildCollectionPageJsonLd(title, pageDescription, pageUrl);
+const breadcrumbJsonLdItems = [
+  { name: '首頁', url: absoluteSiteUrl('/') },
+  { name: title, url: pageUrl },
+];
+
+/** 所屬品牌；Brand 為空時只標「最新消息」 */
+const brandLabel = (post: Post) => brandAuthorLabels[post.brand] ?? '最新消息';
+const formatDate = (date: string) => (date ? date.slice(0, 10) : '');
+const padNum = (n: number) => String(n).padStart(2, '0');
+---
+
+<NewLayout
+  title={title}
+  description={pageDescription}
+  navActive={journalSection.key}
+  noindex={!BRAND_SECTIONS_INDEXABLE}
+  breadcrumb={breadcrumbJsonLdItems}
+  jsonLd={collectionPageJsonLd}
+>
+  <div class="crumb">
+    <a href={newHomeUrl}>首頁</a><span>/</span><span>{journalSection.label}</span><span>/</span><span>{title}</span>
+  </div>
+  <div class="main2" style="padding-top:26px">
+    <div>
+      <div class="sec-head rev" style="margin-top:0">
+        <div>
+          <div class="ovl">Latest News</div>
+          <h1 class="a-h2 srf">{title}</h1>
+        </div>
+        {posts.length > 0 && <span class="a-date" style="letter-spacing:.18em">共 {posts.length} 篇文章</span>}
+      </div>
+      <p class="a-ex rev" style="margin:0 0 32px">{intro}</p>
+
+      {
+        leadPost ? (
+          <>
+            <a class="t-lead" href={newArticleUrl(leadPost.id)}>
+              <span class="t-leadimg zi rev rev-l" style="display:block">
+                <img class="ph" src={postImage(leadPost.image, 'lead')} alt={leadPost.title} fetchpriority="high" />
+              </span>
+              <span class="lead-body rev">
+                <span class="fx ac gap12">
+                  <span class="a-cat">{brandLabel(leadPost)}</span>
+                  <span class="a-date">{formatDate(leadPost.date)}</span>
+                </span>
+                <span class="a-h3 srf" style="display:block;font-size:25px">{leadPost.title}</span>
+                {leadPost.excerpt && <span class="a-ex" style="display:block">{leadPost.excerpt}</span>}
+                <span class="alink">閱讀全文 →</span>
+              </span>
+            </a>
+            {restPosts.length > 0 && (
+              <div class="rev rev-r" style="margin-top:36px">
+                {restPosts.map((post, index) => (
+                  <a
+                    class="a-row"
+                    href={newArticleUrl(post.id)}
+                    style={index === restPosts.length - 1 ? 'border-bottom:1px solid rgba(11,42,74,.16)' : undefined}
+                  >
+                    <span class="a-num srf">{padNum(index + 1)}</span>
+                    <span>
+                      <span class="a-cat">{brandLabel(post)}</span>
+                      <span class="a-rt srf" style="display:block">{post.title}</span>
+                      <span class="a-date">{formatDate(post.date)}</span>
+                    </span>
+                    <span class="a-thumb zi">
+                      <img class="ph" src={postImage(post.image, 'thumb')} alt={post.title} loading="lazy" />
+                    </span>
+                  </a>
+                ))}
+              </div>
+            )}
+          </>
+        ) : (
+          <p class="a-ex" style="margin-top:24px">內容籌備中</p>
+        )
+      }
+    </div>
+    <CategoryPageSidebar />
+  </div>
+</NewLayout>

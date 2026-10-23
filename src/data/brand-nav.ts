@@ -168,10 +168,33 @@ export function getPostBrandCategory(post: Pick<Post, 'brand' | 'newCategory'>, 
   };
 }
 
+/**
+ * 跨品牌區「旅人手記」：不屬於任何單一品牌，三格固定顯示（不套用最低篇數門檻）。
+ * 頂部選單排在所有品牌分區之後。
+ */
+export const journalSection = {
+  key: 'journal',
+  label: '旅人手記',
+  items: [
+    { label: '旅人故事', href: '/stories/' },
+    { label: '最新資訊', href: '/news/' },
+    { label: '資源推薦', href: '/resources/' },
+  ],
+} as const;
+
+/** /news/ 彙整的新分類（所有品牌） */
+export const NEWS_NEW_CATEGORY = '最新消息';
+
+/** 最新資訊：所有品牌「新分類＝最新消息」的文章（新到舊） */
+export function getNewsPosts<T extends BrandPostLike>(posts: T[]): T[] {
+  return posts.filter((p) => p.newCategory === NEWS_NEW_CATEGORY).sort(byDateDesc);
+}
+
 /** 頁尾固定頁欄位 */
 export const footerFixedPages = [
   { label: '關於我們', href: '/about/' },
   { label: '旅人故事', href: '/stories/' },
+  { label: '最新資訊', href: '/news/' },
   { label: '資源推薦', href: '/resources/' },
   { label: '隱私權', href: '/privacy/' },
   { label: '服務條款', href: '/terms/' },

@@ -5,6 +5,7 @@ import CategoryPageSidebar from '../CategoryPageSidebar.astro';
 import { newHomeUrl } from '../../lib/new-article-url';
 import { absoluteSiteUrl } from '../../lib/seo/site-url';
 import { categoryMetaDescription } from '../../data/category-intros';
+import { BRAND_SECTIONS_INDEXABLE, journalSection } from '../../data/brand-nav';
 
 interface Props {
   title: string;
@@ -16,15 +17,23 @@ interface Props {
 
 const { title, ovl, intro, path } = Astro.props;
 const pageDescription = categoryMetaDescription(intro);
+/* 畫面麵包屑：首頁/旅人手記/標題；「旅人手記」沒有獨立網址，JSON-LD 不列 */
 const breadcrumbJsonLdItems = [
   { name: '首頁', url: absoluteSiteUrl('/') },
   { name: title, url: absoluteSiteUrl(path) },
 ];
+const hasContent = Astro.slots.has('default');
 ---
 
-<NewLayout title={title} description={pageDescription} breadcrumb={breadcrumbJsonLdItems}>
+<NewLayout
+  title={title}
+  description={pageDescription}
+  navActive={journalSection.key}
+  noindex={!BRAND_SECTIONS_INDEXABLE}
+  breadcrumb={breadcrumbJsonLdItems}
+>
   <div class="crumb">
-    <a href={newHomeUrl}>首頁</a><span>/</span><span>{title}</span>
+    <a href={newHomeUrl}>首頁</a><span>/</span><span>{journalSection.label}</span><span>/</span><span>{title}</span>
   </div>
   <div class="main2" style="padding-top:26px">
     <div>
@@ -35,7 +44,7 @@ const breadcrumbJsonLdItems = [
         </div>
       </div>
       <p class="a-ex rev" style="margin:0 0 32px">{intro}</p>
-      <slot />
+      {hasContent ? <slot /> : <p class="a-ex" style="margin-top:24px">內容籌備中</p>}
     </div>
     <CategoryPageSidebar />
   </div>

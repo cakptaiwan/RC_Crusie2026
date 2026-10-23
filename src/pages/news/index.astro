@@ -1,0 +1,9 @@
+---
+import NewsPage from '../../components/brand/NewsPage.astro';
+import { getNewsPosts } from '../../data/brand-nav';
+import { getAllPosts } from '../../lib/notion';
+
+const posts = getNewsPosts(await getAllPosts());
+---
+
+<NewsPage posts={posts} />

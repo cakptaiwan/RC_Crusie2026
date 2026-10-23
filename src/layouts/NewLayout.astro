@@ -1,5 +1,5 @@
 ---
-import { footerFixedPages, getNavBrandMenus } from '../data/brand-nav';
+import { footerFixedPages, getNavBrandMenus, journalSection } from '../data/brand-nav';
 import { getAllPosts } from '../lib/notion';
 import { newHomeUrl } from '../lib/new-article-url';
 import { socialLinks } from '../data/social-links';
@@ -374,6 +374,14 @@ html,body{overflow-x:hidden}
     </div>
   ))
 }
+<div class="nav-item">
+  <span class:list={['nl', navActive === journalSection.key && 'navon']}>{journalSection.label}</span>
+  <div class="nav-drop">
+    {journalSection.items.map((item) => (
+      <a href={item.href}>{item.label}</a>
+    ))}
+  </div>
+</div>
 </div>
 <div class="fx ac gap10">
 <label for="nav-toggle" class="nav-burger" aria-label="開啟導覽選單">
@@ -396,6 +404,12 @@ html,body{overflow-x:hidden}
     </div>
   ))
 }
+<div class="nav-m-sec">
+  <div class="nav-m-hd">{journalSection.label}</div>
+  {journalSection.items.map((item) => (
+    <a class="nav-m-link" href={item.href}>{item.label}</a>
+  ))}
+</div>
 </div>
 <label for="nav-toggle" class="nav-scrim" aria-hidden="true"></label>
 </nav>

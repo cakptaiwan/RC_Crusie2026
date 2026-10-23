@@ -1,7 +1,7 @@
 ---
 import { socialLinks, navSocialLinkClass, navStripSocialLinkClass, navSocialGroupClass } from '../data/social-links';
 import { siteAuthor } from '../data/site-author';
-import { getNavBrandMenus } from '../data/brand-nav';
+import { getNavBrandMenus, journalSection } from '../data/brand-nav';
 import { getAllPosts } from '../lib/notion';
 
 interface Props {
@@ -30,6 +30,10 @@ const navItems: NavItem[] = getNavBrandMenus(await getAllPosts()).map((menu) => 
     ...menu.categories.map(({ label, href }) => ({ label, href })),
   ],
 }));
+navItems.push({
+  label: journalSection.label,
+  children: journalSection.items.map(({ label, href }) => ({ label, href })),
+});
 
 const isItemActive = (item: NavItem) =>
   item.href
