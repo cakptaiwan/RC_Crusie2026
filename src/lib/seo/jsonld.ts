@@ -3,6 +3,7 @@ import { postImage } from '../cloudinary-image';
 import { socialLinks } from '../../data/social-links';
 import { absoluteSiteUrl, defaultOgImage, organizationId, websiteId } from './site-url';
 import { getModifiedDate, isoDateFromYmd } from './get-modified-date';
+import { getAuthorLabel } from '../../data/brand-nav';
 
 /** 全站共用 Organization（每頁輸出一次，其他節點以 @id 引用） */
 export function buildOrganizationJsonLd(): Record<string, unknown> {
@@ -100,7 +101,8 @@ export function buildArticleJsonLd(post: Post, buildDayYmd?: string): Record<str
     headline: post.title.trim(),
     datePublished: isoDateFromYmd(datePublishedYmd),
     dateModified: isoDateFromYmd(dateModifiedYmd),
-    author: { '@id': organizationId },
+    // author 依文章 Brand 顯示分區名（getAuthorLabel）；publisher 維持網站本身（郵輪旅人）
+    author: { '@type': 'Organization', name: getAuthorLabel(post) || undefined },
     publisher: { '@id': organizationId },
     url: canonical,
     inLanguage: 'zh-TW',

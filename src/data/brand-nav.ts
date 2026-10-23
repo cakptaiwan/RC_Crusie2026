@@ -11,6 +11,14 @@ export type BrandCategory = {
   newCategory: string;
 };
 
+/** 文章署名顯示名（Notion Brand 值 → 署名）；Notion 的 Author 欄位不改，只在顯示層取代 */
+export const brandAuthorLabels: Readonly<Record<string, string>> = {
+  '郵輪學堂': '郵輪學堂',
+  '皇家': '皇家旅人',
+  '公主': '公主旅人',
+  '迪士尼': '迪士尼旅人',
+};
+
 export type BrandSection = {
   key: string;
   slug: string;
@@ -168,3 +176,8 @@ export const footerFixedPages = [
   { label: '隱私權', href: '/privacy/' },
   { label: '服務條款', href: '/terms/' },
 ] as const;
+
+/** 文章署名：Brand 有對照就用對照名；Brand 為空（或不在對照表）退回 Notion 的 Author */
+export function getAuthorLabel(post: Pick<Post, 'brand' | 'author'>): string {
+  return (post.brand && brandAuthorLabels[post.brand]) || post.author;
+}

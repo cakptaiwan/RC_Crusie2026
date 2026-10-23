@@ -1,6 +1,7 @@
 ---
 import { siteAuthor } from '../data/site-author';
 import { getPostCrumbs } from '../lib/post-breadcrumb';
+import { getAuthorLabel } from '../data/brand-nav';
 import { mapArticleBodyHtml, estimateReadMinutes, countArticleHeading2 } from '../lib/map-article-body';
 import { postImage } from '../lib/cloudinary-image';
 import { newArticleUrl, newHomeUrl } from '../lib/new-article-url';
@@ -43,7 +44,7 @@ const relatedPosts = allPosts
   <h1 class="ah1">{post.title}</h1>
   <div class="ameta">
     <span>{formattedDate}</span><span>·</span>
-    <span>{post.author || '皇家旅人'}</span><span>·</span>
+    <span>{getAuthorLabel(post) || siteAuthor.name}</span><span>·</span>
     <span>閱讀約 {readMinutes} 分鐘</span>
   </div>
 </div>
@@ -89,7 +90,7 @@ const relatedPosts = allPosts
       </picture>
     </span>
     <span>
-      <span class="fw7 fs15 navy">{siteAuthor.name} · {siteAuthor.tagline}</span>
+      <span class="fw7 fs15 navy">{getAuthorLabel(post) || siteAuthor.name} · {siteAuthor.tagline}</span>
       <span class="sbp" style="display:block;margin-top:8px">{siteAuthor.bio}</span>
     </span>
   </div>
