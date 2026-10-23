@@ -25,6 +25,8 @@ export type BrandSection = {
   label: string;
   /** Notion Brand 欄位值 */
   brand: string;
+  /** 郵輪品牌名稱，填入品牌分類導言的「{品牌}」（跨品牌的郵輪學堂不設定） */
+  lineName?: string;
   enabled: boolean;
   /** 分類文章數 ≥ 此值才顯示卡片、產生頁面、列入選單（每個分區自己設定） */
   minArticles: number;
@@ -75,6 +77,7 @@ export const brandSections: readonly BrandSection[] = [
     slug: 'royal',
     label: '皇家旅人',
     brand: '皇家',
+    lineName: '皇家加勒比',
     enabled: true,
     minArticles: MIN_ARTICLES,
     categories: cruiseLineCategories,
@@ -84,6 +87,7 @@ export const brandSections: readonly BrandSection[] = [
     slug: 'princess',
     label: '公主旅人',
     brand: '公主',
+    lineName: '公主郵輪',
     enabled: true,
     /** 老大裁示：先讓公主旅人只有 1 篇也顯示，看位置與設計；文章累積後再調回 */
     minArticles: 1,
@@ -94,6 +98,7 @@ export const brandSections: readonly BrandSection[] = [
     slug: 'disney',
     label: '迪士尼',
     brand: '迪士尼',
+    lineName: '迪士尼郵輪',
     enabled: false,
     minArticles: MIN_ARTICLES,
     categories: [],

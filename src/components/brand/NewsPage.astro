@@ -8,6 +8,7 @@ import { newArticleUrl, newHomeUrl } from '../../lib/new-article-url';
 import { absoluteSiteUrl } from '../../lib/seo/site-url';
 import { buildCollectionPageJsonLd } from '../../lib/seo/jsonld';
 import { categoryMetaDescription } from '../../data/category-intros';
+import { newsIntro } from '../../data/brand-category-intros';
 import type { Post } from '../../lib/notion';
 
 interface Props {
@@ -19,7 +20,7 @@ const { posts } = Astro.props;
 const [leadPost, ...restPosts] = posts;
 
 const title = '最新資訊';
-const intro = '皇家加勒比、公主等各品牌的新船、新航線與政策變動，這裡彙整持續更新。';
+const intro = newsIntro;
 const pageDescription = categoryMetaDescription(intro);
 const pageUrl = absoluteSiteUrl('/news/');
 const collectionPageJsonLd = buildCollectionPageJsonLd(title, pageDescription, pageUrl);
