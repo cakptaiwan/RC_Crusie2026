@@ -1,0 +1,8 @@
+---
+import BrandSectionIndex from '../../components/brand/BrandSectionIndex.astro';
+import { getBrandSection } from '../../data/brand-nav';
+
+const section = getBrandSection('guide');
+---
+
+<BrandSectionIndex section={section} />

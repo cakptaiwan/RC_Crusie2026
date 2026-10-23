@@ -5,6 +5,10 @@ import sitemap from '@astrojs/sitemap';
 import cloudflare from '@astrojs/cloudflare';
 import { sitemapLastmodPatchIntegration } from './src/integrations/sitemap-lastmod-patch.ts';
 import { imageDimensionsIntegration } from './src/integrations/image-dimensions.ts';
+import { BRAND_SECTIONS_INDEXABLE } from './src/data/brand-nav.ts';
+
+/** 品牌分區（BRAND_SECTIONS_INDEXABLE 為 false 時 noindex）不列入 sitemap */
+const BRAND_SECTION_PREFIXES = ['https://royal-cruiser.com/guide/', 'https://royal-cruiser.com/royal/'];
 
 export default defineConfig({
   site: 'https://royal-cruiser.com',
@@ -34,7 +38,11 @@ export default defineConfig({
   integrations: [
     tailwind({ applyBaseStyles: false }),
     // 站內搜尋頁 noindex，不列入 sitemap
-    sitemap({ filter: (page) => page !== 'https://royal-cruiser.com/search/' }),
+    sitemap({
+      filter: (page) =>
+        page !== 'https://royal-cruiser.com/search/' &&
+        (BRAND_SECTIONS_INDEXABLE || !BRAND_SECTION_PREFIXES.some((prefix) => page.startsWith(prefix))),
+    }),
     sitemapLastmodPatchIntegration(),
     imageDimensionsIntegration(),
   ],

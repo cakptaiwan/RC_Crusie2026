@@ -1,0 +1,18 @@
+---
+import BrandCategoryPage from '../../components/brand/BrandCategoryPage.astro';
+import { brandCategoryStaticPaths } from '../../components/brand/static-paths';
+import type { BrandSection, VisibleBrandCategory } from '../../data/brand-nav';
+
+export function getStaticPaths() {
+  return brandCategoryStaticPaths('royal');
+}
+
+interface Props {
+  section: BrandSection;
+  category: VisibleBrandCategory;
+}
+
+const { section, category } = Astro.props;
+---
+
+<BrandCategoryPage section={section} category={category} />

@@ -1,0 +1,140 @@
+---
+/** 品牌分區首頁：標題、簡介、可見分類卡片（含文章數）、該分區最新 6 篇 */
+import NewLayout from '../../layouts/NewLayout.astro';
+import CategoryPageSidebar from '../CategoryPageSidebar.astro';
+import {
+  BRAND_SECTIONS_INDEXABLE,
+  brandCategoryHref,
+  brandSectionHref,
+  getSectionPosts,
+  getVisibleCategories,
+  type BrandSection,
+} from '../../data/brand-nav';
+import { brandSectionIntros } from '../../data/brand-category-intros';
+import { getAllPosts } from '../../lib/notion';
+import { postImage } from '../../lib/cloudinary-image';
+import { newArticleUrl, newHomeUrl } from '../../lib/new-article-url';
+import { absoluteSiteUrl } from '../../lib/seo/site-url';
+import { buildCollectionPageJsonLd } from '../../lib/seo/jsonld';
+import { categoryMetaDescription } from '../../data/category-intros';
+
+interface Props {
+  section: BrandSection;
+}
+
+const { section } = Astro.props;
+const allPosts = await getAllPosts();
+const categories = getVisibleCategories(section, allPosts);
+const latestPosts = getSectionPosts(section, allPosts).slice(0, 6);
+
+const intro = brandSectionIntros[section.key];
+if (!intro) {
+  throw new Error(`brand-category-intros.ts 缺少分區簡介：${section.key}`);
+}
+const pageDescription = categoryMetaDescription(intro);
+const pageUrl = absoluteSiteUrl(brandSectionHref(section));
+const collectionPageJsonLd = buildCollectionPageJsonLd(section.label, pageDescription, pageUrl);
+const categoryLabel = (post: { newCategory: string }) => post.newCategory;
+
+const formatDate = (date: string) => (date ? date.slice(0, 10) : '');
+const padNum = (n: number) => String(n).padStart(2, '0');
+
+const breadcrumbJsonLdItems = [
+  { name: '首頁', url: absoluteSiteUrl('/') },
+  { name: section.label, url: pageUrl },
+];
+---
+
+<NewLayout
+  title={section.label}
+  description={pageDescription}
+  noindex={!BRAND_SECTIONS_INDEXABLE}
+  breadcrumb={breadcrumbJsonLdItems}
+  jsonLd={collectionPageJsonLd}
+>
+  <div class="crumb">
+    <a href={newHomeUrl}>首頁</a><span>/</span><span>{section.label}</span>
+  </div>
+  <div class="main2" style="padding-top:26px">
+    <div>
+      <div class="sec-head rev" style="margin-top:0">
+        <div>
+          <div class="ovl">Section · {section.slug}</div>
+          <h1 class="a-h2 srf">{section.label}</h1>
+        </div>
+      </div>
+      <p class="a-ex rev" style="margin:0 0 32px">{intro}</p>
+
+      {
+        categories.length > 0 && (
+          <div class="brand-cats rev">
+            {categories.map((category) => (
+              <a class="sb brand-cat" href={brandCategoryHref(section, category)}>
+                <span class="sbt srf">{category.label}</span>
+                <span class="a-date">共 {category.count} 篇文章</span>
+              </a>
+            ))}
+          </div>
+        )
+      }
+
+      {
+        latestPosts.length > 0 && (
+          <>
+            <div class="sec-head rev" style="margin-top:64px">
+              <div>
+                <div class="ovl">Latest · 最新文章</div>
+                <h2 class="a-h2 srf" style="font-size:32px">最新文章</h2>
+              </div>
+            </div>
+            <div class="rev rev-r" style="margin-top:36px">
+              {
+                latestPosts.map((post, index) => (
+                  <a
+                    class="a-row"
+                    href={newArticleUrl(post.id)}
+                    style={index === latestPosts.length - 1
+                      ? 'border-bottom:1px solid rgba(11,42,74,.16)'
+                      : undefined}
+                  >
+                    <span class="a-num srf">{padNum(index + 1)}</span>
+                    <span>
+                      <span class="a-cat">{categoryLabel(post)}</span>
+                      <span class="a-rt srf" style="display:block">{post.title}</span>
+                      <span class="a-date">{formatDate(post.date)}</span>
+                    </span>
+                    <span class="a-thumb zi">
+                      <img class="ph" src={postImage(post.image, 'thumb')} alt={post.title} loading="lazy" />
+                    </span>
+                  </a>
+                ))
+              }
+            </div>
+          </>
+        )
+      }
+
+      {
+        latestPosts.length === 0 && (
+          <p class="a-ex" style="margin-top:24px">尚無文章，敬請期待。</p>
+        )
+      }
+    </div>
+    <CategoryPageSidebar />
+  </div>
+</NewLayout>
+
+<style>
+  .brand-cats {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 16px;
+  }
+  .brand-cat {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    text-decoration: none;
+    color: inherit;
+  }
+</style>

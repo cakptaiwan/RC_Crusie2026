@@ -254,6 +254,10 @@ export interface Post {
   status: string;
   page: string;
   subPage: string;
+  /** Notion Brand（郵輪學堂／皇家／公主／迪士尼），可空 */
+  brand: string;
+  /** Notion 新分類（新手入門、訂票選艙…），可空 */
+  newCategory: string;
   showOnHome: boolean;
   showTOC: boolean;
   body: string;
@@ -709,6 +713,8 @@ export function parsePost(notionPage: PageObjectResponse): Post {
   const subPage = normalizeNavName(
     props['Subpage']?.select?.name ?? props['SubPage']?.select?.name ?? ''
   );
+  const brand = props['Brand']?.select?.name ?? '';
+  const newCategory = props['新分類']?.select?.name ?? '';
   const showOnHome = props['ShowOnHome']?.checkbox ?? false;
   const showTOC = props['ShowTOC']?.checkbox ?? false;
 
@@ -729,6 +735,8 @@ export function parsePost(notionPage: PageObjectResponse): Post {
     status,
     page: pg,
     subPage,
+    brand,
+    newCategory,
     showOnHome,
     showTOC,
     body,
@@ -770,6 +778,8 @@ export function getMockPosts(pageFilter?: string, subPageFilter?: string): Post[
       status: '已發布',
       page: 'HOME',
       subPage: '',
+      brand: '',
+      newCategory: '',
       showOnHome: true,
       showTOC: false,
       body: '',
@@ -792,6 +802,8 @@ export function getMockPosts(pageFilter?: string, subPageFilter?: string): Post[
       status: '已發布',
       page: 'HOME',
       subPage: '',
+      brand: '',
+      newCategory: '',
       showOnHome: true,
       showTOC: false,
       body: '',
@@ -814,6 +826,8 @@ export function getMockPosts(pageFilter?: string, subPageFilter?: string): Post[
       status: '已發布',
       page: 'HOME',
       subPage: '',
+      brand: '',
+      newCategory: '',
       showOnHome: true,
       showTOC: false,
       body: '',
@@ -837,6 +851,8 @@ export function getMockPosts(pageFilter?: string, subPageFilter?: string): Post[
       status: '已發布',
       page: 'HOME',
       subPage: '',
+      brand: '',
+      newCategory: '',
       showOnHome: true,
       showTOC: false,
       body: '',
@@ -859,6 +875,8 @@ export function getMockPosts(pageFilter?: string, subPageFilter?: string): Post[
       status: '已發布',
       page: 'HOME',
       subPage: '',
+      brand: '',
+      newCategory: '',
       showOnHome: true,
       showTOC: false,
       body: '',
@@ -882,6 +900,8 @@ export function getMockPosts(pageFilter?: string, subPageFilter?: string): Post[
       status: '已發布',
       page: 'HOME',
       subPage: '',
+      brand: '',
+      newCategory: '',
       showOnHome: true,
       showTOC: false,
       body: '',
