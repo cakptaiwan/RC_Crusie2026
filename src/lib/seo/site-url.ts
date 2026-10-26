@@ -12,4 +12,4 @@ export const organizationId = `${SITE}/#organization`;
 
 export const websiteId = `${SITE}/#website`;
 
-export const defaultOgImage = absoluteSiteUrl('/logo.png');
+export const defaultOgImage = absoluteSiteUrl('/og-default.jpg');

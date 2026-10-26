@@ -13,7 +13,7 @@ export function buildOrganizationJsonLd(): Record<string, unknown> {
     '@id': organizationId,
     name: 'Royal Cruiser 郵輪旅人',
     url: absoluteSiteUrl('/'),
-    logo: { '@type': 'ImageObject', url: defaultOgImage },
+    logo: { '@type': 'ImageObject', url: absoluteSiteUrl('/icon-512.png') },
     description: '專業郵輪旅遊心得，提供真實體驗與實用攻略',
     contactPoint: {
       '@type': 'ContactPoint',
