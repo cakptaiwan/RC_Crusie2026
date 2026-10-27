@@ -1,5 +1,7 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
+import NewLayout from '../layouts/NewLayout.astro';
+import CategoryPageSidebar from '../components/CategoryPageSidebar.astro';
+import { newHomeUrl } from '../lib/new-article-url';
 import { buildAboutPageJsonLd } from '../lib/seo/jsonld';
 import { absoluteSiteUrl } from '../lib/seo/site-url';
 
@@ -11,9 +13,13 @@ const breadcrumb = [
 ];
 ---
 
-<BaseLayout title={pageTitle} description={description} jsonLd={buildAboutPageJsonLd(pageTitle, description)} breadcrumb={breadcrumb}>
-  <div class="mx-auto max-w-content px-gutter-sm md:px-gutter-md lg:px-gutter-lg py-12">
-    <article class="prose max-w-none">
+<NewLayout title={pageTitle} description={description} jsonLd={buildAboutPageJsonLd(pageTitle, description)} breadcrumb={breadcrumb}>
+  <div class="crumb">
+    <a href={newHomeUrl}>首頁</a><span>/</span><span>{pageTitle}</span>
+  </div>
+  <div class="main2" style="padding-top:26px">
+    <div>
+    <article class="abody rev" style="padding:0">
       <h1 class="text-3xl font-semibold text-blue-brand mb-8">關於郵輪旅人</h1>
 
       <p class="text-ink-soft mb-6">郵輪旅人（Cruise Traveler）是一個以繁體中文撰寫的皇家加勒比郵輪資訊站，主要讀者是台灣、香港、新加坡、馬來西亞與中國的華文旅客。</p>
@@ -40,5 +46,7 @@ const breadcrumb = [
 
       <p class="text-ink-soft mt-10 text-right">郵輪旅人編輯室</p>
     </article>
+    </div>
+    <CategoryPageSidebar />
   </div>
-</BaseLayout>
+</NewLayout>
