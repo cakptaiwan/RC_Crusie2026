@@ -1,7 +1,7 @@
 import type { Post } from '../notion';
 import { postImage } from '../cloudinary-image';
 import { socialLinks } from '../../data/social-links';
-import { absoluteSiteUrl, defaultOgImage, organizationId, websiteId } from './site-url';
+import { absoluteSiteUrl, organizationId, websiteId } from './site-url';
 import { getModifiedDate, isoDateFromYmd } from './get-modified-date';
 import { getAuthorLabel } from '../../data/brand-nav';
 
