@@ -1,10 +1,16 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
+import NewLayout from '../layouts/NewLayout.astro';
+import CategoryPageSidebar from '../components/CategoryPageSidebar.astro';
+import { newHomeUrl } from '../lib/new-article-url';
 ---
 
-<BaseLayout title="隱私權政策 | 郵輪旅人 Cruise Traveler" description="郵輪旅人網站隱私權政策">
-  <div class="mx-auto max-w-content px-gutter-sm md:px-gutter-md lg:px-gutter-lg py-12">
-    <article class="prose max-w-none">
+<NewLayout title="隱私權政策 | 郵輪旅人 Cruise Traveler" description="郵輪旅人網站隱私權政策">
+  <div class="crumb">
+    <a href={newHomeUrl}>首頁</a><span>/</span><span>隱私權政策</span>
+  </div>
+  <div class="main2" style="padding-top:26px">
+    <div>
+    <article class="abody rev" style="padding:0">
       <h1 class="text-3xl font-semibold text-blue-brand mb-8">隱私權政策</h1>
       
       <p class="text-ink-soft mb-6">最後更新日期：2026年10月22日</p>
@@ -46,5 +52,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       <h2 class="text-xl font-semibold text-ink mt-8 mb-4">七、聯絡我們</h2>
       <p class="text-ink-soft mb-6">如對本隱私權政策有任何疑問，請透過網站聯絡表單與我們聯繫。</p>
     </article>
+    </div>
+    <CategoryPageSidebar />
   </div>
-</BaseLayout>
+</NewLayout>

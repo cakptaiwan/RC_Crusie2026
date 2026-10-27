@@ -1,10 +1,16 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
+import NewLayout from '../layouts/NewLayout.astro';
+import CategoryPageSidebar from '../components/CategoryPageSidebar.astro';
+import { newHomeUrl } from '../lib/new-article-url';
 ---
 
-<BaseLayout title="使用條款 | 郵輪旅人 Cruise Traveler" description="郵輪旅人網站使用條款">
-  <div class="mx-auto max-w-content px-gutter-sm py-12 md:px-gutter-md lg:px-gutter-lg">
-    <article class="prose max-w-none">
+<NewLayout title="使用條款 | 郵輪旅人 Cruise Traveler" description="郵輪旅人網站使用條款">
+  <div class="crumb">
+    <a href={newHomeUrl}>首頁</a><span>/</span><span>使用條款</span>
+  </div>
+  <div class="main2" style="padding-top:26px">
+    <div>
+    <article class="abody rev" style="padding:0">
       <h1 class="mb-8 text-3xl font-semibold text-blue-brand">使用條款</h1>
 
       <p class="mb-6 text-ink-soft">最後更新日期：2026年10月22日</p>
@@ -62,5 +68,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       <h2 class="mb-4 mt-8 text-xl font-semibold text-ink">九、聯絡我們</h2>
       <p class="mb-6 text-ink-soft">如對本使用條款有任何疑問，請透過網站聯絡表單與我們聯繫。</p>
     </article>
+    </div>
+    <CategoryPageSidebar />
   </div>
-</BaseLayout>
+</NewLayout>
