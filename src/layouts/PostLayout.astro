@@ -48,11 +48,11 @@ const articleJsonLd = {
   dateModified: date,
   author: {
     '@type': 'Person',
-    name: author || '皇家旅人',
+    name: author || '郵輪旅人',
   },
   publisher: {
     '@type': 'Organization',
-    name: 'Royal Cruiser 皇家旅人',
+    name: '郵輪旅人 Cruise Traveler',
     url: 'https://royal-cruiser.com',
     logo: {
       '@type': 'ImageObject',
@@ -180,7 +180,7 @@ const relatedPosts = allPosts
         <div class="mt-8 flex items-start gap-4 rounded-card border border-canvas-ceramic bg-surface-cool p-5">
           <img
             src={siteAuthor.avatar}
-            alt={`Loyal to Royal ${siteAuthor.name}`}
+            alt={siteAuthor.name}
             width="56"
             height="56"
             loading="lazy"

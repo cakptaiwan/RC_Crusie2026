@@ -38,7 +38,7 @@ const organizationJsonLd = buildOrganizationJsonLd();
 const websiteJsonLd = buildWebSiteJsonLd();
 const ogImage = image.startsWith('http') ? image : absoluteSiteUrl(image.startsWith('/') ? image : `/${image}`);
 /* <title> 加後綴超過 60 字就只留頁面標題（只影響 <title>，不改 og:title） */
-const titleWithSuffix = `${title} | Royal Cruiser 郵輪旅人`;
+const titleWithSuffix = `${title} | 郵輪旅人 Cruise Traveler`;
 const documentTitle = [...titleWithSuffix].length > 60 ? title : titleWithSuffix;
 ---
 <title>{documentTitle}</title>
@@ -50,7 +50,7 @@ const documentTitle = [...titleWithSuffix].length > 60 ? title : titleWithSuffix
 <meta property="og:url" content={canonicalUrl} />
 <meta property="og:image" content={ogImage} />
 <meta property="og:type" content={type} />
-<meta property="og:site_name" content="Royal Cruiser 郵輪旅人" />
+<meta property="og:site_name" content="郵輪旅人 Cruise Traveler" />
 <meta property="og:locale" content="zh_TW" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content={title} />

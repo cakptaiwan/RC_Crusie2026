@@ -14,13 +14,13 @@ export function buildContactEmailHtml(payload: ContactFormPayload): string {
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8" />
-  <title>皇家旅人聯絡表單</title>
+  <title>郵輪旅人聯絡表單</title>
 </head>
 <body style="margin:0;padding:24px;background:#F8FAFC;font-family:'Segoe UI',system-ui,sans-serif;color:#1E2937;">
   <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:560px;margin:0 auto;background:#FFFFFF;border-radius:16px;overflow:hidden;box-shadow:0 8px 32px rgba(6,21,86,0.08);">
     <tr>
       <td style="padding:24px 28px;background:#061556;color:#FFFFFF;">
-        <p style="margin:0 0 6px;font-size:12px;letter-spacing:0.12em;text-transform:uppercase;opacity:0.75;">Royal Cruiser</p>
+        <p style="margin:0 0 6px;font-size:12px;letter-spacing:0.12em;text-transform:uppercase;opacity:0.75;">Cruise Traveler</p>
         <h1 style="margin:0;font-size:22px;font-weight:600;">新的聯絡表單訊息</h1>
       </td>
     </tr>

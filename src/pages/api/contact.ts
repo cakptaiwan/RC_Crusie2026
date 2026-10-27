@@ -73,7 +73,7 @@ export const POST: APIRoute = async ({ request }) => {
       from: fromEmail,
       to: [toEmail],
       replyTo: email,
-      subject: `[皇家旅人聯絡表單] ${subject}`,
+      subject: `[郵輪旅人聯絡表單] ${subject}`,
       html: buildContactEmailHtml({ name, phone, email, subject, message }),
     });
 
