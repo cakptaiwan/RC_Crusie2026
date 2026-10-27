@@ -6,7 +6,7 @@ alwaysApply: false
 
 # WebInformation
 
-**專案**：皇家旅人 Royal Cruiser — 皇家加勒比遊輪中文資訊站（Astro 5 + Tailwind v3.4）
+**專案**：郵輪旅人 Cruise Traveler — 皇家加勒比郵輪中文資訊站（Astro 5 + Tailwind v3.4）
 **風格**：Premium Minimalist Ocean Luxury（皇家藍白 + 金色點綴）
 **快照日期**：2026-05-24（導覽、字體、色彩 token、技術備註於 2026-09-28 校正；其餘細節以程式碼為準）
 
@@ -28,8 +28,8 @@ alwaysApply: false
 資料來源：`src/data/nav-pages.ts`（NavStrip、Footer、側欄分類共用），**以該檔為準**。2026-09-28 時為：
 
 ```
-新手出發：遊輪品牌、訂票攻略、聰明花費、新手FAQ
-玩轉遊輪：船上活動、娛樂設施、餐廳美食、岸上行程
+新手出發：郵輪品牌、訂票攻略、聰明花費、新手FAQ
+玩轉郵輪：船上活動、娛樂設施、餐廳美食、岸上行程
 航線資訊：東南亞航線、東北亞航線、美洲航線、歐洲航線
 旅人手記：旅人故事、最新資訊、資源推薦
 ```
@@ -45,7 +45,7 @@ alwaysApply: false
 ## 首頁 Hero
 
 - 高度 **464px**（原 520px 減去 NavStrip 56px）；**直角**（`rounded-none`）；緊鄰 NavStrip（`mb-0`）
-- 毛玻璃卡片：置中放大 LOGO、分類「**旅人介紹**」、標題「**愛好旅行、喜歡遊輪、我只選擇皇家加勒比遊輪**」
+- 毛玻璃卡片：置中放大 LOGO、分類「**旅人介紹**」、標題「**愛好旅行、喜歡郵輪、我只選擇皇家加勒比郵輪**」
 - 標題行高 `line-height: 2`（避免壅擠）
 - 精選區 ghost quote：9 句輪播 ticker（左滑入）；色 `#061556/70`；無引號；`break-words` + `md:pr-[38%]` 防與卡片重疊
 

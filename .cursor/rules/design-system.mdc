@@ -1,12 +1,12 @@
 ---
-description: 皇家旅人設計系統（皇家加勒比藍白海洋風格）。修改畫面、元件、版面時使用。
+description: 郵輪旅人設計系統（皇家加勒比藍白海洋風格）。修改畫面、元件、版面時使用。
 globs: ["src/**/*.astro", "src/styles/**"]
 alwaysApply: false
 ---
 
-# 皇家旅人 Royal Cruiser 設計系統
+# 郵輪旅人 Cruise Traveler 設計系統
 
-網站：皇家旅人 Royal Cruiser（royal-cruiser.com），皇家加勒比遊輪的中文資訊站。
+網站：郵輪旅人 Cruise Traveler（royal-cruiser.com），皇家加勒比遊輪的中文資訊站。
 
 ## 風格
 - 乾淨、專業、親切、大量留白，讓人聯想到皇家加勒比的藍白海洋感

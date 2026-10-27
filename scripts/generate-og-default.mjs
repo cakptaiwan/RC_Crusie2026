@@ -1,3 +1,6 @@
+// 2026-10-27 停用：此腳本產生的是舊品牌（皇家旅人／ROYAL CRUISER）分享圖，執行會覆蓋 A1-1 換好的新圖
+console.error('此腳本已停用：它會產生舊品牌分享圖並覆蓋現行的 public/og-default.jpg 與 public/assets/og-default.jpg。如需重做分享圖，請改用新設計稿。');
+process.exit(1);
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';

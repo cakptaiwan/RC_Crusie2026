@@ -1,10 +1,10 @@
-# CLAUDE.md — RC_Crusie2026（皇家旅人網站）
+# CLAUDE.md — RC_Crusie2026（郵輪旅人網站）
 
 繁體中文回覆。技術概念用類比或譬喻說明。
 
 ## 這是什麼
 
-皇家旅人 royal-cruiser.com 的網站本體。
+郵輪旅人（Cruise Traveler）royal-cruiser.com 的網站本體。
 Astro 5.x + Tailwind CSS，內容來自 Notion（`@notionhq/client`），部署在 Cloudflare Pages。
 文章產製系統在另一個 repo：RC-ArticleAgent。
 
@@ -39,11 +39,6 @@ Cloudinary。`BaseLayout.astro` 已內建自動補上 `f_auto,q_auto` 的邏輯�
 
 ## 導覽結構
 
-以 `src/data/nav-pages.ts` 為準（NavStrip、Footer、側欄共用）。2026-09-28 時為：
-
-- 新手出發：遊輪品牌、訂票攻略、聰明花費、新手FAQ
-- 玩轉遊輪：船上活動、娛樂設施、餐廳美食、岸上行程
-- 航線資訊：東南亞航線、東北亞航線、美洲航線、歐洲航線
-- 旅人手記：旅人故事、最新資訊、資源推薦
-
-分類的唯一依據是 Notion 的 `Subpage` 欄位（`Category` 欄位已刪除），值須與 `nav-pages.ts` 的 `name` 完全一致。
+- 舊版導覽以 src/data/nav-pages.ts 為準（NavStrip、Footer、側欄共用）。
+- 新版分區（郵輪學堂、皇家旅人、公主旅人）以 src/data/brand-nav.ts 為準，分類依 Notion 的 Brand＋新分類兩欄。
+- 分類唯一依據：舊分類為 Notion 的 Subpage 欄位（值須與 nav-pages.ts 的 name 完全一致）；新分區為 Brand＋新分類（值須與 brand-nav.ts 一致）。
