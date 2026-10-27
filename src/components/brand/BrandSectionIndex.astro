@@ -60,7 +60,16 @@ const breadcrumbJsonLdItems = [
       <div class="sec-head rev" style="margin-top:0">
         <div>
           <div class="ovl">Section · {section.slug}</div>
-          <h1 class="a-h2 srf">{section.label}</h1>
+          {
+            section.key === 'princess' ? (
+              <div class="sec-h1-row">
+                <img class="sec-sublogo" src="/assets/brand/princess-sub.svg" alt="公主旅人 Princess" width="40" height="40" />
+                <h1 class="a-h2 srf">{section.label}</h1>
+              </div>
+            ) : (
+              <h1 class="a-h2 srf">{section.label}</h1>
+            )
+          }
         </div>
       </div>
       <p class="a-ex rev" style="margin:0 0 32px">{intro}</p>
@@ -125,6 +134,29 @@ const breadcrumbJsonLdItems = [
 </NewLayout>
 
 <style>
+  .sec-h1-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .sec-h1-row h1 {
+    min-width: 0;
+  }
+  .sec-sublogo {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    display: block;
+  }
+  @media (max-width: 480px) {
+    .sec-h1-row {
+      gap: 10px;
+    }
+    .sec-sublogo {
+      width: 32px;
+      height: 32px;
+    }
+  }
   .brand-cats {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
