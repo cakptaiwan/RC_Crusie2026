@@ -1,0 +1,60 @@
+---
+/** 分區中欄頁籤：「全部」＋各可見分類，全為連結；目前頁籤選中，手機橫向捲動 */
+import { brandCategoryHref, brandSectionHref, type BrandSection, type VisibleBrandCategory } from '../../data/brand-nav';
+
+interface Props {
+  section: BrandSection;
+  categories: VisibleBrandCategory[];
+  activeSlug?: string;
+}
+
+const { section, categories, activeSlug } = Astro.props;
+const tabs = [
+  { label: '全部', href: brandSectionHref(section), active: !activeSlug },
+  ...categories.map((category) => ({
+    label: category.label,
+    href: brandCategoryHref(section, category),
+    active: category.slug === activeSlug,
+  })),
+];
+---
+
+<nav class="bst" aria-label={`${section.label}分類頁籤`}>
+  {tabs.map((tab) => (
+    <a href={tab.href} class:list={['bst-tab', tab.active && 'bst-on']} aria-current={tab.active ? 'page' : undefined}>
+      {tab.label}
+    </a>
+  ))}
+</nav>
+
+<style>
+  .bst {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    padding-bottom: 4px;
+  }
+  .bst-tab {
+    flex: none;
+    white-space: nowrap;
+    padding: 8px 16px;
+    border: 1px solid rgba(11, 42, 74, .16);
+    border-radius: 999px;
+    font-size: 14px;
+    color: #33506B;
+    text-decoration: none;
+    background: #fff;
+  }
+  .bst-tab:hover {
+    border-color: #0B2A4A;
+    opacity: 1;
+  }
+  .bst-on {
+    background: #0B2A4A;
+    border-color: #0B2A4A;
+    color: #fff;
+    font-weight: 700;
+  }
+</style>

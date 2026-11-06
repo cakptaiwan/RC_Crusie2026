@@ -1,0 +1,56 @@
+---
+/** 分區右欄清單卡（最新文章／更多文章／延伸閱讀）；0 篇時不渲染 */
+import { newArticleUrl } from '../../lib/new-article-url';
+import type { Post } from '../../lib/notion';
+
+interface Props {
+  title: string;
+  posts: Pick<Post, 'id' | 'title' | 'date'>[];
+}
+
+const { title, posts } = Astro.props;
+const formatDate = (date: string) => (date ? date.slice(0, 10) : '');
+---
+
+{
+  posts.length > 0 && (
+    <section class="bs3-card">
+      <h2 class="bs3-card-h">{title}</h2>
+      <ul class="bsl">
+        {posts.map((post) => (
+          <li>
+            <a class="bsl-a" href={newArticleUrl(post.id)}>
+              <span class="bsl-t">{post.title}</span>
+              <span class="a-date">{formatDate(post.date)}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )
+}
+
+<style>
+  .bsl {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .bsl li + li {
+    border-top: 1px solid rgba(11, 42, 74, .1);
+  }
+  .bsl-a {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 12px 0;
+    text-decoration: none;
+  }
+  .bsl-t {
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.55;
+    color: #0B2A4A;
+    overflow-wrap: anywhere;
+  }
+</style>

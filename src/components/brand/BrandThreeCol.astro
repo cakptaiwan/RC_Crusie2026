@@ -1,0 +1,60 @@
+---
+/**
+ * 品牌分區三欄容器：≥1200px 左／中／右三欄，<1200px 單欄（與 header 收合斷點一致）。
+ * DOM 順序為 中 → 右 → 左，手機單欄即依此順序排列；桌機以 grid-template-areas 排回左中右。
+ */
+---
+
+<div class="bs3">
+  <div class="bs3-main"><slot /></div>
+  <aside class="bs3-right"><slot name="right" /></aside>
+  <aside class="bs3-left"><slot name="left" /></aside>
+</div>
+
+<style is:global>
+  .bs3 {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 32px;
+    max-width: 90rem;
+    margin: 0 auto;
+    padding: 26px 24px 64px;
+    box-sizing: border-box;
+    color: #0B2A4A;
+    position: relative;
+    z-index: 1;
+  }
+  .bs3-main,
+  .bs3-right,
+  .bs3-left {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  @media (min-width: 1201px) {
+    .bs3 {
+      grid-template-columns: 240px minmax(0, 1fr) 280px;
+      grid-template-areas: 'left main right';
+      gap: 40px;
+      padding: 26px 56px 96px;
+      align-items: start;
+    }
+    .bs3-main { grid-area: main; }
+    .bs3-right { grid-area: right; }
+    .bs3-left { grid-area: left; }
+  }
+  .bs3-card {
+    background: #fff;
+    border: 1px solid rgba(11, 42, 74, .16);
+    border-radius: 16px;
+    padding: 24px;
+    box-sizing: border-box;
+  }
+  .bs3-card-h {
+    font-size: 17px;
+    font-weight: 700;
+    margin: 0 0 12px;
+    color: #0B2A4A;
+  }
+</style>
