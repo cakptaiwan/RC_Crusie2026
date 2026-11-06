@@ -1,17 +1,24 @@
 ---
-/** 品牌分區分類頁：版面結構與樣式沿用 src/pages/category/[slug].astro（複製，不共用） */
+/** 品牌分區分類頁（三欄）：左欄簡介與分類、中欄頁首卡＋頁籤＋本分類全部文章、右欄最新文章與延伸閱讀 */
 import NewLayout from '../../layouts/NewLayout.astro';
-import CategoryPageSidebar from '../CategoryPageSidebar.astro';
+import BrandThreeCol from './BrandThreeCol.astro';
+import BrandSideIntro from './BrandSideIntro.astro';
+import BrandSideList from './BrandSideList.astro';
+import BrandTabs from './BrandTabs.astro';
+import BrandPostCard from './BrandPostCard.astro';
+import { furtherReadingPosts } from './side-posts';
 import {
   BRAND_SECTIONS_INDEXABLE,
   brandCategoryHref,
   brandSectionHref,
+  getSectionPosts,
+  getVisibleCategories,
   type BrandSection,
   type VisibleBrandCategory,
 } from '../../data/brand-nav';
-import { brandCategoryIntros } from '../../data/brand-category-intros';
-import { postImage } from '../../lib/cloudinary-image';
-import { newArticleUrl, newHomeUrl } from '../../lib/new-article-url';
+import { brandCategoryIntros, brandSectionIntros } from '../../data/brand-category-intros';
+import { getAllPosts } from '../../lib/notion';
+import { newHomeUrl } from '../../lib/new-article-url';
 import { absoluteSiteUrl } from '../../lib/seo/site-url';
 import { buildCollectionPageJsonLd } from '../../lib/seo/jsonld';
 import { categoryMetaDescription } from '../../data/category-intros';
@@ -23,7 +30,14 @@ interface Props {
 
 const { section, category } = Astro.props;
 const posts = category.posts;
-const [leadPost, ...restPosts] = posts;
+const allPosts = await getAllPosts();
+const categories = getVisibleCategories(section, allPosts);
+/** 完整分區文章（左欄文章數）；右欄「最新文章」排除中欄已列出的本分類文章 */
+const sectionPosts = getSectionPosts(section, allPosts);
+const shownIds = new Set(posts.map((p) => p.id));
+const latestPosts = sectionPosts.filter((p) => !shownIds.has(p.id)).slice(0, 5);
+const furtherPosts = furtherReadingPosts(section, allPosts, [...posts, ...latestPosts]);
+const sectionIntro = brandSectionIntros[section.key] ?? '';
 
 const intro = brandCategoryIntros[`${section.key}/${category.slug}`];
 if (!intro) {
@@ -32,9 +46,6 @@ if (!intro) {
 const pageDescription = categoryMetaDescription(intro);
 const pageUrl = absoluteSiteUrl(brandCategoryHref(section, category));
 const collectionPageJsonLd = buildCollectionPageJsonLd(category.label, pageDescription, pageUrl);
-
-const formatDate = (date: string) => (date ? date.slice(0, 10) : '');
-const padNum = (n: number) => String(n).padStart(2, '0');
 
 /** 首頁/分區/分類，JSON-LD 同步 */
 const breadcrumbJsonLdItems = [
@@ -56,61 +67,26 @@ const breadcrumbJsonLdItems = [
     <a href={brandSectionHref(section)}>{section.label}</a><span>/</span>
     <span>{category.label}</span>
   </div>
-  <div class="main2" style="padding-top:26px">
-    <div>
-      <div class="sec-head rev" style="margin-top:0">
-        <div>
-          <div class="ovl">Category · {category.slug}</div>
-          <h1 class="a-h2 srf">{category.label}</h1>
-        </div>
-        <span class="a-date" style="letter-spacing:.18em">共 {posts.length} 篇文章</span>
-      </div>
-      <p class="a-ex rev" style="margin:0 0 32px">{intro}</p>
-
-      <a class="t-lead" href={newArticleUrl(leadPost.id)}>
-        <span class="t-leadimg zi rev rev-l" style="display:block">
-          <img class="ph" src={postImage(leadPost.image, 'lead')} alt={leadPost.title} fetchpriority="high" />
-        </span>
-        <span class="lead-body rev">
-          <span class="fx ac gap12">
-            <span class="a-cat">{category.label}</span>
-            <span class="a-date">{formatDate(leadPost.date)}</span>
-          </span>
-          <span class="a-h3 srf" style="display:block;font-size:25px">{leadPost.title}</span>
-          {leadPost.excerpt && (
-            <span class="a-ex" style="display:block">{leadPost.excerpt}</span>
-          )}
-          <span class="alink">閱讀全文 →</span>
-        </span>
-      </a>
-      {
-        restPosts.length > 0 && (
-          <div class="rev rev-r" style="margin-top:36px">
-            {
-              restPosts.map((post, index) => (
-                <a
-                  class="a-row"
-                  href={newArticleUrl(post.id)}
-                  style={index === restPosts.length - 1
-                    ? 'border-bottom:1px solid rgba(11,42,74,.16)'
-                    : undefined}
-                >
-                  <span class="a-num srf">{padNum(index + 1)}</span>
-                  <span>
-                    <span class="a-cat">{category.label}</span>
-                    <span class="a-rt srf" style="display:block">{post.title}</span>
-                    <span class="a-date">{formatDate(post.date)}</span>
-                  </span>
-                  <span class="a-thumb zi">
-                    <img class="ph" src={postImage(post.image, 'thumb')} alt={post.title} loading="lazy" />
-                  </span>
-                </a>
-              ))
-            }
-          </div>
-        )
-      }
+  <BrandThreeCol>
+    <div class="bs3-card">
+      <div class="ovl">Category · {category.slug}</div>
+      <h1 class="a-h2 srf">{category.label}</h1>
+      <div class="a-date" style="letter-spacing:.18em;margin-top:8px">共 {posts.length} 篇文章</div>
+      <p class="a-ex" style="margin:12px 0 0">{intro}</p>
     </div>
-    <CategoryPageSidebar />
-  </div>
+    <BrandTabs section={section} categories={categories} activeSlug={category.slug} />
+    {posts.map((post, index) => <BrandPostCard post={post} eager={index === 0} />)}
+    <Fragment slot="right">
+      <BrandSideList title="最新文章" posts={latestPosts} />
+      <BrandSideList title="延伸閱讀" posts={furtherPosts} />
+    </Fragment>
+    <BrandSideIntro
+      slot="left"
+      section={section}
+      intro={sectionIntro}
+      postCount={sectionPosts.length}
+      categories={categories}
+      activeSlug={category.slug}
+    />
+  </BrandThreeCol>
 </NewLayout>
