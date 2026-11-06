@@ -1,5 +1,5 @@
 ---
-import Footer from '../components/Footer.astro';
+import SiteFooter from '../components/SiteFooter.astro';
 import SEO from '../components/SEO.astro';
 import OceanBackground from '../components/OceanBackground.astro';
 import MotionEnhancements from '../components/MotionEnhancements.astro';
@@ -59,7 +59,7 @@ const { title, description, image, type, jsonLd, noindex, breadcrumb } = Astro.p
       <main class="min-h-[50vh] overflow-x-hidden">
         <slot />
       </main>
-      <Footer />
+      <SiteFooter sprite />
     </div>
     <MotionEnhancements />
 
