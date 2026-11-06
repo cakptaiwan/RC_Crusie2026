@@ -24,6 +24,13 @@ const { title, description, navActive = '', image, type = 'website', jsonLd, noi
 /** 頂部選單／頁尾：品牌分區與其可見分類（文章數 ≥ 該分區 minArticles） */
 const navMenus = getNavBrandMenus(await getAllPosts());
 const currentYear = new Date().getFullYear();
+/** 頂部列「贊助」按鈕旗標：true 才渲染（連結 /donate） */
+const SHOW_DONATE = false;
+/** 目前所在分區：由網址判斷（/guide/、/royal/、/princess/ 及其底下頁面），或沿用頁面傳入的 navActive */
+const { pathname } = Astro.url;
+const activeSectionKey =
+  navMenus.find((menu) => pathname === menu.href.replace(/\/$/, '') || pathname.startsWith(menu.href))?.section.key ?? '';
+const isActiveSection = (key: string) => key === activeSectionKey || key === navActive;
 ---
 <!DOCTYPE html>
 <html lang="zh-Hant">
@@ -235,6 +242,27 @@ a:hover{opacity:.75}
 .nav-m-hd{font-size:11px;font-weight:700;letter-spacing:.18em;color:#3E6C97;margin-bottom:8px}
 .nav-m-link{display:block;padding:9px 0;font-size:15px;font-weight:400;color:#33506B;text-decoration:none}
 .nav-m-link:hover{color:#0B2A4A}
+.nav-search{display:flex;align-items:center;margin:0}
+.nav-search-in{box-sizing:border-box;width:168px;min-width:0;height:34px;padding:0 10px;border:1px solid rgba(11,42,74,.25);border-right:0;border-radius:8px 0 0 8px;background:#fff;color:#0B2A4A;font:inherit;font-size:14px;-webkit-appearance:none;appearance:none}
+.nav-search-in::placeholder{color:#8AA3B9}
+.nav-search-in:focus-visible,.nav-search-btn:focus-visible{outline:2px solid #3E6C97;outline-offset:1px}
+.nav-search-btn{box-sizing:border-box;flex:none;display:flex;align-items:center;justify-content:center;width:36px;height:34px;padding:0;border:1px solid rgba(11,42,74,.25);border-radius:0 8px 8px 0;background:#0B2A4A;color:#fff;cursor:pointer}
+.nav-search-m{display:none;margin:0 0 6px}
+.nav-search-m .nav-search-in{flex:1;width:auto}
+.nav-donate{display:inline-flex;align-items:center;height:34px;padding:0 14px;border-radius:8px;background:#0B2A4A;color:#fff;font-size:14px;font-weight:700;text-decoration:none;white-space:nowrap}
+.nav-donate-m{display:flex;justify-content:center;margin-top:14px}
+.nl.navon::after{height:3px}
+.nl[aria-current]{font-weight:700}
+@media (max-width:1200px){
+.a-links,.nav-search-d,.nav-donate-d{display:none}
+.nav-burger{display:flex}
+.nav-search-m{display:flex}
+.nav-toggle:checked~.nav-mobile{transform:translateX(0)}
+.nav-toggle:checked~.nav-scrim{display:block}
+.nav-toggle:checked+.brand+.a-links+.fx .nav-burger span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.nav-toggle:checked+.brand+.a-links+.fx .nav-burger span:nth-child(2){opacity:0}
+.nav-toggle:checked+.brand+.a-links+.fx .nav-burger span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+}
 .crumb-title,.ah1,.a-h3,.l-t,.a-rt{overflow-wrap:anywhere;word-break:break-word}
 .crumb{flex-wrap:wrap}
 @media (max-width:900px){
@@ -366,7 +394,7 @@ html,body{overflow-x:hidden}
 {
   navMenus.map((menu) => (
     <div class="nav-item">
-      <a href={menu.href} class:list={['nl', navActive === menu.section.key && 'navon']} style="color:inherit;text-decoration:none;opacity:1">{menu.section.label}</a>
+      <a href={menu.href} class:list={['nl', isActiveSection(menu.section.key) && 'navon']} aria-current={isActiveSection(menu.section.key) ? 'true' : undefined} style="color:inherit;text-decoration:none;opacity:1">{menu.section.label}</a>
       {menu.categories.length > 0 && (
         <div class="nav-drop">
           {menu.categories.map((category) => (
@@ -378,7 +406,7 @@ html,body{overflow-x:hidden}
   ))
 }
 <div class="nav-item">
-  <span class:list={['nl', navActive === journalSection.key && 'navon']}>{journalSection.label}</span>
+  <span class:list={['nl', isActiveSection(journalSection.key) && 'navon']} aria-current={isActiveSection(journalSection.key) ? 'true' : undefined}>{journalSection.label}</span>
   <div class="nav-drop">
     {journalSection.items.map((item) => (
       <a href={item.href}>{item.label}</a>
@@ -387,6 +415,11 @@ html,body{overflow-x:hidden}
 </div>
 </div>
 <div class="fx ac gap10">
+<form class="nav-search nav-search-d" method="get" action="/search" role="search">
+<input type="search" name="q" class="nav-search-in" aria-label="搜尋文章" placeholder="搜尋文章" autocomplete="off">
+<button type="submit" class="nav-search-btn" aria-label="送出搜尋"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" stroke="currentColor" fill="none" stroke-width="1.8"></circle><path d="M16 16l4.5 4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg></button>
+</form>
+{SHOW_DONATE && <a class="nav-donate nav-donate-d" href="/donate">贊助</a>}
 <label for="nav-toggle" class="nav-burger" aria-label="開啟導覽選單">
 <span></span><span></span><span></span>
 </label>
@@ -397,6 +430,11 @@ html,body{overflow-x:hidden}
 ))}
 </div>
 <div class="nav-mobile">
+<form class="nav-search nav-search-m" method="get" action="/search" role="search">
+<input type="search" name="q" class="nav-search-in" aria-label="搜尋文章" placeholder="搜尋文章" autocomplete="off">
+<button type="submit" class="nav-search-btn" aria-label="送出搜尋"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" stroke="currentColor" fill="none" stroke-width="1.8"></circle><path d="M16 16l4.5 4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg></button>
+</form>
+{SHOW_DONATE && <a class="nav-donate nav-donate-m" href="/donate">贊助</a>}
 {
   navMenus.map((menu) => (
     <div class="nav-m-sec">
