@@ -1,6 +1,7 @@
 ---
 import NewLayout from '../layouts/NewLayout.astro';
 import HomePageSidebar from '../components/HomePageSidebar.astro';
+import HomeHero from '../components/HomeHero.astro';
 import { getCategoryHrefBySubPage } from '../data/new-layout-nav';
 import { brandCategoryHref, getBrandSection, getPostBrandCategory, getVisibleCategories } from '../data/brand-nav';
 import { newArticleUrl } from '../lib/new-article-url';
@@ -46,30 +47,7 @@ const padNum = (n: number) => String(n).padStart(2, '0');
   description="皇家加勒比郵輪全攻略，從新手訂票入門到老手玩法進階，船上活動、岸上行程、聰明花費技巧一次掌握，實際搭乘經驗分享，給華人旅客最實用的皇家加勒比郵輪資訊。"
   lcpImage="/assets/hero-banner-1280.webp"
 >
-  <!-- Hero 紙雕橫幅：Royal Cruiser 標題與標語已直接畫在圖片裡 -->
-  <div class="hero-paper-band">
-    <div class="hero-paper-wrap">
-      <picture>
-        <source
-          srcset="/assets/hero-banner-640.webp 640w, /assets/hero-banner-960.webp 960w, /assets/hero-banner-1280.webp 1280w, /assets/hero-banner.webp 1536w, /assets/hero-banner-1920.webp 1920w"
-          sizes="100vw"
-          type="image/webp"
-        />
-        <img
-          class="hero-paper-base"
-          src="/assets/hero-banner.png"
-          alt="郵輪旅人 Royal Cruiser——紙雕風格插畫，皇家加勒比郵輪航行於海灣與熱帶島嶼之間，標語：上船那一刻起，假期才真正開始"
-          width="1536"
-          height="464"
-          loading="eager"
-          decoding="async"
-          fetchpriority="high"
-          data-lcp
-        />
-      </picture>
-      <h1 class="sr-only">郵輪旅人 Cruise Traveler：上船那一刻起，假期才真正開始</h1>
-    </div>
-  </div>
+  <HomeHero />
 
   <!-- 精選郵輪活動 -->
   <div class="a-sec">
@@ -209,13 +187,3 @@ const padNum = (n: number) => String(n).padStart(2, '0');
     <HomePageSidebar />
   </div>
 </NewLayout>
-
-<style>
-  .hero-paper-band{position:relative;margin:0}
-  .hero-paper-wrap{position:relative;width:100%}
-  .hero-paper-base{display:block;width:100%;height:auto;
-    filter:
-      drop-shadow(0 2px 3px rgba(11,42,74,.10))
-      drop-shadow(0 14px 20px rgba(11,42,74,.18))
-      drop-shadow(0 28px 38px rgba(11,42,74,.16))}
-</style>

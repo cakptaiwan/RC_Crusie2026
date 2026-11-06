@@ -1,0 +1,164 @@
+---
+/**
+ * 首頁兩欄 Hero：左欄文字與按鈕、右欄圓角圖片。
+ * 圖片目前是紙雕橫幅（hero-banner）的裁切放樣圖，之後會換成新圖。
+ * 按鈕連結由 brand-nav.ts 產生，不寫死網址。
+ */
+import {
+  brandCategoryHref,
+  brandSectionHref,
+  getBrandSection,
+  getVisibleCategories,
+} from '../data/brand-nav';
+import { getAllPosts } from '../lib/notion';
+
+// ── 文字（集中在這裡，方便修改）──────────────────────────────
+const EYEBROW = '郵輪旅人 · CRUISE TRAVELER';
+const TITLE = '上船之前，功課先交給我們';
+const INTRO =
+  '艙房怎麼挑、訂票怎麼比、港口怎麼玩、錢怎麼花得聰明，白話講清楚。皇家加勒比的新消息幫你盯著，公主郵輪也在陸續補上。';
+const PRIMARY_LABEL = '先看新手入門';
+const SECONDARY_LABEL = '逛逛皇家旅人';
+// ─────────────────────────────────────────────────────────
+
+const allPosts = await getAllPosts();
+const guide = getBrandSection('guide');
+const newbie = getVisibleCategories(guide, allPosts).find((c) => c.slug === 'newbie');
+const primaryHref = newbie ? brandCategoryHref(guide, newbie) : brandSectionHref(guide);
+const secondaryHref = brandSectionHref(getBrandSection('royal'));
+---
+
+<section class="hh">
+  <div class="hh-in">
+    <div class="hh-txt">
+      <div class="ovl">{EYEBROW}</div>
+      <h1 class="hh-h1 srf">{TITLE}</h1>
+      <p class="hh-intro">{INTRO}</p>
+      <div class="hh-btns">
+        <a class="hh-btn hh-btn-p" href={primaryHref}>{PRIMARY_LABEL}</a>
+        <a class="hh-btn hh-btn-s" href={secondaryHref}>{SECONDARY_LABEL}</a>
+      </div>
+    </div>
+    <div class="hh-img">
+      <picture>
+        <source
+          srcset="/assets/hero-banner-640.webp 640w, /assets/hero-banner-960.webp 960w, /assets/hero-banner-1280.webp 1280w, /assets/hero-banner.webp 1536w, /assets/hero-banner-1920.webp 1920w"
+          sizes="(min-width: 901px) 48vw, calc(100vw - 48px)"
+          type="image/webp"
+        />
+        <img
+          class="hh-pic"
+          src="/assets/hero-banner.png"
+          alt="郵輪旅人 Royal Cruiser——紙雕風格插畫，皇家加勒比郵輪航行於海灣與熱帶島嶼之間，標語：上船那一刻起，假期才真正開始"
+          width="1536"
+          height="464"
+          loading="eager"
+          decoding="async"
+          fetchpriority="high"
+          data-lcp
+        />
+      </picture>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hh {
+    background: #fff;
+    color: #0B2A4A;
+    padding: 56px 56px 48px;
+    box-sizing: border-box;
+  }
+  .hh-in {
+    max-width: 90rem;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: minmax(0, 52fr) minmax(0, 48fr);
+    gap: 48px;
+    align-items: center;
+  }
+  .hh-txt {
+    min-width: 0;
+  }
+  .hh-h1 {
+    font-size: clamp(2.25rem, 3.4vw, 3.25rem);
+    line-height: 1.25;
+    font-weight: 900;
+    letter-spacing: .01em;
+    margin: 14px 0 0;
+    color: #0B2A4A;
+    overflow-wrap: anywhere;
+  }
+  .hh-intro {
+    font-size: 1.1875rem;
+    line-height: 1.85;
+    color: #33506B;
+    max-width: 34em;
+    margin: 20px 0 0;
+  }
+  .hh-btns {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 32px;
+  }
+  .hh-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    padding: 0 28px;
+    box-sizing: border-box;
+    border-radius: 12px;
+    border: 1px solid #0B2A4A;
+    font-size: 16px;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .hh-btn-p {
+    background: #0B2A4A;
+    color: #fff;
+  }
+  .hh-btn-s {
+    background: #fff;
+    color: #0B2A4A;
+  }
+  .hh-btn:hover {
+    opacity: .85;
+  }
+  .hh-img {
+    aspect-ratio: 4 / 3;
+    border-radius: 16px;
+    overflow: hidden;
+    background: #F4F9FD;
+    box-shadow: 0 14px 40px rgba(11, 42, 74, .14);
+  }
+  .hh-img picture {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  .hh-pic {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: right center;
+  }
+  @media (max-width: 900px) {
+    .hh {
+      padding: 32px 24px 40px;
+    }
+    .hh-in {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 32px;
+    }
+    .hh-h1 {
+      font-size: 2.125rem;
+    }
+    .hh-intro {
+      font-size: 1.0625rem;
+    }
+  }
+</style>
