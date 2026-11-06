@@ -67,9 +67,16 @@ body{margin:0;background:#EDF4FA;font-family:'Noto Sans TC',sans-serif}
 .a-h2,.a-h3,.a-rt,.sbt,.bph1,.wm1{font-family:'Noto Sans TC',sans-serif}
 .mono{font-family:ui-monospace,'SF Mono',Menlo,monospace}
 .art{width:100%;background:#fff;position:relative}
-.ph{width:100%;height:100%;object-fit:cover;display:block;transition:transform .7s cubic-bezier(.2,.7,.2,1)}
+.ph{width:100%;height:100%;object-fit:cover;display:block;transition:transform .3s ease}
 .zi{overflow:hidden}
-.zi:hover .ph{transform:scale(1.05)}
+/* 卡片圖片 hover 微放大：只在卡片（a.pcard／.bpc／.l-row-rel）內的 .zi 外層生效；封面、橫幅、logo 不套用 */
+.pcard .zi,.bpc .zi,.l-row-rel .zi{border-radius:12px}
+@media (hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference){
+.pcard:hover .zi .ph,.pcard:focus-visible .zi .ph,.bpc:hover .zi .ph,.bpc:focus-visible .zi .ph,.l-row-rel:hover .zi .ph,.l-row-rel:focus-visible .zi .ph{transform:scale(1.05)}
+}
+@media (prefers-reduced-motion:reduce){
+.ph{transition:none}
+}
 .ovl{font-size:12px;letter-spacing:.24em;color:#3E6C97;font-weight:700;text-transform:uppercase}
 .navy{color:#0B2A4A}
 .soc{width:30px;height:30px;border:1px solid rgba(11,42,74,.35);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;letter-spacing:.04em;color:inherit;font-weight:700}
