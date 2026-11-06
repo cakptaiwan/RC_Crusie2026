@@ -352,6 +352,12 @@ html,body{overflow-x:hidden}
 @media (max-width:600px){
 a.pcard{padding:14px}
 }
+.nav-soc-m{display:none}
+@media (max-width:640px){
+.a-nav{flex-wrap:nowrap}
+.nav-soc-top{display:none}
+.nav-soc-m{display:flex;gap:12px;padding:10px 0 14px}
+}
 .fab-frap {
   position: fixed;
   bottom: 1.5rem;
@@ -437,7 +443,7 @@ a.pcard{padding:14px}
 <span></span><span></span><span></span>
 </label>
 {socialLinks.map((link) => (
-<a href={link.href} class="soc" target="_blank" rel="noopener noreferrer" aria-label={link.label} style="text-decoration:none">
+<a href={link.href} class="soc nav-soc-top" target="_blank" rel="noopener noreferrer" aria-label={link.label} style="text-decoration:none">
 <svg width="15" height="15" viewBox="0 0 24 24"><use href={`#ic-${link.icon}`}></use></svg>
 </a>
 ))}
@@ -447,6 +453,13 @@ a.pcard{padding:14px}
 <input type="search" name="q" class="nav-search-in" aria-label="搜尋文章" placeholder="搜尋文章" autocomplete="off">
 <button type="submit" class="nav-search-btn" aria-label="送出搜尋"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" stroke="currentColor" fill="none" stroke-width="1.8"></circle><path d="M16 16l4.5 4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg></button>
 </form>
+<div class="nav-soc-m">
+{socialLinks.map((link) => (
+<a href={link.href} class="soc" target="_blank" rel="noopener noreferrer" aria-label={link.label} style="text-decoration:none">
+<svg width="15" height="15" viewBox="0 0 24 24"><use href={`#ic-${link.icon}`}></use></svg>
+</a>
+))}
+</div>
 {SHOW_DONATE && <a class="nav-donate nav-donate-m" href="/donate">贊助</a>}
 {
   navMenus.map((menu) => (
