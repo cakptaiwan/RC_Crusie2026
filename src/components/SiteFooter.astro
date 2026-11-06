@@ -157,10 +157,14 @@ const legalLinks = [
     text-decoration: none;
   }
   .sf-menu {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 40px 48px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 32px 48px;
     margin-top: 48px;
+  }
+  .sf-grp {
+    min-width: 0;
   }
   .sf-h {
     font-size: 14px;
@@ -211,9 +215,10 @@ const legalLinks = [
     color: #fff;
     opacity: 1;
   }
-  @media (max-width: 1200px) {
+  @media (min-width: 1201px) {
     .sf-menu {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      flex-wrap: nowrap;
+      column-gap: clamp(40px, 4vw, 72px);
     }
   }
   @media (max-width: 900px) {
@@ -226,7 +231,8 @@ const legalLinks = [
       padding-bottom: 88px;
     }
     .sf-menu {
-      grid-template-columns: minmax(0, 1fr);
+      flex-direction: column;
+      align-items: center;
       gap: 28px;
       margin-top: 36px;
     }
