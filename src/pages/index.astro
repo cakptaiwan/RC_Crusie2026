@@ -83,7 +83,7 @@ const padNum = (n: number) => String(n).padStart(2, '0');
     {
       featuredLead ? (
         <div class="a-grid">
-          <a class="a-lead" href={newArticleUrl(featuredLead.id)} style="text-decoration:none;color:inherit">
+          <a class="a-lead pcard" href={newArticleUrl(featuredLead.id)} style="text-decoration:none;color:inherit">
             <div class="a-leadimg zi rev rev-l">
               <img class="ph" src={postImage(featuredLead.image, 'lead')} alt={featuredLead.title} loading="lazy" decoding="async" />
             </div>
@@ -100,14 +100,7 @@ const padNum = (n: number) => String(n).padStart(2, '0');
           <div class="rev rev-r">
             {
               featuredRows.map((post, index) => (
-                <a
-                  class="a-row"
-                  href={newArticleUrl(post.id)}
-                  style={[
-                    index === 0 ? 'border-top:none;padding-top:0' : '',
-                    index === featuredRows.length - 1 ? 'border-bottom:1px solid rgba(11,42,74,.16)' : '',
-                  ].filter(Boolean).join(';') || undefined}
-                >
+                <a class="a-row pcard" href={newArticleUrl(post.id)}>
                   <span class="a-num srf">{padNum(index + 1)}</span>
                   <span>
                     <span class="a-cat">{post.subPage || post.category}</span>
@@ -141,7 +134,7 @@ const padNum = (n: number) => String(n).padStart(2, '0');
       {
         trendingLead ? (
           <>
-            <a class="t-lead" href={newArticleUrl(trendingLead.id)}>
+            <a class="t-lead pcard" href={newArticleUrl(trendingLead.id)}>
               <span class="t-leadimg zi rev rev-l" style="display:block">
                 <img class="ph" src={postImage(trendingLead.image, 'lead')} alt={trendingLead.title} loading="lazy" />
               </span>
@@ -157,10 +150,10 @@ const padNum = (n: number) => String(n).padStart(2, '0');
             </a>
             {
               trendingCells.length > 0 && (
-                <div class="t-grid rev rev-r" style="margin-top:36px">
+                <div class="t-grid pcard-grid rev rev-r" style="margin-top:36px">
                   {
                     trendingCells.map((post) => (
-                      <a class="t-cell" href={newArticleUrl(post.id)}>
+                      <a class="t-cell pcard" href={newArticleUrl(post.id)}>
                         <span>
                           <span class="a-cat">{post.subPage || post.category}</span>
                           <span class="l-t">{post.title}</span>
@@ -191,14 +184,10 @@ const padNum = (n: number) => String(n).padStart(2, '0');
       </div>
       {
         latestPosts.length > 0 ? (
-          <div class="l-grid rev">
+          <div class="l-grid pcard-grid rev">
             {
-              latestPosts.map((post, index) => (
-                <a
-                  class="l-row"
-                  href={newArticleUrl(post.id)}
-                  style={index < 2 ? 'border-top:none;padding-top:0' : undefined}
-                >
+              latestPosts.map((post) => (
+                <a class="l-row pcard" href={newArticleUrl(post.id)}>
                   <span class="l-thumb zi">
                     <img class="ph" src={postImage(post.image, 'thumb')} alt={post.title} loading="lazy" />
                   </span>

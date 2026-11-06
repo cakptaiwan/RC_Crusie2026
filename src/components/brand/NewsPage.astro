@@ -60,7 +60,7 @@ const padNum = (n: number) => String(n).padStart(2, '0');
       {
         leadPost ? (
           <>
-            <a class="t-lead" href={newArticleUrl(leadPost.id)}>
+            <a class="t-lead pcard" href={newArticleUrl(leadPost.id)}>
               <span class="t-leadimg zi rev rev-l" style="display:block">
                 <img class="ph" src={postImage(leadPost.image, 'lead')} alt={leadPost.title} fetchpriority="high" />
               </span>
@@ -77,11 +77,7 @@ const padNum = (n: number) => String(n).padStart(2, '0');
             {restPosts.length > 0 && (
               <div class="rev rev-r" style="margin-top:36px">
                 {restPosts.map((post, index) => (
-                  <a
-                    class="a-row"
-                    href={newArticleUrl(post.id)}
-                    style={index === restPosts.length - 1 ? 'border-bottom:1px solid rgba(11,42,74,.16)' : undefined}
-                  >
+                  <a class="a-row pcard" href={newArticleUrl(post.id)}>
                     <span class="a-num srf">{padNum(index + 1)}</span>
                     <span>
                       <span class="a-cat">{brandLabel(post)}</span>
