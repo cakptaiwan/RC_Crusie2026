@@ -261,17 +261,37 @@ const legalLinks = [
     .sf {
       padding-bottom: 88px;
     }
+    /* 四組 2×2：品牌區（含社群圖示）獨佔第一列，四組在其正下方；DOM 順序不變 */
     .sf-top {
-      flex-direction: column;
-      align-items: center;
-      gap: 28px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: 24px;
+      row-gap: 32px;
+      align-items: start;
+      justify-items: center;
     }
     .sf-brand {
+      grid-column: 1 / -1;
       flex: none;
+      margin-bottom: 4px;
+    }
+    .sf-grp {
+      width: 100%;
+    }
+    .sf-h {
       margin-bottom: 8px;
+    }
+    .sf-l {
+      padding: 7px 0;
     }
     .sf-bar {
       margin-top: 36px;
+    }
+  }
+  /* 極窄寬度改回單欄 */
+  @media (max-width: 340px) {
+    .sf-top {
+      grid-template-columns: minmax(0, 1fr);
     }
   }
 </style>
