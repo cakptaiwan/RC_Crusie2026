@@ -19,9 +19,11 @@ export interface Props {
   breadcrumb?: Array<{ name: string; url: string }>;
   /** 首頁 LCP 圖 preload（WebP） */
   lcpImage?: string;
+  /** 頂部列移除下緣邊線，與緊接的 Hero 背景無縫相接（僅首頁使用） */
+  headerSeamless?: boolean;
 }
 
-const { title, description, navActive = '', image, type = 'website', jsonLd, noindex = false, breadcrumb, lcpImage } = Astro.props;
+const { title, description, navActive = '', image, type = 'website', jsonLd, noindex = false, breadcrumb, lcpImage, headerSeamless = false } = Astro.props;
 /** 頂部選單／頁尾：品牌分區與其可見分類（文章數 ≥ 該分區 minArticles） */
 const navMenus = getNavBrandMenus(await getAllPosts());
 /** 頂部列「贊助」按鈕旗標：true 才渲染（連結 /donate） */
@@ -354,6 +356,7 @@ html,body{overflow-x:hidden}
 a.pcard{padding:14px}
 }
 .nav-soc-m{display:none}
+.a-nav.a-nav-seamless{border-bottom:0}
 @media (max-width:640px){
 .a-nav{flex-wrap:nowrap}
 .nav-soc-top{display:none}
@@ -407,7 +410,7 @@ a.pcard{padding:14px}
 <symbol id="ic-th" viewBox="1.7 1.7 20.6 20.6"><path d="M18.2 8.9C17.4 6.2 15.2 4.7 12.2 4.7 8.3 4.7 5.9 7.5 5.9 12s2.4 7.3 6.3 7.3c2.8 0 4.8-1.4 4.8-3.7 0-2.2-1.9-3.4-4.2-3.4-1.8 0-2.9.8-2.9 1.9s1 1.9 2.4 1.9c2.1 0 3.1-1.6 3.1-4v-.8c0-1.8-1.2-2.8-3.1-2.8-1 0-1.8.3-2.3.9" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></symbol>
 </defs></svg>
 <div class="art">
-<nav class="a-nav">
+<nav class:list={['a-nav', headerSeamless && 'a-nav-seamless']}>
 <input type="checkbox" id="nav-toggle" class="nav-toggle" aria-hidden="true">
 <a href={newHomeUrl} class="brand" style="text-decoration:none;color:inherit"><img class="logo" src="/icon-192.png" alt="郵輪旅人 Cruise Traveler" width="42" height="42" data-lcp /><div class="wm wm-stack srf"><span class="wm1">郵輪旅人</span><span class="wm2">CRUISE TRAVELER</span></div></a>
 <div class="a-links">
