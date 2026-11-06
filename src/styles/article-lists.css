@@ -27,8 +27,8 @@
 .abody .toclist .toc-num {
   flex: 0 0 auto;
   min-width: calc(var(--toc-num-ch, 2) * 1em);
-  color: #3e6c97;
-  font-weight: 700;
+  color: inherit;
+  font-weight: inherit;
   font-variant-numeric: tabular-nums;
 }
 .abody .toclist .toc-txt {
