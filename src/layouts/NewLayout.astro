@@ -19,11 +19,14 @@ export interface Props {
   breadcrumb?: Array<{ name: string; url: string }>;
   /** 首頁 LCP 圖 preload（WebP） */
   lcpImage?: string;
+  /** 首頁 LCP 預載用的 imagesrcset／imagesizes，需與頁面 <picture> 的 webp <source> 一致 */
+  lcpImageSrcset?: string;
+  lcpImageSizes?: string;
   /** 頂部列移除下緣邊線，與緊接的 Hero 背景無縫相接（僅首頁使用） */
   headerSeamless?: boolean;
 }
 
-const { title, description, navActive = '', image, type = 'website', jsonLd, noindex = false, breadcrumb, lcpImage, headerSeamless = false } = Astro.props;
+const { title, description, navActive = '', image, type = 'website', jsonLd, noindex = false, breadcrumb, lcpImage, lcpImageSrcset, lcpImageSizes, headerSeamless = false } = Astro.props;
 /** 頂部選單／頁尾：品牌分區與其可見分類（文章數 ≥ 該分區 minArticles） */
 const navMenus = getNavBrandMenus(await getAllPosts());
 /** 頂部列「贊助」按鈕旗標：true 才渲染（連結 /donate） */
@@ -59,7 +62,7 @@ const isActiveSection = (key: string) => key === activeSectionKey || key === nav
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;800;900&family=Noto+Serif+TC:wght@700;900&display=swap">
-{lcpImage && <link rel="preload" as="image" href={lcpImage} type="image/webp" fetchpriority="high" />}
+{lcpImage && <link rel="preload" as="image" href={lcpImage} imagesrcset={lcpImageSrcset} imagesizes={lcpImageSrcset ? lcpImageSizes : undefined} type="image/webp" fetchpriority="high" />}
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;800;900&family=Noto+Serif+TC:wght@700;900&display=swap" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;800;900&family=Noto+Serif+TC:wght@700;900&display=swap"></noscript>
 <link rel="stylesheet" href="/reveal/reveal-animation.css">

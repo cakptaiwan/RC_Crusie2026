@@ -38,6 +38,11 @@ const royalSection = getBrandSection('royal');
 const royalNews = getVisibleCategories(royalSection, allPosts).find((c) => c.slug === 'news');
 const latestNewsHref = royalNews ? brandCategoryHref(royalSection, royalNews) : '/category/latest-news/';
 
+/** 與 HomeHero 的 <picture> webp <source> 的 srcset／sizes 一致，LCP 預載才會選到同一張圖 */
+const heroSrcset =
+  '/assets/hero-banner-640.webp 640w, /assets/hero-banner-960.webp 960w, /assets/hero-banner-1280.webp 1280w, /assets/hero-banner.webp 1536w, /assets/hero-banner-1920.webp 1920w';
+const heroSizes = '(min-width: 901px) 48vw, calc(100vw - 48px)';
+
 const formatDate = (date: string) => (date ? date.slice(0, 10) : '');
 const padNum = (n: number) => String(n).padStart(2, '0');
 ---
@@ -46,6 +51,8 @@ const padNum = (n: number) => String(n).padStart(2, '0');
   title="皇家加勒比郵輪攻略｜新手入門到老手進階"
   description="皇家加勒比郵輪全攻略，從新手訂票入門到老手玩法進階，船上活動、岸上行程、聰明花費技巧一次掌握，實際搭乘經驗分享，給華人旅客最實用的皇家加勒比郵輪資訊。"
   lcpImage="/assets/hero-banner-1280.webp"
+  lcpImageSrcset={heroSrcset}
+  lcpImageSizes={heroSizes}
   headerSeamless
 >
   <HomeHero />
