@@ -264,8 +264,9 @@ const legalLinks = [
     /* 四組 2×2：品牌區（含社群圖示）獨佔第一列，四組在其正下方；DOM 順序不變 */
     .sf-top {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      column-gap: 24px;
+      grid-template-columns: repeat(2, max-content);
+      justify-content: center;
+      column-gap: 40px;
       row-gap: 32px;
       align-items: start;
       justify-items: center;
@@ -282,7 +283,7 @@ const legalLinks = [
       margin-bottom: 8px;
     }
     .sf-l {
-      padding: 7px 0;
+      padding: 7px 8px;
     }
     .sf-bar {
       margin-top: 36px;
