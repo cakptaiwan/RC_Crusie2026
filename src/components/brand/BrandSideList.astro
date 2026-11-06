@@ -14,8 +14,8 @@ const formatDate = (date: string) => (date ? date.slice(0, 10) : '');
 
 {
   posts.length > 0 && (
-    <section class="bs3-card">
-      <h2 class="bs3-card-h">{title}</h2>
+    <section class="bs3-card bsl-card">
+      <h2 class="bs3-card-h bsl-h">{title}</h2>
       <ul class="bsl">
         {posts.map((post) => (
           <li>
@@ -31,10 +31,22 @@ const formatDate = (date: string) => (date ? date.slice(0, 10) : '');
 }
 
 <style>
+  .bsl-card {
+    padding: 0;
+    overflow: hidden;
+  }
+  .bsl-h {
+    margin: 0;
+    padding: 14px 24px;
+    background: #EAF3FA;
+    border-bottom: 1px solid rgba(11, 42, 74, .16);
+    color: #0B2A4A;
+    font-weight: 700;
+  }
   .bsl {
     list-style: none;
     margin: 0;
-    padding: 0;
+    padding: 4px 24px 12px;
   }
   .bsl li + li {
     border-top: 1px solid rgba(11, 42, 74, .1);
