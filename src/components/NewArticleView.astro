@@ -105,14 +105,14 @@ const relatedPosts = allPosts
           {
             relatedPosts.map((related, index) => (
               <a
-                class="l-row"
+                class="l-row l-row-rel"
                 href={newArticleUrl(related.id)}
                 style={index < 2 ? 'border-top:none;padding-top:0' : undefined}
               >
                 <span class="l-thumb l-thumb-full zi">
                   <img class="ph" src={postImage(related.image, 'thumb')} alt={related.title} loading="lazy" />
                 </span>
-                <span>
+                <span class="l-body">
                   <span class="a-cat">{related.subPage || related.category}</span>
                   <span class="l-t">{related.title}</span>
                   <span class="a-date">{related.date?.slice(0, 10)}</span>
