@@ -9,23 +9,24 @@ import {
   brandSectionHref,
   getBrandSection,
   getVisibleCategories,
+  journalSection,
 } from '../data/brand-nav';
 import { getAllPosts } from '../lib/notion';
 
 // ── 文字（集中在這裡，方便修改）──────────────────────────────
 const EYEBROW = '郵輪旅人 · CRUISE TRAVELER';
-const TITLE = '上船之前，功課先交給我們';
+const TITLE = '陪您準備每一趟郵輪旅程';
 const INTRO =
-  '艙房怎麼挑、訂票怎麼比、港口怎麼玩、錢怎麼花得聰明，白話講清楚。皇家加勒比的新消息幫你盯著，公主郵輪也在陸續補上。';
-const PRIMARY_LABEL = '先看新手入門';
-const SECONDARY_LABEL = '逛逛皇家旅人';
+  '有感於中文郵輪資訊的稀缺，「郵輪旅人」是第一個以郵輪研究為主題的中文網站，分享國內外論壇與部落格的郵輪知識與心得資訊。';
+const PRIMARY_LABEL = '新手入門';
+const SECONDARY_LABEL = '最新消息';
 // ─────────────────────────────────────────────────────────
 
 const allPosts = await getAllPosts();
 const guide = getBrandSection('guide');
 const newbie = getVisibleCategories(guide, allPosts).find((c) => c.slug === 'newbie');
 const primaryHref = newbie ? brandCategoryHref(guide, newbie) : brandSectionHref(guide);
-const secondaryHref = brandSectionHref(getBrandSection('royal'));
+const secondaryHref = journalSection.items.find((i) => i.label === '最新資訊')!.href;
 ---
 
 <section class="hh">
