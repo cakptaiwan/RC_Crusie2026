@@ -1,9 +1,8 @@
 ---
-import NewsPage from '../../components/brand/NewsPage.astro';
-import { getNewsPosts } from '../../data/brand-nav';
-import { getAllPosts } from '../../lib/notion';
+import BrandSectionIndex from '../../components/brand/BrandSectionIndex.astro';
+import { getBrandSection } from '../../data/brand-nav';
 
-const posts = getNewsPosts(await getAllPosts());
+const section = getBrandSection('news');
 ---
 
-<NewsPage posts={posts} />
+<BrandSectionIndex section={section} />

@@ -10,6 +10,7 @@ export const brandSectionIntros: Record<string, string> = {
   guide: '第一次搭郵輪不知道從哪開始？從挑艙房、行前打包到靠港下船，這裡整理不分品牌都用得上的郵輪基本功。',
   royal: '皇家加勒比的船隊、船上活動、餐廳與費用方案一次看懂，訂票前就知道這趟船上的日子怎麼過。',
   princess: '公主郵輪的船隊介紹與最新動態陸續整理中，適合想比較不同郵輪品牌的您。',
+  news: '郵輪產業與各品牌的最新動態，整理成中文重點，讓您快速掌握。',
 };
 
 /** 最新資訊（/news/）導言 */
@@ -56,7 +57,15 @@ const lineCategoryTemplates: Record<string, string> = {
   news: '{品牌}的新船、新航線與政策變動，第一時間整理成中文。',
 };
 
+/** 最新資訊分區（Brand＝新聞）分類導言；沒有 lineName，不走上面的樣板 */
+const newsCategoryIntros: Record<string, string> = {
+  'news/general': '跨品牌與產業動態，例如港口建設與旅遊安全相關消息。',
+  'news/royal': '皇家加勒比的官方新聞稿與業界動態，整理成中文重點與對華文圈旅客的影響。',
+  'news/princess': '公主郵輪的官方新聞稿與業界動態，整理成中文重點與對華文圈旅客的影響。',
+};
+
 export const brandCategoryIntros: Record<string, string> = {
+  ...newsCategoryIntros,
   ...Object.fromEntries(Object.entries(guideCategoryIntros).map(([slug, intro]) => [`guide/${slug}`, intro])),
   ...Object.fromEntries(
     brandSections

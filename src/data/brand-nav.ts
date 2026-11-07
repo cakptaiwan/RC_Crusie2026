@@ -17,6 +17,7 @@ export const brandAuthorLabels: Readonly<Record<string, string>> = {
   '皇家': '皇家旅人',
   '公主': '公主旅人',
   '迪士尼': '迪士尼旅人',
+  '新聞': '郵輪旅人',
 };
 
 export type BrandSection = {
@@ -53,7 +54,6 @@ const cruiseLineCategories: readonly BrandCategory[] = [
   { slug: 'dining', label: '餐廳美食', newCategory: '餐廳美食' },
   { slug: 'pricing', label: '費用方案', newCategory: '費用方案' },
   { slug: 'routes', label: '航線部署', newCategory: '航線部署' },
-  { slug: 'news', label: '最新消息', newCategory: '最新消息' },
 ];
 
 export const brandSections: readonly BrandSection[] = [
@@ -94,6 +94,20 @@ export const brandSections: readonly BrandSection[] = [
     categories: cruiseLineCategories,
   },
   {
+    key: 'news',
+    slug: 'news',
+    label: '最新資訊',
+    brand: '新聞',
+    enabled: true,
+    /** 老大裁示：有 1 篇就顯示該分類；所有分類都不可見時整個分區不進選單與頁尾 */
+    minArticles: 1,
+    categories: [
+      { slug: 'general', label: '一般資訊', newCategory: '一般資訊' },
+      { slug: 'royal', label: '皇家快訊', newCategory: '皇家快訊' },
+      { slug: 'princess', label: '公主快訊', newCategory: '公主快訊' },
+    ],
+  },
+  {
     key: 'disney',
     slug: 'disney',
     label: '迪士尼',
@@ -117,7 +131,7 @@ export function getBrandSection(key: string): BrandSection {
 
 /** 頂部選單與頁尾顯示的分區（順序即顯示順序） */
 export const navBrandSections = (): BrandSection[] =>
-  ['guide', 'royal', ...(PRINCESS_IN_NAV ? ['princess'] : [])].map(getBrandSection);
+  ['guide', 'royal', ...(PRINCESS_IN_NAV ? ['princess'] : []), 'news'].map(getBrandSection);
 
 const byDateDesc = (a: BrandPostLike, b: BrandPostLike) => (b.date || '').localeCompare(a.date || '');
 
@@ -143,16 +157,18 @@ export function getVisibleCategories<T extends BrandPostLike>(
 
 /** 選單與頁尾用：分區 → 可見分類（不含文章清單） */
 export function getNavBrandMenus(posts: BrandPostLike[]) {
-  return navBrandSections().map((section) => ({
-    section,
-    href: brandSectionHref(section),
-    categories: getVisibleCategories(section, posts).map((category) => ({
-      slug: category.slug,
-      label: category.label,
-      count: category.count,
-      href: brandCategoryHref(section, category),
-    })),
-  }));
+  return navBrandSections()
+    .map((section) => ({
+      section,
+      href: brandSectionHref(section),
+      categories: getVisibleCategories(section, posts).map((category) => ({
+        slug: category.slug,
+        label: category.label,
+        count: category.count,
+        href: brandCategoryHref(section, category),
+      })),
+    }))
+    .filter((menu) => menu.section.key !== 'news' || menu.categories.length > 0);
 }
 
 /**
@@ -174,7 +190,7 @@ export function getPostBrandCategory(post: Pick<Post, 'brand' | 'newCategory'>, 
 }
 
 /**
- * 跨品牌區「旅人手記」：不屬於任何單一品牌，三格固定顯示（不套用最低篇數門檻）。
+ * 跨品牌區「旅人手記」：不屬於任何單一品牌，兩格固定顯示（不套用最低篇數門檻）。
  * 頂部選單排在所有品牌分區之後。
  */
 export const journalSection = {
@@ -182,7 +198,6 @@ export const journalSection = {
   label: '旅人手記',
   items: [
     { label: '旅人故事', href: '/stories/' },
-    { label: '最新資訊', href: '/news/' },
     { label: '資源推薦', href: '/resources/' },
   ],
 } as const;
