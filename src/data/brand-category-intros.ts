@@ -1,6 +1,7 @@
 /**
  * 品牌分區與分類的導言（老大定稿文案，逐字使用，勿改寫）。
- * 同一段文字同時用在頁面頂端導言與 meta description／og:description。
+ * 同一段文字同時用在頁面頂端導言與 meta description／og:description；
+ * 有長導言（brandCategoryLongIntros）的分類，頁面頂端改顯示長導言，meta 仍用這裡的一句。
  * 分區首頁以分區 key 為鍵；分類以「分區 key/分類 slug」為鍵。
  */
 import { brandSections } from './brand-nav';
@@ -22,6 +23,28 @@ const guideCategoryIntros: Record<string, string> = {
   ports: '靠港那幾個小時怎麼玩、怎麼準時回船，各停靠港的交通與行程整理。',
   'smart-spending': '小費、飲料套餐、船上消費怎麼算，搞懂這些，最後一天的帳單就不會嚇到您。',
 };
+
+/**
+ * 郵輪學堂分類頁頂端顯示的長導言（老大定稿，逐字使用）。只取代頁面可見的一句導言；
+ * meta description／og:description 仍用上面 guideCategoryIntros 的一句，不讀這裡。
+ */
+const guideCategoryLongIntros: Record<string, string> = {
+  newbie:
+    '第一次搭郵輪，最容易手忙腳亂的是登船當天與出發前那一段。這裡整理登船第一天該做的事、新手最常踩的雷，以及過來人的實用提醒；也收錄颱風季改港、甩港與航次取消時，旅客權益怎麼看。',
+  booking:
+    '內艙、海景還是陽台？選艙與訂票的每個決定，都會影響整趟旅程的花費與體驗。這裡整理艙房怎麼挑、位置怎麼避雷、官網直訂與旅行社各有什麼差別，也收錄退改簽與取消費用的規則，訂之前先看一遍，少走冤枉路。',
+  prep:
+    '證件、保險、行李與身體狀況，出發前把這些準備好，上船就能放心玩。這裡整理入境與機票銜接、打包清單與船上小物，以及暈船、生病與醫療後送的實際情況；帶長輩同行的旅客也可以找到安排重點。',
+  ports:
+    '靠港那幾個小時怎麼玩、怎麼準時回船，是自由行的關鍵。這裡整理各停靠港與出發港的交通、景點與回船時間，也比較官方岸上行程與第三方平台該怎麼選。出發前先看一遍，靠港日更從容。',
+  'smart-spending':
+    '船票之外，小費、服務費與船上消費怎麼算，是最容易被忽略的一塊。這裡整理小費制度、帳單上的服務費與匯率，以及不同郵輪品牌的小費比較，搞懂這些，下船前的帳單就不會嚇到你。',
+};
+
+/** 分類頁頂端可見導言的長版（「分區 key/分類 slug」為鍵）；沒有長版的分類沿用一句導言 */
+export const brandCategoryLongIntros: Record<string, string> = Object.fromEntries(
+  Object.entries(guideCategoryLongIntros).map(([slug, intro]) => [`guide/${slug}`, intro]),
+);
 
 /** 郵輪品牌分區共用的分類導言；{品牌} 由該分區的 lineName 代入 */
 const lineCategoryTemplates: Record<string, string> = {

@@ -16,7 +16,8 @@ import {
   type BrandSection,
   type VisibleBrandCategory,
 } from '../../data/brand-nav';
-import { brandCategoryIntros, brandSectionIntros } from '../../data/brand-category-intros';
+import { brandCategoryIntros, brandCategoryLongIntros, brandSectionIntros } from '../../data/brand-category-intros';
+import { getCategoryListGroups } from '../../data/category-groups';
 import { getAllPosts } from '../../lib/notion';
 import { newHomeUrl } from '../../lib/new-article-url';
 import { absoluteSiteUrl } from '../../lib/seo/site-url';
@@ -44,6 +45,10 @@ if (!intro) {
   throw new Error(`brand-category-intros.ts 缺少分類導言：${section.key}/${category.slug}`);
 }
 const pageDescription = categoryMetaDescription(intro);
+/** 頁面可見導言：學堂分類用長導言，其餘沿用一句導言；meta 不受影響 */
+const visibleIntro = brandCategoryLongIntros[`${section.key}/${category.slug}`] ?? intro;
+/** 學堂分類的文章清單 H2 分組；null＝照舊只列卡片（皇家／公主分類頁） */
+const listGroups = getCategoryListGroups(`${section.key}/${category.slug}`, posts);
 const pageUrl = absoluteSiteUrl(brandCategoryHref(section, category));
 const collectionPageJsonLd = buildCollectionPageJsonLd(category.label, pageDescription, pageUrl);
 
@@ -72,10 +77,21 @@ const breadcrumbJsonLdItems = [
       <div class="ovl">Category · {category.slug}</div>
       <h1 class="a-h2 srf">{category.label}</h1>
       <div class="a-date" style="letter-spacing:.18em;margin-top:8px">共 {posts.length} 篇文章</div>
-      <p class="a-ex" style="margin:12px 0 0">{intro}</p>
+      <p class="a-ex" style="margin:12px 0 0">{visibleIntro}</p>
     </div>
     <BrandTabs section={section} categories={categories} activeSlug={category.slug} />
-    {posts.map((post, index) => <BrandPostCard post={post} eager={index === 0} />)}
+    {
+      listGroups
+        ? listGroups.map((group, groupIndex) => (
+            <Fragment>
+              <h2 class="a-h3 srf" style="margin:8px 0 -8px">{group.heading}</h2>
+              {group.posts.map((post, index) => (
+                <BrandPostCard post={post} eager={groupIndex === 0 && index === 0} />
+              ))}
+            </Fragment>
+          ))
+        : posts.map((post, index) => <BrandPostCard post={post} eager={index === 0} />)
+    }
     <Fragment slot="right">
       <BrandSideList title="最新文章" posts={latestPosts} />
       <BrandSideList title="延伸閱讀" posts={furtherPosts} />
