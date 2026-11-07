@@ -1,6 +1,6 @@
 ---
 /**
- * 全站頁尾（置中）：品牌區 → 四組選單 → 分隔線 → 版權與固定頁連結。
+ * 全站頁尾（置中）：品牌區 → 五組選單 → 分隔線 → 版權與固定頁連結。
  * 選單資料與頂部列同源（brand-nav.ts 的 getNavBrandMenus、journalSection），不寫死。
  * 樣式自包含（scoped），NewLayout 與 BaseLayout 共用；BaseLayout 沒有社群圖示 sprite，傳 sprite 才在頁尾內補上。
  */
@@ -106,7 +106,7 @@ const legalLinks = [
     max-width: 90rem;
     margin: 0 auto;
   }
-  /* 641–1200px：品牌區在上、四組一列置中（左右區以 display:contents 讓四組直接排進 .sf-top） */
+  /* 641–1200px：品牌區在上、五組一列置中（左右區以 display:contents 讓四組直接排進 .sf-top） */
   .sf-top {
     display: flex;
     flex-wrap: wrap;
@@ -224,7 +224,7 @@ const legalLinks = [
     color: #fff;
     opacity: 1;
   }
-  /* ≥1201px：品牌區在中央欄，前兩組靠左、後兩組靠右 */
+  /* ≥1201px：品牌區在中央欄，前兩組靠左、後三組靠右 */
   @media (min-width: 1201px) {
     .sf-top {
       display: grid;
@@ -261,7 +261,7 @@ const legalLinks = [
     .sf {
       padding-bottom: 88px;
     }
-    /* 四組 2×2：品牌區（含社群圖示）獨佔第一列，四組在其正下方；DOM 順序不變 */
+    /* 五組兩欄三列：品牌區（含社群圖示）獨佔第一列，第五組獨占最後一列並置中；DOM 順序不變 */
     .sf-top {
       display: grid;
       grid-template-columns: repeat(2, max-content);
@@ -278,6 +278,9 @@ const legalLinks = [
     }
     .sf-grp {
       width: 100%;
+    }
+    .sf-right .sf-grp:last-child {
+      grid-column: 1 / -1;
     }
     .sf-h {
       margin-bottom: 8px;
