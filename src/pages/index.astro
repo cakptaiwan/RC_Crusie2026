@@ -3,7 +3,7 @@ import NewLayout from '../layouts/NewLayout.astro';
 import HomePageSidebar from '../components/HomePageSidebar.astro';
 import HomeHero from '../components/HomeHero.astro';
 import { getCategoryHrefBySubPage } from '../data/new-layout-nav';
-import { brandCategoryHref, getBrandSection, getPostBrandCategory, getVisibleCategories } from '../data/brand-nav';
+import { brandSectionHref, getBrandSection, getNavBrandMenus, getPostBrandCategory } from '../data/brand-nav';
 import { newArticleUrl } from '../lib/new-article-url';
 import { postImage } from '../lib/cloudinary-image';
 import { getAllPosts, getFeaturedPosts, getPosts } from '../lib/notion';
@@ -35,8 +35,9 @@ const featuredViewAll = featuredLead
     getCategoryHrefBySubPage(featuredLead.subPage, 'onboard-activities')
   : '/category/onboard-activities/';
 const royalSection = getBrandSection('royal');
-const royalNews = getVisibleCategories(royalSection, allPosts).find((c) => c.slug === 'news');
-const latestNewsHref = royalNews ? brandCategoryHref(royalSection, royalNews) : '/category/latest-news/';
+/** 兩處「查看全部」：最新資訊分區首頁；分區目前不可見（所有分類都沒有文章）時退回皇家旅人首頁 */
+const latestNewsHref =
+  getNavBrandMenus(allPosts).find((m) => m.section.key === 'news')?.href ?? brandSectionHref(royalSection);
 
 /** 與 HomeHero 的 <picture> webp <source> 的 srcset／sizes 一致，LCP 預載才會選到同一張圖 */
 const heroSrcset =

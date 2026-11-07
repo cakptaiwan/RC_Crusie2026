@@ -1,7 +1,7 @@
 ---
 import { siteAuthor } from '../data/site-author';
 import { getPostCrumbs } from '../lib/post-breadcrumb';
-import { getAuthorLabel } from '../data/brand-nav';
+import { getAuthorLabel, getBrandSection } from '../data/brand-nav';
 import { mapArticleBodyHtml, estimateReadMinutes, countArticleHeading2 } from '../lib/map-article-body';
 import { postImage } from '../lib/cloudinary-image';
 import { newArticleUrl, newHomeUrl } from '../lib/new-article-url';
@@ -14,6 +14,8 @@ interface Props {
 }
 
 const { post } = Astro.props;
+/** Brand＝新聞的文章，標籤顯示新分類（皇家快訊、一般資訊…）；其他文章維持舊分類標籤 */
+const newsBrand = getBrandSection('news').brand;
 const mappedBody = mapArticleBodyHtml(post.body, post.title);
 const heading2Count = countArticleHeading2(post.body);
 const showTOC = post.showTOC || heading2Count >= 6;
@@ -40,7 +42,7 @@ const relatedPosts = allPosts
 </div>
 
 <div class="ah rise d1">
-  <span class="stamp">{post.subPage || post.category}</span>
+  <span class="stamp">{post.brand === newsBrand && post.newCategory ? post.newCategory : post.subPage || post.category}</span>
   <h1 class="ah1">{post.title}</h1>
   <div class="ameta">
     <span>{formattedDate}</span><span>·</span>
@@ -79,7 +81,7 @@ const relatedPosts = allPosts
 
   <div class="tagrow rev">
     <span class="ovl" style="font-size:11px">Tags</span>
-    <span class="stamp">{post.subPage || post.category}</span>
+    <span class="stamp">{post.brand === newsBrand && post.newCategory ? post.newCategory : post.subPage || post.category}</span>
   </div>
 
   <div class="authbox rev">

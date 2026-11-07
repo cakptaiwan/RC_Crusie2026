@@ -12,7 +12,7 @@ const BRAND_SECTION_PREFIXES = [
   'https://royal-cruiser.com/guide/',
   'https://royal-cruiser.com/royal/',
   'https://royal-cruiser.com/princess/',
-  /* 旅人手記的三個頁面（換版日跟分區一起由 BRAND_SECTIONS_INDEXABLE 打開） */
+  /* 旅人手記的兩個頁面（stories、resources）與最新資訊分區 /news/（前綴涵蓋其底下分類頁；換版日跟分區一起由 BRAND_SECTIONS_INDEXABLE 打開） */
   'https://royal-cruiser.com/stories/',
   'https://royal-cruiser.com/news/',
   'https://royal-cruiser.com/resources/',
