@@ -60,7 +60,7 @@ export const POST: APIRoute = async ({ request }) => {
       return jsonResponse({ ok: false, error: '寄送失敗，請稍後再試' }, 502);
     }
 
-    return jsonResponse({ ok: true, message: '訂閱成功！感謝你的支持。' });
+    return jsonResponse({ ok: true, message: '訂閱成功！感謝您的支持。' });
   } catch (err) {
     console.error('[newsletter] Unexpected error:', err);
     return jsonResponse({ ok: false, error: '系統暫時無法處理，請稍後再試。' }, 500);
