@@ -15,7 +15,11 @@ import { getAllPosts } from '../lib/notion';
 
 // ── 文字（集中在這裡，方便修改）──────────────────────────────
 const EYEBROW = '郵輪旅人 · CRUISE TRAVELER';
-const TITLE = '陪您準備每一趟郵輪旅程';
+const TITLE = '陪你準備每一趟郵輪旅程';
+// 標語打字效果（參照 React Bits TextType 預設值）
+const TYPING_SPEED = 90;
+const DELETING_SPEED = 40;
+const PAUSE_DURATION = 2000;
 const INTRO =
   '有感於中文郵輪資訊的稀缺，「郵輪旅人」是第一個以郵輪研究為主題的中文網站，分享國內外論壇與部落格的郵輪知識與心得資訊。';
 const PRIMARY_LABEL = '新手入門';
@@ -34,7 +38,50 @@ const secondaryHref = getNavBrandMenus(allPosts).find((m) => m.section.key === '
   <div class="hh-in">
     <div class="hh-txt">
       <div class="ovl">{EYEBROW}</div>
-      <h1 class="hh-h1 srf">{TITLE}</h1>
+      <h1 class="hh-h1 srf">
+        <span class="hh-sr">{TITLE}</span>
+        <span
+          class="hh-type"
+          aria-hidden="true"
+          data-typing={TYPING_SPEED}
+          data-deleting={DELETING_SPEED}
+          data-pause={PAUSE_DURATION}
+        >
+          <span class="hh-type-ghost" data-text={TITLE}></span>
+          <span class="hh-type-live"><span class="hh-type-t"></span><span class="hh-cursor">|</span></span>
+        </span>
+      </h1>
+      <script is:inline>
+        // 打字效果：無 JS 或偏好減少動態時不執行，直接顯示完整句子（.hh-type-ghost 的 ::before）
+        (function () {
+          var h1 = document.currentScript.previousElementSibling;
+          var root = h1 && h1.querySelector('.hh-type');
+          if (!root) return;
+          if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+          var full = Array.from(root.querySelector('.hh-type-ghost').getAttribute('data-text'));
+          var out = root.querySelector('.hh-type-t');
+          var typing = Number(root.dataset.typing);
+          var deleting = Number(root.dataset.deleting);
+          var pause = Number(root.dataset.pause);
+          var n = 0;
+          var erasing = false;
+          root.classList.add('is-typing');
+          function tick() {
+            var wait;
+            if (!erasing) {
+              n += 1;
+              out.textContent = full.slice(0, n).join('');
+              if (n === full.length) { erasing = true; wait = pause; } else { wait = typing; }
+            } else {
+              n -= 1;
+              out.textContent = full.slice(0, n).join('');
+              if (n === 0) { erasing = false; wait = 400; } else { wait = deleting; }
+            }
+            setTimeout(tick, wait);
+          }
+          setTimeout(tick, typing);
+        })();
+      </script>
       <p class="hh-intro">{INTRO}</p>
       <div class="hh-btns">
         <a class="hh-btn hh-btn-p" href={primaryHref}>{PRIMARY_LABEL}</a>
@@ -90,6 +137,46 @@ const secondaryHref = getNavBrandMenus(allPosts).find((m) => m.section.key === '
     margin: 14px 0 0;
     color: #0B2A4A;
     overflow-wrap: anywhere;
+  }
+  .hh-sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+  /* 打字效果：ghost 與 live 疊在同一格，ghost 隱形但撐住完整句子的高度，打字／刪除時不推動下方內容 */
+  .hh-type {
+    display: grid;
+  }
+  .hh-type-ghost,
+  .hh-type-live {
+    grid-area: 1 / 1;
+  }
+  .hh-type-ghost::before {
+    content: attr(data-text);
+  }
+  .hh-type-live {
+    visibility: hidden;
+  }
+  .hh-type.is-typing .hh-type-ghost {
+    visibility: hidden;
+  }
+  .hh-type.is-typing .hh-type-live {
+    visibility: visible;
+  }
+  .hh-cursor {
+    margin-left: 2px;
+    font-weight: 400;
+    animation: hh-blink .5s steps(1) infinite alternate;
+  }
+  @keyframes hh-blink {
+    from { opacity: 1; }
+    to { opacity: 0; }
   }
   .hh-intro {
     font-size: 1.1875rem;
