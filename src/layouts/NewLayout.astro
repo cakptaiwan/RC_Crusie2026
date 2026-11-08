@@ -187,6 +187,11 @@ a:hover{opacity:.75}
 .ameta{display:flex;gap:10px;align-items:center;color:#8AA3B9;font-size:13px;letter-spacing:.04em}
 .aheroimg{aspect-ratio:3/2;margin:34px auto 0;max-width:980px;box-sizing:border-box;border-radius:16px}
 .aheroimg .ph{border-radius:16px}
+/* 桌機（≥901px）：封面與文字欄（.abody／.ah）同一個盒子模型，左右各內縮 56px，封面左右緣與文字欄切齊；比例改由圖片本身維持 3:2。手機（≤900px）沿用下方既有規則 */
+@media (min-width:901px){
+.aheroimg{padding:0 56px;aspect-ratio:auto}
+.aheroimg .ph{height:auto;aspect-ratio:3/2}
+}
 .abody{color:#33506B;font-size:16px;line-height:2.05;max-width:980px;margin-left:auto;margin-right:auto;box-sizing:border-box;padding:38px 56px 64px}
 .abody p{margin:0 0 26px}
 .abody .tip p{margin:0}
