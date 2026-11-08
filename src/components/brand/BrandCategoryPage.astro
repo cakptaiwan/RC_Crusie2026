@@ -49,6 +49,8 @@ const pageDescription = categoryMetaDescription(intro);
 const visibleIntro = brandCategoryLongIntros[`${section.key}/${category.slug}`] ?? intro;
 /** 學堂分類的文章清單 H2 分組；null＝照舊只列卡片（皇家／公主分類頁） */
 const listGroups = getCategoryListGroups(`${section.key}/${category.slug}`, posts);
+/** 頁面 title：品牌分區（有 lineName，即皇家／公主）加「｜分區名」，與其他分區的同名分類區分；H1 與 JSON-LD 仍用分類名 */
+const pageTitle = section.lineName ? `${category.label}｜${section.label}` : category.label;
 const pageUrl = absoluteSiteUrl(brandCategoryHref(section, category));
 const collectionPageJsonLd = buildCollectionPageJsonLd(category.label, pageDescription, pageUrl);
 
@@ -61,7 +63,7 @@ const breadcrumbJsonLdItems = [
 ---
 
 <NewLayout
-  title={category.label}
+  title={pageTitle}
   description={pageDescription}
   noindex={!BRAND_SECTIONS_INDEXABLE}
   breadcrumb={breadcrumbJsonLdItems}
