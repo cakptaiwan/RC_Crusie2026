@@ -7,6 +7,7 @@
 import { getNavBrandMenus, journalSection } from '../data/brand-nav';
 import { getAllPosts } from '../lib/notion';
 import { socialLinks } from '../data/social-links';
+import SocialLink from './SocialLink.astro';
 
 interface Props {
   /** 頁面本身沒有 #ic-* 社群圖示 sprite 時為 true */
@@ -59,9 +60,7 @@ const legalLinks = [
       <p class="sf-ex">全方位的郵輪知識中文網站</p>
       <div class="sf-soc">
         {socialLinks.map((link) => (
-          <a href={link.href} target="_blank" rel="noopener noreferrer" aria-label={link.label}>
-            <svg width="15" height="15" viewBox="0 0 24 24"><use href={`#ic-${link.icon}`}></use></svg>
-          </a>
+          <SocialLink platform={link.icon} href={link.href} label={link.label} variant="dark" />
         ))}
       </div>
     </div>
@@ -159,18 +158,6 @@ const legalLinks = [
     justify-content: center;
     gap: 10px;
     margin-top: 16px;
-  }
-  .sf-soc a {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 30px;
-    height: 30px;
-    box-sizing: border-box;
-    border: 1px solid rgba(255, 255, 255, .55);
-    border-radius: 50%;
-    color: #fff;
-    text-decoration: none;
   }
   .sf-grp {
     min-width: 0;

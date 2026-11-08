@@ -1,5 +1,6 @@
 ---
-import { socialLinks, navSocialLinkClass, navStripSocialLinkClass, navSocialGroupClass } from '../data/social-links';
+import { socialLinks, navSocialGroupClass } from '../data/social-links';
+import SocialLink from './SocialLink.astro';
 import { siteAuthor } from '../data/site-author';
 import { getNavBrandMenus, journalSection } from '../data/brand-nav';
 import { getAllPosts } from '../lib/notion';
@@ -141,10 +142,8 @@ const navLogoClass =
           );
         })}
         <div class:list={['ml-4 h-full', navSocialGroupClass]} aria-label="社群媒體">
-          {socialLinks.map(({ label, href, navSvg }) => (
-            <a href={href} aria-label={label} class={navStripSocialLinkClass}>
-              <Fragment set:html={navSvg} />
-            </a>
+          {socialLinks.map(({ icon, label, href }) => (
+            <SocialLink platform={icon} href={href} label={label} variant="dark" />
           ))}
         </div>
       </div>
@@ -277,10 +276,8 @@ const navLogoClass =
             );
           })}
           <div class:list={['ml-4 h-full', navSocialGroupClass]} aria-label="社群媒體">
-            {socialLinks.map(({ label, href, navSvg }) => (
-              <a href={href} aria-label={label} class={navStripSocialLinkClass}>
-                <Fragment set:html={navSvg} />
-              </a>
+            {socialLinks.map(({ icon, label, href }) => (
+              <SocialLink platform={icon} href={href} label={label} variant="dark" />
             ))}
           </div>
         </div>
@@ -344,10 +341,8 @@ const navLogoClass =
   </nav>
   <div class="border-t border-white/8 px-gutter-sm py-6">
     <div class="mx-auto flex max-w-content items-center justify-center gap-5">
-      {socialLinks.map(({ label, href, navSvg }) => (
-        <a href={href} aria-label={label} class={navSocialLinkClass}>
-          <Fragment set:html={navSvg} />
-        </a>
+      {socialLinks.map(({ icon, label, href }) => (
+        <SocialLink platform={icon} href={href} label={label} variant="dark" />
       ))}
     </div>
     <p class="mt-4 text-center font-sans text-[11px] uppercase tracking-[0.15em] text-white/20">

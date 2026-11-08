@@ -1,0 +1,82 @@
+---
+/**
+ * 社群連結（圓形 40×40 可點區＋線條圖示＋hover 效果）。全站頁首、頁尾、舊版導覽列共用，樣式只在這裡。
+ * variant：light＝淺色底（頁首，hover 藍字淺藍底）；dark＝深色底（頁尾、舊版導覽列，hover 白字淡白底，藍字對比不足）。
+ * 顏色沿用所在區塊的文字色（light 繼承、dark 白）；href／target／rel／aria-label 與原連結相同。
+ */
+import SocialIcon from './SocialIcon.astro';
+
+interface Props {
+  platform: 'ig' | 'fb' | 'th';
+  href: string;
+  /** 無障礙名稱：Facebook／Instagram／Threads */
+  label: string;
+  variant?: 'light' | 'dark';
+  class?: string;
+  size?: number;
+}
+
+const { platform, href, label, variant = 'light', class: className, size } = Astro.props;
+---
+
+<a
+  class:list={['soc-link', `soc-link--${variant}`, className]}
+  href={href}
+  target="_blank"
+  rel="noopener noreferrer"
+  aria-label={label}
+>
+  <SocialIcon platform={platform} size={size} />
+</a>
+
+<style is:global>
+  .soc-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    box-sizing: border-box;
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
+    border: 1px solid rgba(11, 42, 74, .35);
+    border-radius: 50%;
+    background: transparent;
+    color: inherit;
+    text-decoration: none;
+    transition: color 200ms ease, background-color 200ms ease, border-color 200ms ease;
+  }
+  .soc-link .soc-ico {
+    display: block;
+    transition: transform 200ms ease;
+  }
+  .soc-link--dark {
+    border-color: rgba(255, 255, 255, .55);
+    color: #fff;
+  }
+  .soc-link:hover,
+  .soc-link:focus-visible {
+    color: #2A628F;
+    background-color: #EDF4FA;
+  }
+  .soc-link--dark:hover,
+  .soc-link--dark:focus-visible {
+    color: #fff;
+    background-color: rgba(255, 255, 255, .12);
+  }
+  .soc-link:hover .soc-ico,
+  .soc-link:focus-visible .soc-ico {
+    transform: translateY(-2px);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .soc-link,
+    .soc-link .soc-ico {
+      transition: none;
+    }
+    .soc-link:hover .soc-ico,
+    .soc-link:focus-visible .soc-ico {
+      transform: none;
+    }
+  }
+</style>

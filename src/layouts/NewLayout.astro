@@ -5,6 +5,7 @@ import { newHomeUrl } from '../lib/new-article-url';
 import { socialLinks } from '../data/social-links';
 import ContactPanel from '../components/ContactPanel.astro';
 import SiteFooter from '../components/SiteFooter.astro';
+import SocialLink from '../components/SocialLink.astro';
 import SEO from '../components/SEO.astro';
 import '../styles/typography.css';
 
@@ -84,7 +85,6 @@ body{margin:0;background:#EDF4FA;font-family:'Noto Sans TC',sans-serif}
 }
 .ovl{font-size:12px;letter-spacing:.24em;color:#3E6C97;font-weight:700;text-transform:uppercase}
 .navy{color:#0B2A4A}
-.soc{width:30px;height:30px;border:1px solid rgba(11,42,74,.35);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;letter-spacing:.04em;color:inherit;font-weight:700}
 .wsoc{border-color:rgba(255,255,255,.55)}
 .alink{color:#0B2A4A;font-weight:600;font-size:14px;text-decoration:none;border-bottom:1px solid rgba(11,42,74,.4);padding-bottom:2px;transition:opacity .25s}
 .alink:hover{opacity:.6}
@@ -455,9 +455,7 @@ a.pcard{padding:14px}
 <span></span><span></span><span></span>
 </label>
 {socialLinks.map((link) => (
-<a href={link.href} class="soc nav-soc-top" target="_blank" rel="noopener noreferrer" aria-label={link.label} style="text-decoration:none">
-<svg width="15" height="15" viewBox="0 0 24 24"><use href={`#ic-${link.icon}`}></use></svg>
-</a>
+<SocialLink platform={link.icon} href={link.href} label={link.label} class="nav-soc-top" />
 ))}
 </div>
 <div class="nav-mobile">
@@ -467,9 +465,7 @@ a.pcard{padding:14px}
 </form>
 <div class="nav-soc-m">
 {socialLinks.map((link) => (
-<a href={link.href} class="soc" target="_blank" rel="noopener noreferrer" aria-label={link.label} style="text-decoration:none">
-<svg width="15" height="15" viewBox="0 0 24 24"><use href={`#ic-${link.icon}`}></use></svg>
-</a>
+<SocialLink platform={link.icon} href={link.href} label={link.label} />
 ))}
 </div>
 {SHOW_DONATE && <a class="nav-donate nav-donate-m" href="/donate">贊助</a>}
