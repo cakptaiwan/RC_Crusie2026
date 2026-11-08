@@ -14,7 +14,7 @@ import {
   getVisibleCategories,
   type BrandSection,
 } from '../../data/brand-nav';
-import { brandSectionIntros } from '../../data/brand-category-intros';
+import { brandSectionIntros, brandSectionLongIntros } from '../../data/brand-category-intros';
 import { getAllPosts } from '../../lib/notion';
 import { newHomeUrl } from '../../lib/new-article-url';
 import { absoluteSiteUrl } from '../../lib/seo/site-url';
@@ -39,6 +39,8 @@ if (!intro) {
   throw new Error(`brand-category-intros.ts 缺少分區簡介：${section.key}`);
 }
 const pageDescription = categoryMetaDescription(intro);
+/** 頁面可見導言：有長版（公主旅人、最新資訊）顯示長版，其餘沿用一句；meta 與左欄簡介卡不受影響 */
+const visibleIntro = brandSectionLongIntros[section.key] ?? intro;
 const pageUrl = absoluteSiteUrl(brandSectionHref(section));
 const collectionPageJsonLd = buildCollectionPageJsonLd(section.label, pageDescription, pageUrl);
 
@@ -71,7 +73,7 @@ const breadcrumbJsonLdItems = [
           <h1 class="a-h2 srf">{section.label}</h1>
         )
       }
-      <p class="a-ex" style="margin:12px 0 0">{intro}</p>
+      <p class="a-ex" style="margin:12px 0 0">{visibleIntro}</p>
     </div>
     <BrandTabs section={section} categories={categories} />
     {latestPosts.map((post, index) => <BrandPostCard post={post} eager={index === 0} />)}

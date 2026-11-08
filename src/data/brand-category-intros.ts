@@ -1,7 +1,7 @@
 /**
  * 品牌分區與分類的導言（老大定稿文案，逐字使用，勿改寫）。
  * 同一段文字同時用在頁面頂端導言與 meta description／og:description；
- * 有長導言（brandCategoryLongIntros）的分類，頁面頂端改顯示長導言，meta 仍用這裡的一句。
+ * 有長導言（brandCategoryLongIntros／brandSectionLongIntros）的頁面，頁面頂端改顯示長導言，meta 仍用這裡的一句。
  * 分區首頁以分區 key 為鍵；分類以「分區 key/分類 slug」為鍵。
  */
 import { brandSections } from './brand-nav';
@@ -42,10 +42,41 @@ const guideCategoryLongIntros: Record<string, string> = {
     '船票之外，小費、服務費與船上消費怎麼算，是最容易被忽略的一塊。這裡整理小費制度、帳單上的服務費與匯率，以及不同郵輪品牌的小費比較，搞懂這些，下船前的帳單就不會嚇到您。',
 };
 
+/**
+ * 品牌與最新資訊分類頁、分區首頁頂端顯示的長導言（老大定稿，逐字使用，約兩行）。
+ * 只取代頁面可見的導言；meta description／og:description 仍用一句版（brandCategoryIntros／brandSectionIntros）。
+ */
+const otherCategoryLongIntros: Record<string, string> = {
+  'royal/fleet':
+    '皇家加勒比的船隊規模不一，各船的大小、設施與主打航線都有差異。這裡整理各艘船的特色與適合的旅客，選船前先比一比，才不會訂了才發現不是自己要的那一艘。',
+  'royal/onboard':
+    '白天玩什麼、晚上看什麼，是登船前最容易被忽略的功課。這裡整理皇家加勒比船上的活動、表演與設施，以及過來人的實際體驗，幫您把每一天安排得更順。',
+  'royal/dining':
+    '主餐廳、自助餐到特色餐廳，船上的吃法會影響整趟旅程的花費與滿意度。這裡整理皇家加勒比哪些餐點免費、哪些要加價，也收錄旅客的實際評價，吃之前先看一遍。',
+  'royal/pricing':
+    '套餐、優惠與各種額外費用，是訂票後最容易超支的地方。這裡整理皇家加勒比的方案怎麼選、哪些錢值得花，幫您算清楚整趟旅程的總花費，付款前先看一遍。',
+  'royal/routes':
+    '航線與船隻部署會隨季節調整，想找離您最近的那一班，得先知道哪艘船開到哪裡。這裡整理皇家加勒比在亞洲與各地的航線與部署消息，規劃行程前先掌握動向。',
+  'princess/fleet':
+    '公主郵輪的船隊各有不同的規模與特色，選船前最需要知道的是哪艘適合誰。這裡整理各船介紹與適合的旅客，內容陸續更新，想比較不同品牌的您可以從這裡開始。',
+  'news/general':
+    '港口建設、旅遊安全與產業動態，不屬於單一品牌，卻會影響每一趟行程。這裡整理跨品牌的郵輪消息，並說明對華文圈旅客的實際影響，讓您快速掌握重點。',
+  'news/royal':
+    '皇家加勒比的官方新聞稿與業界動態，每則都整理成中文重點。不只翻譯，也說明對台港星馬旅客的實際影響，訂票或出發前先掃一眼，不錯過重要變動。',
+};
+
 /** 分類頁頂端可見導言的長版（「分區 key/分類 slug」為鍵）；沒有長版的分類沿用一句導言 */
-export const brandCategoryLongIntros: Record<string, string> = Object.fromEntries(
-  Object.entries(guideCategoryLongIntros).map(([slug, intro]) => [`guide/${slug}`, intro]),
-);
+export const brandCategoryLongIntros: Record<string, string> = {
+  ...otherCategoryLongIntros,
+  ...Object.fromEntries(Object.entries(guideCategoryLongIntros).map(([slug, intro]) => [`guide/${slug}`, intro])),
+};
+
+/** 分區首頁頂端可見導言的長版（以分區 key 為鍵）；左欄簡介卡與 meta 仍用 brandSectionIntros 的一句 */
+export const brandSectionLongIntros: Record<string, string> = {
+  princess:
+    '公主郵輪的船隊介紹與最新動態陸續整理中。想比較不同郵輪品牌、或正在考慮公主的您，可以先從船隊看起，內容會隨文章累積持續擴充。',
+  news: '郵輪產業與各品牌的最新動態，整理成中文重點。從官方新聞稿到港口與旅遊安全消息，都說明對華文圈旅客的實際影響，讓您快速掌握。',
+};
 
 /** 郵輪品牌分區共用的分類導言；{品牌} 由該分區的 lineName 代入 */
 const lineCategoryTemplates: Record<string, string> = {
