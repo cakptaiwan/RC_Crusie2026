@@ -1,8 +1,8 @@
-# 郵輪旅人 DESIGN.md（v0.4.1）
+# 郵輪旅人 DESIGN.md（v0.5）
 
 本文件是「郵輪旅人」新站版面的設計規範，供人與 Claude Code 共同遵守。
-更新日期：2026-11-08。資料依據：程式碼與 git 紀錄（任務 A～A13、B、N1、C1、F35、學堂分類頁補強）。實作時若與現況矛盾，以現況程式碼為準並回報，不自行猜測。
-預覽分支：feat/brand-sections（撰寫時 HEAD b7382e8）。預覽站全站 noindex，只在 build 時讀 Notion。
+更新日期：2026-11-09。資料依據：程式碼與 git 紀錄（任務 A～A13、B、N1、C1、F35、學堂分類頁補強、分類頁導言擴寫、首頁標語打字效果、社群圖示改版與清理、SEO 環境變數）。實作時若與現況矛盾，以現況程式碼為準並回報，不自行猜測。
+預覽分支：feat/brand-sections（撰寫時 HEAD f9aefce）。預覽站全站 noindex（`BRAND_SECTIONS_INDEXABLE` 預設 false，見第 10 節「SEO／GEO」），只在 build 時讀 Notion。
 
 ## 1. 範圍
 
@@ -55,6 +55,15 @@
 - ≤640px（A5）：社群圖示從頂部列移進抽屜（`.nav-soc-top` 隱藏、`.nav-soc-m` 顯示，間距 12px），頂部列強制單行（`flex-wrap: nowrap`）
 - 首頁頂部列無分割線（A9）：只有首頁傳 `headerSeamless`，下緣邊線改為 0，與緊接的 Hero 背景相接；其他頁面維持 1px 下緣邊線
 
+### 社群圖示（`SocialIcon.astro`、`SocialLink.astro`）
+- 用在三處：頁首（桌機頂部列 `.nav-soc-top`、手機抽屜 `.nav-soc-m`，淺色底）、頁尾 `SiteFooter.astro`（深色底，#0B2A4A）、/search/ 舊導覽列 `NavStrip.astro`（深色底）。連結資料來自 `social-links.ts` 的 `socialLinks`（label、href、icon：`ig`／`fb`／`th`）
+- 圖示（`SocialIcon`）：Tabler 線條風格（Facebook、Instagram、Threads），顯示 20px（`size` 預設 20）、viewBox 24×24、`stroke-width` 1.75、`stroke="currentColor"`、round cap／join、`aria-hidden="true"`
+- 連結（`SocialLink`）：`target="_blank"`、`rel="noopener noreferrer"`、`aria-label`（Facebook／Instagram／Threads）；`variant` 為 `light`（預設）或 `dark`
+- 外框：40×40 圓角方框（`border-radius: 10px`、`box-sizing: border-box`、1px 框線），背景透明；淺色底框線 #C9D9E8，深色底框線 rgba(255,255,255,.28)；深色底文字色白
+- hover／focus-visible：淺色底框與字 #2A628F、背景 #EDF4FA；深色底字白、框 rgba(255,255,255,.6)、背景 rgba(255,255,255,.12)（深色底不用藍字，對比不足）；圖示上移 2px；transition 200ms ease；偏好減少動態（`prefers-reduced-motion`）時取消位移與 transition，色彩仍變
+- 樣式集中在 `SocialLink.astro` 的 `<style is:global>`（class `.soc-link`、`.soc-link--dark`、`.soc-ico`），各處只呼叫元件，不再各自寫樣式
+- 舊的社群圖示 sprite（`#ic-*`）與 `social-links.ts` 的 `svg`／`navSvg` 欄位已移除
+
 ## 4. 分區頁三欄（已實作）
 
 適用：`/guide/`、`/royal/`、`/princess/`、`/news/` 首頁與各分類頁。四區共用 `BrandSectionIndex.astro`、`BrandCategoryPage.astro`。
@@ -92,17 +101,25 @@
 - 公主目前 1 篇文章、1 個可見分類，頁面無空卡
 
 ### 郵輪學堂分類頁（bf30788）
-- 簡介有兩層：`brandCategoryIntros`（一句導言，同時用於 meta description）與 `brandCategoryLongIntros`（長導言，只有學堂 5 個分類有）；分類頁頂端顯示長導言，沒有長導言的分類沿用一句導言，meta 不受影響
+- 簡介有兩層：`brandCategoryIntros`（一句導言，同時用於 meta description）與 `brandCategoryLongIntros`（長導言，涵蓋範圍見下方「分類頁與分區首頁導言」）；分類頁頂端顯示長導言，沒有長導言的分類沿用一句導言，meta 不受影響
 - 文章清單的 H2 分組在 `src/data/category-groups.ts`，以「分區 key／分類 slug」為鍵，只設定學堂 5 個分類：
   - 訂票選艙（`guide/booking`）：三組「選艙：怎麼挑、怎麼避雷」「訂票：管道與時機」「退改簽與取消費用」；標題「｜」之前的部分完全等於清單中一筆就歸入該組，都對不到的放最後一組「其他文章」；沒有文章的組不顯示
   - 其餘 4 個學堂分類：整份清單上方只有一個 H2「本區文章」
   - 沒有設定的分類（皇家、公主與最新資訊的所有分類）回傳 null，頁面照舊只列卡片，不出現 H2，也不會有空的分組
 
+### 分類頁與分區首頁導言（可見導言與 meta 分開）
+- 頁面可見導言與 meta description／og:description／twitter:description 是兩個獨立欄位。meta 維持原本一句話（`brandSectionIntros`、`brandCategoryIntros`、`newsCategoryIntros` 的一句，各頁一句版現況 25～48 字，其中涵蓋長導言的 15 頁為 25～37 字；由 `categoryMetaDescription` 取第一句、少於 20 字併第二句）；可見導言是長導言，現況 61～97 字、顯示兩行
+- 資料檔 `src/data/brand-category-intros.ts`：`guideCategoryLongIntros`（學堂 5 類）與 `otherCategoryLongIntros`（皇家 5 類、`princess/fleet`、`news/general`、`news/royal`）兩個內部常數，合併為匯出的 `brandCategoryLongIntros`（鍵為「分區 key／分類 slug」）；分區首頁用 `brandSectionLongIntros`（鍵為分區 key：`princess`、`news`）
+- 讀取方式：`BrandCategoryPage.astro` 取 `brandCategoryLongIntros[...] ?? intro`、`BrandSectionIndex.astro` 取 `brandSectionLongIntros[key] ?? intro`；沒有長導言者沿用一句導言
+- 涵蓋 15 頁：學堂 5 個分類、皇家 5 個分類、公主船隊（`/princess/fleet/`）、一般資訊（`/news/general/`）、皇家快訊（`/news/royal/`）、`/news/`、`/princess/`。沒有長導言：`/guide/`、`/royal/`（沿用一句）
+- 左欄簡介卡（`BrandSideIntro`）一律傳短版一句（欄位窄），不換成長導言
+- 文案為老大定稿，逐字使用
+
 ### 最新資訊分區（N1，Brand＝新聞）
 - 分區定義在 `brand-nav.ts` 的 `brandSections`（key `news`，路徑 `/news/`，選單名稱「最新資訊」，Notion Brand 值「新聞」）；分類（頁籤）依序：一般資訊（`/news/general/`）、皇家快訊（`/news/royal/`）、公主快訊（`/news/princess/`）
 - 門檻 1：有 1 篇就顯示該分類；分類頁只為有文章的分類產生（目前公主快訊 0 篇已發布，`/news/princess/` 不存在）；所有分類都不可見時整個分區不進選單與頁尾；`/news/` 本身永遠是真實頁面（`check-redirects` 有 4 條規則導向它）
 - 路由：`src/pages/news/index.astro`（分區首頁）、`src/pages/news/[slug].astro`（分類頁），沿用 guide／royal／princess 的寫法
-- 簡介：分區簡介與三個分類簡介由老大定稿，存於 `brand-category-intros.ts`（`brandSectionIntros.news`、`newsCategoryIntros`）；沒有長導言
+- 簡介：分區簡介與三個分類簡介由老大定稿，存於 `brand-category-intros.ts`（`brandSectionIntros.news`、`newsCategoryIntros`）；`/news/` 與 `/news/general/`、`/news/royal/` 另有長導言（見下方「分類頁與分區首頁導言」）
 - 皇家與公主共用的 `cruiseLineCategories` 已移除「最新消息」（Notion 新分類舊選項暫留，待移除）
 - 文章頁（Brand＝新聞）：麵包屑「首頁／最新資訊／該分類／標題」（畫面與 JSON-LD 相同，由 `post-breadcrumb.ts` 經 `getPostBrandCategory` 取得）；標題旁分類標籤（stamp）顯示新分類名稱（皇家快訊、一般資訊…）；署名顯示「郵輪旅人」（`brandAuthorLabels`）；文章網址 `/post/<id>/` 不變
 - 程式內仍保留但不再使用：`getNewsPosts`、`NEWS_NEW_CATEGORY`、`newsIntro`、`lineCategoryTemplates.news`（`brand-nav.ts` 被 ArticleAgent 測試解析，處理須先經老大批准）
@@ -113,10 +130,18 @@
 
 ### Hero（`HomeHero.astro`）
 - 兩欄：左欄文字與按鈕、右欄圓角圖片；文字集中在檔案頂端常數區，方便修改
-- 文案（A13，用「您」）：小字「郵輪旅人 · CRUISE TRAVELER」；標題「陪您準備每一趟郵輪旅程」；簡介「有感於中文郵輪資訊的稀缺，「郵輪旅人」是第一個以郵輪研究為主題的中文網站，分享國內外論壇與部落格的郵輪知識與心得資訊。」
+- 文案（A13，用「您」）：小字「郵輪旅人 · CRUISE TRAVELER」；標題「陪你準備每一趟郵輪旅程」（用「你」，見下方「標語打字效果」）；簡介「有感於中文郵輪資訊的稀缺，「郵輪旅人」是第一個以郵輪研究為主題的中文網站，分享國內外論壇與部落格的郵輪知識與心得資訊。」
 - 按鈕：主要「新手入門」→ 郵輪學堂新手入門分類（不可見時退回 /guide/）；次要「最新資訊」→ 最新資訊分區首頁（由 `getNavBrandMenus` 取得；分區不可見則不渲染該按鈕）。連結都由 `brand-nav` 產生，不寫死
 - 版面：桌機左右 52fr／48fr，欄距 48px，外距 56px 56px 48px；≤900px 單欄，欄距 32px，外距 32px 24px 40px；右欄圖片 4:3、圓角 16px
 - 圖片：目前是紙雕橫幅（`hero-banner`）的裁切放樣圖，暫當佔位，之後由老大重做（A16）；`<picture>` 的 webp `srcset`／`sizes` 與頁首 LCP 預載的 `imagesrcset`／`imagesizes`（`NewLayout` 的 `lcpImageSrcset`、`lcpImageSizes`）必須一致（A10）
+
+### 標語打字效果（`HomeHero.astro`）
+- 標語文字「陪你準備每一趟郵輪旅程」。這是全站固定文字用「您」的唯一例外：老大指定首頁標語用「你」，日後不得改回「您」
+- 效果參考 React Bits TextType，用原生 JS＋CSS 實作（不使用 React 或 GSAP）：打字 90ms／字（`TYPING_SPEED`）、刪除 40ms／字（`DELETING_SPEED`）、打滿後停 2000ms（`PAUSE_DURATION`）、刪光後停 400ms（寫在 script 內）、循環、閃爍游標「|」（`.hh-cursor`，0.5s）。字級、粗細、字型沿用原標語樣式（`.hh-h1`）
+- SEO／無障礙：完整句子放在 `.hh-sr`（sr-only，搜尋引擎與螢幕閱讀器讀得到）；動畫區塊 `.hh-type` 為 `aria-hidden`；偏好減少動態（`prefers-reduced-motion`）或禁用 JS 時不啟動動畫，直接顯示完整句子（`.hh-type-ghost::before` 讀 `data-text`）
+- 避免跳版：`.hh-type-ghost`（隱形的完整句子）與 `.hh-type-live`（動畫文字）疊在同一個 grid 格，ghost 撐住標語高度，打字與刪除不推動下方內容
+- 腳本為 `is:inline`，緊接在 `<h1>` 之後，只存在首頁，不影響其他頁面的 JS
+- 依賴的 class 名稱不得更動：`.hh-type`、`.hh-type-ghost`、`.hh-type-live`、`.hh-type-t`、`.hh-cursor`、`.hh-sr`
 
 ### 選文（F35，`src/pages/index.astro`）
 - F 序列＝已發布且勾 Featured 的文章，依 Date 新到舊（`getAllPosts` 由 Notion 依 Date 降冪），精選與熱門共用這一份；ShowOnHome 不再使用
@@ -168,6 +193,11 @@
 - 虛線：文章頁（`/post/`）沒有虛線樣式。`.rdash`（2px 頂線）與 `.tstub`（左側線）是 `NewLayout.astro` 內沒有任何元件使用的遺留規則；`.catrow` 為首頁與內容頁側欄「文章分類」每列的 1px 底線（`HomePageSidebar.astro`、`CategoryPageSidebar.astro`）。老大只要求移除本文重點框與作者卡的虛線，其餘未改
 - 沒有任何檔案引用：`HeroHeader.astro`、`Layout.astro`、`Footer.astro`，為刪除候選，刪除須老大批准
 - 首頁精選區的大圖文章若沒有 Brand／新分類（例如尚未補填的新文章），「查看全部」與文章頁麵包屑會退回舊 `/category/…`（轉址到新分類頁）
+- 已知待清理（備註，尚未處理）：
+  - `BaseLayout.astro` 的 `<SiteFooter sprite />` 多餘屬性（`SiteFooter` 的 `sprite` prop 已移除，傳了沒有作用）
+  - `social-links.ts` 的 `navStripSocialLinkClass`、`navSocialLinkClass` 兩個 class 常數（現行頁面沒人使用，只剩未被引用的 `Footer.astro` 會用到其一）
+  - `global.css` 的 `.social-icon-link` 系列樣式（dist 沒有任何頁面使用）
+  - 未被任何檔案引用的 10 個檔案，待老大批准刪除（尚未刪除）：`Card.astro`、`DisqusComments.astro`、`Footer.astro`、`GiscusComments.astro`、`HeroHeader.astro`、`SectionHeader.astro`、`SubPagePosts.astro`、`Welcome.astro`（皆在 `src/components/`）、`src/layouts/Layout.astro`、`src/data/sub-pages.ts`；另有 `CategoryPageHeader.astro`、`nav-pages.ts` 只被上述檔案引用，連帶閒置
 
 ## 10. 資料來源對照
 
@@ -185,6 +215,12 @@
 | sitemap 路徑前綴 | `astro.config.mjs`（`BRAND_SECTION_PREFIXES`，`/news/` 前綴涵蓋其底下分類頁；`BRAND_SECTIONS_INDEXABLE` 為 false 時不列入） |
 
 分區是否顯示由 `brand-nav.ts` 的門檻決定，不在元件內另寫判斷。
+
+### SEO／GEO（f9aefce 起）
+- `BRAND_SECTIONS_INDEXABLE`（`brand-nav.ts`）由環境變數控制：值為字串 `"true"` 才為 true，沒設一律 false（預覽站預設）。為 true 時，分區與分類頁（`/guide/`、`/royal/`、`/princess/`、`/news/`、`/stories/`、`/resources/` 前綴）進 sitemap，且不輸出 `<meta name="robots" content="noindex, follow">`；為 false 時兩者相反。換版日在 Cloudflare Pages 的 Production 環境變數設 `BRAND_SECTIONS_INDEXABLE=true`
+- Organization 與 WebSite 的 JSON-LD（`src/lib/seo/jsonld.ts`）都有 `alternateName`：皇家旅人、Royal Cruiser、Royal Cruiser 皇家旅人
+- 預覽站的 `X-Robots-Tag: noindex` 來自 Cloudflare 設定，不在程式碼內（`public/_headers` 只有 `X-Frame-Options`）
+- 分類頁 title（6859e78）：皇家旅人、公主旅人（分區有 `lineName`）的分類頁 title 為「{分類名}｜{分區名}」，og:title 與 twitter:title 同；H1 與 JSON-LD 仍用分類名。郵輪學堂與最新資訊的分類頁 title 不加品牌後綴，是刻意設計（跨品牌分區不設 `lineName`）
 
 ## 11. 驗收清單（每個任務完成都要過）
 
@@ -227,3 +263,14 @@
 | C1 | 8792bae | 移除 `NewsPage.astro` |
 | F35 | b7382e8 | 首頁選文改依 Featured 序列（第 5 節） |
 | 封面切齊 | （v0.4.1） | 桌機版文章封面左右緣與文字欄切齊（第 7 節） |
+
+### 11-08～11-09（commit 對照，v0.5）
+| 任務 | commit | 內容（現況見對應章節） |
+|---|---|---|
+| 固定文字一致性 | 6859e78 | 皇家與公主分類頁 title 加「｜分區名」；/search/ 側欄文字與首頁一致；站名寫法統一（第 10 節） |
+| 導言擴寫 | 24785a4 | 皇家、公主船隊、最新資訊分類頁與 /princess/、/news/ 長導言；可見導言與 meta 分欄（第 4 節） |
+| 首頁標語 | 9111ab9 | 標語改「陪你準備每一趟郵輪旅程」加打字效果（第 5 節） |
+| 社群圖示 | e906185、d91882c、8f0f881 | 線條圖示共用元件、40×40 圓角方框、hover 效果；圖示 20px、stroke 1.75（第 3 節） |
+| 清理 | 6accb24 | 移除社群圖示 sprite 與 `social-links.ts` 舊 svg／navSvg 欄位（第 3、9 節） |
+| SEO | f9aefce | `BRAND_SECTIONS_INDEXABLE` 改環境變數；Organization／WebSite 加 `alternateName`（第 10 節） |
+| DESIGN v0.5 | （本次） | 併入上列內容；第 4、5 節三處與現況不符的既有句子更正 |
