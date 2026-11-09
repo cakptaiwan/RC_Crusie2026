@@ -12,6 +12,7 @@ export function buildOrganizationJsonLd(): Record<string, unknown> {
     '@type': 'Organization',
     '@id': organizationId,
     name: '郵輪旅人 Cruise Traveler',
+    alternateName: ['皇家旅人', 'Royal Cruiser', 'Royal Cruiser 皇家旅人'],
     url: absoluteSiteUrl('/'),
     logo: { '@type': 'ImageObject', url: absoluteSiteUrl('/icon-512.png') },
     description: '專業郵輪旅遊心得，提供真實體驗與實用攻略',
@@ -47,7 +48,9 @@ export function buildWebSiteJsonLd(): Record<string, unknown> {
     '@type': 'WebSite',
     '@id': websiteId,
     name: '郵輪旅人 Cruise Traveler',
+    alternateName: ['皇家旅人', 'Royal Cruiser', 'Royal Cruiser 皇家旅人'],
     url: absoluteSiteUrl('/'),
+    description: '專業郵輪旅遊心得，提供真實體驗與實用攻略',
     inLanguage: 'zh-TW',
     publisher: { '@id': organizationId },
   };

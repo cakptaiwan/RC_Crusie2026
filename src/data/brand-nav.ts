@@ -45,8 +45,13 @@ export const MIN_ARTICLES = 3;
 /** 公主旅人是否出現在頂部選單與頁尾（對應頁面在 src/pages/princess/） */
 export const PRINCESS_IN_NAV = true;
 
-/** false：分區所有頁面 noindex，且不列入 sitemap（astro.config.mjs 讀這個旗標） */
-export const BRAND_SECTIONS_INDEXABLE = false;
+/**
+ * false：分區所有頁面 noindex，且不列入 sitemap（astro.config.mjs 與元件都從這裡讀，單一出口）。
+ * 由環境變數 BRAND_SECTIONS_INDEXABLE 控制，值為字串 "true" 才為 true，沒設一律 false（預覽站預設）。
+ * 正式站在 Cloudflare Pages 的 Production 環境變數設 BRAND_SECTIONS_INDEXABLE=true 後，分區頁才會進 sitemap 且不輸出 noindex。
+ */
+export const BRAND_SECTIONS_INDEXABLE =
+  (typeof process !== 'undefined' && process.env?.BRAND_SECTIONS_INDEXABLE) === 'true';
 
 const cruiseLineCategories: readonly BrandCategory[] = [
   { slug: 'fleet', label: '品牌船隊', newCategory: '品牌船隊' },
