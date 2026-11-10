@@ -50,7 +50,7 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   if (body.website) {
-    return jsonResponse({ ok: true, message: '訊息已送出，感謝您的聯絡！' });
+    return jsonResponse({ ok: true, message: '訊息已送出，感謝你的聯絡！' });
   }
 
   const name = normalizeField(body.name, 80);
@@ -85,7 +85,7 @@ export const POST: APIRoute = async ({ request }) => {
       );
     }
 
-    return jsonResponse({ ok: true, message: '訊息已送出，感謝您的聯絡！我們會盡快回覆。' });
+    return jsonResponse({ ok: true, message: '訊息已送出，感謝你的聯絡！我們會盡快回覆。' });
   } catch (err) {
     console.error('[contact] Unexpected error:', err);
     return jsonResponse(
