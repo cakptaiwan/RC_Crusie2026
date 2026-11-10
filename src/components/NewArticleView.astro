@@ -22,6 +22,9 @@ const showTOC = post.showTOC || heading2Count >= 6;
 const readMinutes = estimateReadMinutes(post.excerpt, post.body);
 const crumbs = getPostCrumbs(post, await getAllPosts());
 const postImageUrl = postImage(post.image, 'hero');
+/** 封面 srcset：手機取 800、桌機取 1200（postImage 的 lead／hero 寬度）；非 Cloudinary 圖兩者相同，不輸出 srcset */
+const postImageSmall = postImage(post.image, 'lead');
+const postImageSrcset = postImageSmall !== postImageUrl ? `${postImageSmall} 800w, ${postImageUrl} 1200w` : undefined;
 
 const formattedDate = post.date
   ? new Date(post.date).toLocaleDateString('zh-TW', { year: 'numeric', month: '2-digit', day: '2-digit' })
@@ -53,7 +56,7 @@ const relatedPosts = allPosts
 
 {post.image && (
   <div class="aheroimg zi rev">
-    <img class="ph" src={postImageUrl} alt={post.title} fetchpriority="high" />
+    <img class="ph" src={postImageUrl} srcset={postImageSrcset} sizes={postImageSrcset ? '(min-width: 901px) 868px, calc(100vw - 48px)' : undefined} alt={post.title} fetchpriority="high" />
   </div>
 )}
 
