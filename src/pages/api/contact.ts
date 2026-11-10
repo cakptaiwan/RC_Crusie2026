@@ -29,7 +29,7 @@ export const POST: APIRoute = async ({ request }) => {
   const apiKey = readRuntimeEnv('RESEND_API_KEY');
   const toEmail = readRuntimeEnv('CONTACT_TO_EMAIL');
   const fromEmail =
-    readRuntimeEnv('CONTACT_FROM_EMAIL') ?? 'Royal Cruiser <onboarding@resend.dev>';
+    readRuntimeEnv('CONTACT_FROM_EMAIL') ?? 'Cruise Traveler <onboarding@resend.dev>';
 
   if (!apiKey || !toEmail) {
     console.error('[contact] Missing env:', {
