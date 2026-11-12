@@ -1,4 +1,4 @@
-# 郵輪旅人 DESIGN.md（v0.5.3）
+# 郵輪旅人 DESIGN.md（v0.5.4）
 
 本文件是「郵輪旅人」新站版面的設計規範，供人與 Claude Code 共同遵守。
 更新日期：2026-11-10。資料依據：程式碼與 git 紀錄（任務 A～A13、B、N1、C1、F35、學堂分類頁補強、分類頁導言擴寫、首頁標語打字效果、社群圖示改版與清理、SEO 環境變數）。實作時若與現況矛盾，以現況程式碼為準並回報，不自行猜測。
@@ -42,6 +42,7 @@
 - `NewLayout` 已在使用的色碼：#0B2A4A、#33506B、#3E6C97、#51677C、#8AA3B9、#EAF3FA、#F4F9FD、#fff
 - 字體：`fontFamily.sans`（Noto Sans TC 系列）；字級用 `body`、`body-lg`、`h1`、`h2`、`micro`
 - 需要新色彩或字級時，先停下回報
+- 標籤與品牌副標（如「CRUISE TRAVELER」、eyebrow、分類標籤）字距上限 .14em；中文字距另計（.wm1、.sf-n1 為 .06em）
 
 ## 3. 頂部列（已實作）
 
@@ -59,8 +60,8 @@
 - 用在三處：頁首（桌機頂部列 `.nav-soc-top`、手機抽屜 `.nav-soc-m`，淺色底）、頁尾 `SiteFooter.astro`（深色底，#0B2A4A）、/search/ 舊導覽列 `NavStrip.astro`（深色底）。連結資料來自 `social-links.ts` 的 `socialLinks`（label、href、icon：`ig`／`fb`／`th`）
 - 圖示（`SocialIcon`）：Tabler 線條風格（Facebook、Instagram、Threads），顯示 20px（`size` 預設 20）、viewBox 24×24、`stroke-width` 1.75、`stroke="currentColor"`、round cap／join、`aria-hidden="true"`
 - 連結（`SocialLink`）：`target="_blank"`、`rel="noopener noreferrer"`、`aria-label`（Facebook／Instagram／Threads）；`variant` 為 `light`（預設）或 `dark`
-- 外框：40×40 圓角方框（`border-radius: 10px`、`box-sizing: border-box`、1px 框線），背景透明；淺色底框線 #C9D9E8，深色底框線 rgba(255,255,255,.28)；深色底文字色白
-- hover／focus-visible：淺色底框與字 #2A628F、背景 #EDF4FA；深色底字白、框 rgba(255,255,255,.6)、背景 rgba(255,255,255,.12)（深色底不用藍字，對比不足）；圖示上移 2px；transition 200ms ease；偏好減少動態（`prefers-reduced-motion`）時取消位移與 transition，色彩仍變
+- 外框：40×40 圓角方框（`border-radius: 10px`、`box-sizing: border-box`、1px 框線），淺色底（頁首、手機選單）為深藍底 #0B2A4A、框線 #0B2A4A、圖示白；深色底背景透明、框線 rgba(255,255,255,.28)、圖示白
+- hover／focus-visible：淺色底背景與框 #2A628F、圖示白；深色底字白、框 rgba(255,255,255,.6)、背景 rgba(255,255,255,.12)（深色底不用藍字，對比不足）；圖示上移 2px；transition 200ms ease；偏好減少動態（`prefers-reduced-motion`）時取消位移與 transition，色彩仍變
 - 樣式集中在 `SocialLink.astro` 的 `<style is:global>`（class `.soc-link`、`.soc-link--dark`、`.soc-ico`），各處只呼叫元件，不再各自寫樣式
 - 舊的社群圖示 sprite（`#ic-*`）與 `social-links.ts` 的 `svg`／`navSvg` 欄位已移除
 
@@ -277,3 +278,6 @@
 | DESIGN v0.5 | 642940b | 併入上列內容；第 4、5 節三處與現況不符的既有句子更正 |
 | DESIGN v0.5.2 | （本次） | 新 logo 取代網站 logo 與 favicon 系列；頁首、頁尾、文章頁品牌卡小圖示由圓形改為圓角方形（圖檔自帶圓角，不再以 CSS 圓形裁切）；移除 SVG favicon 引用，改用 PNG／ICO |
 | DESIGN v0.5.3 | （本次） | 文章頁封面圖 srcset 800／1200；logo.png 縮為 512×512；刪除稱謂句 |
+| 標語改字（A） | 14fa5c3 | 首頁標語改為「陪你準備每一趟旅程」（第 5 節） |
+| 社群圖示藍底（B） | a1be24f | 頁首、手機選單社群圖示改深藍底 #0B2A4A 白線條，hover #2A628F；頁尾不變（第 3 節） |
+| 標籤字距（C） | （本次） | 品牌副標與標籤字距減半（.28→.14、.24→.12、.22→.11、.2→.1em），新增字距上限 .14em（第 2 節）；DESIGN v0.5.4 |
