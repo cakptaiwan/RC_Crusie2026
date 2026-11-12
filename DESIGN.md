@@ -1,4 +1,4 @@
-# 郵輪旅人 DESIGN.md（v0.5.4）
+# 郵輪旅人 DESIGN.md（v0.5.5）
 
 本文件是「郵輪旅人」新站版面的設計規範，供人與 Claude Code 共同遵守。
 更新日期：2026-11-10。資料依據：程式碼與 git 紀錄（任務 A～A13、B、N1、C1、F35、學堂分類頁補強、分類頁導言擴寫、首頁標語打字效果、社群圖示改版與清理、SEO 環境變數）。實作時若與現況矛盾，以現況程式碼為準並回報，不自行猜測。
@@ -130,11 +130,29 @@
 結構由上而下：頂部列（無分割線）→ `HomeHero` → 精選郵輪活動 → 熱門文章、最新文章（兩欄版面左側）與 `HomePageSidebar`（右側）。
 
 ### Hero（`HomeHero.astro`）
-- 兩欄：左欄文字與按鈕、右欄圓角圖片；文字集中在檔案頂端常數區，方便修改
+- 左欄文字與按鈕、右側紙雕插畫（白底版，見下方「Hero 白底版」）；文字集中在檔案頂端常數區，方便修改
 - 文案：小字「郵輪旅人 · CRUISE TRAVELER」；標題「陪你準備每一趟旅程」（見下方「標語打字效果」）；簡介「有感於中文郵輪資訊的稀缺，「郵輪旅人」是第一個以郵輪研究為主題的中文網站，分享國內外論壇與部落格的郵輪知識與心得資訊。」
 - 按鈕：主要「新手入門」→ 郵輪學堂新手入門分類（不可見時退回 /guide/）；次要「最新資訊」→ 最新資訊分區首頁（由 `getNavBrandMenus` 取得；分區不可見則不渲染該按鈕）。連結都由 `brand-nav` 產生，不寫死
-- 版面：桌機左右 52fr／48fr，欄距 48px，外距 56px 56px 48px；≤900px 單欄，欄距 32px，外距 32px 24px 40px；右欄圖片 4:3、圓角 16px
-- 圖片：目前是紙雕橫幅（`hero-banner`）的裁切放樣圖，暫當佔位，之後由老大重做（A16）；`<picture>` 的 webp `srcset`／`sizes` 與頁首 LCP 預載的 `imagesrcset`／`imagesizes`（`NewLayout` 的 `lcpImageSrcset`、`lcpImageSizes`）必須一致（A10）
+- （舊圖，已不使用，檔案保留）版面：桌機左右 52fr／48fr，欄距 48px，外距 56px 56px 48px；≤900px 單欄，欄距 32px，外距 32px 24px 40px；右欄圖片 4:3、圓角 16px
+- （舊圖，已不使用，檔案保留）圖片：目前是紙雕橫幅（`hero-banner`）的裁切放樣圖，暫當佔位，之後由老大重做（A16）；`<picture>` 的 webp `srcset`／`sizes` 與頁首 LCP 預載的 `imagesrcset`／`imagesizes`（`NewLayout` 的 `lcpImageSrcset`、`lcpImageSizes`）必須一致（A10）
+
+### Hero 白底版（`HomeHero.astro`，現行）
+- 圖：紙雕郵輪航行圖（1536×1024、3:2），天空與左側紙面轉為純白 #FFFFFF，與左欄白底一致、兩欄無邊界；紙面與海浪交界加 S2 輪廓（1px #8FA6BD 50%、投影 #1B3F66 22%）
+- 資源（`public/assets/hero/`，單檔皆 ≤ 200 KB）：`hero-w-640.webp` 43.9 KB、`hero-w-960.webp` 88.0 KB、`hero-w-1280.webp` 147.3 KB（以上品質 88）、`hero-w-1536.webp` 191.0 KB（品質 87）、`hero-w-1536.jpg` 196.3 KB（備援，品質 85）；動態用：`hero-bg-nobirds-w.webp` 190.1 KB（去鳥底圖，品質 87）、`hero-wave-mask-w.png` 15.4 KB、`hero-phase-w.webp` 126.3 KB（8 位元相位圖，無損）、`hero-bird-1w/2w/3w.png` 6.8／3.6／6.8 KB；延伸海浪帶 `hero-base-wave-w.svg` 39.6 KB
+- 相位圖用 8 位元：與 16 位元相比相位誤差最大 0.009 弧度、位移誤差 < 0.09 像素（老大核可；16 位元最小 718 KB，超過 200 KB 上限）
+- 桌機（≥901px）：圖寬 `min(54vw, 960px)`、3:2、靠右滿版（右緣貼視窗）、底緣貼齊 Hero 底部、無圓角無陰影；Hero 最小高度＝圖高＋40px；文字欄寬度不壓到圖片（距圖片左緣 40px）
+- 延伸海浪帶（桌機）：`hero-base-wave-w.svg` 絕對定位於左欄底部，右緣接圖片左緣、左緣到視窗、底緣貼 Hero 底；與圖片同比例縮放（1 單位＝原圖 1 像素），多延伸 24 單位墊在圖片左緣 8px 羽化底下；最左端高度為接縫處的 30%；z-index 在文字之下；靜止（不受 JS／減少動態影響）。接縫最大色差 26／255（僅在 B2 邊界正下方 3–6px 的投影最陡處，其餘 ≤ 6），老大核可為例外
+- 圖片左緣 8px 羽化（桌機）：只用來消除與海浪帶之間的數值接縫
+- 手機（≤900px）：文字在上、圖在下；圖左右滿版貼齊視窗、底緣貼齊 Hero 底部；不顯示延伸海浪帶；圖片左緣不做任何淡出或遮罩
+- 靜態圖：`<picture>` webp srcset 640／960／1280／1536w，sizes `(min-width: 901px) min(54vw, 960px), 100vw`，備援 JPG；`width`／`height` 1536／1024；`loading="eager"`、`fetchpriority="high"`、`data-lcp`（LCP 元素）。首頁 LCP 預載（`index.astro` 的 `heroSrcset`／`heroSizes`、`lcpImage`＝960 寬 webp）與此一致
+- alt：「紙雕風格插畫：郵輪航行於藍色海浪與島嶼之間，海鷗飛過天空」
+- 動態（海鷗＋海浪）：
+  - 啟動條件：非 `prefers-reduced-motion: reduce`、`navigator.connection.saveData` 不為 true、WebGL 可用；window load 後以 `requestIdleCallback`（不支援則 1 秒後）載入去鳥底圖、海浪遮罩、相位圖與海鷗；資源與 WebGL 都就緒才加 `.is-live` 淡入（400ms），之前只有靜態圖
+  - 不符合條件、無 JS 或任何錯誤（含 WebGL context lost）：維持靜態圖，不請求任何動態資源（海鷗圖以 `data-src` 延後載入）
+  - 海浪（A 版）：垂直 AMP_Y 10、水平 AMP_X 3、週期 8 秒、波長 260（原圖像素）；每層紙以相位圖錯開；位移幅度乘以 smoothstep(遮罩值)；取樣點落在遮罩外時退回原像素，遮罩外逐位元組不變；桌機在圖片左緣 12% 寬內位移由 0 線性升到 100%（接縫處不動），手機不做此處理
+  - 海鷗：三隻，CSS animation（`hh-fly1/2/3`），週期 16 秒、起飛錯開 0／5／10 秒，上下起伏 ±4（原圖像素）、轉動 ±3°；位置以原圖座標百分比定位，與靜態圖共用座標
+  - 效能：畫布解析度＝顯示尺寸 × min(devicePixelRatio, 1.5)；上限 30 fps；頁籤隱藏或圖片區離開視窗（IntersectionObserver）時暫停
+
 
 ### 標語打字效果（`HomeHero.astro`）
 - 標語文字「陪你準備每一趟旅程」
@@ -280,4 +298,7 @@
 | DESIGN v0.5.3 | （本次） | 文章頁封面圖 srcset 800／1200；logo.png 縮為 512×512；刪除稱謂句 |
 | 標語改字（A） | 14fa5c3 | 首頁標語改為「陪你準備每一趟旅程」（第 5 節） |
 | 社群圖示藍底（B） | a1be24f | 頁首、手機選單社群圖示改深藍底 #0B2A4A 白線條，hover #2A628F；頁尾不變（第 3 節） |
-| 標籤字距（C） | （本次） | 品牌副標與標籤字距減半（.28→.14、.24→.12、.22→.11、.2→.1em），新增字距上限 .14em（第 2 節）；DESIGN v0.5.4 |
+| 標籤字距（C） | 5e27d3a | 品牌副標與標籤字距減半（.28→.14、.24→.12、.22→.11、.2→.1em），新增字距上限 .14em（第 2 節）；DESIGN v0.5.4 |
+| Hero 白底版圖檔（A） | f357d82 | `public/assets/hero/` 新圖 webp／jpg、去鳥底圖、海浪遮罩、8 位元相位圖、白底海鷗、延伸海浪帶 SVG（第 5 節） |
+| Hero 白底版（B） | f442928 | 白底、圖片靠右滿版、左欄底部延伸海浪帶、海鷗與海浪動態、首頁 LCP 預載改新圖；手機不做左緣淡出（第 5 節） |
+| DESIGN v0.5.5（C） | （本次） | Hero 白底版規格、動態規格與效能守則；舊 hero-banner 段落標註為舊圖 |
