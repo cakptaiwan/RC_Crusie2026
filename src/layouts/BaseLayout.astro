@@ -23,6 +23,8 @@ const { title, description, image, type, jsonLd, noindex, breadcrumb } = Astro.p
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Speculation Rules：滑過站內連結時預取下一頁（不支援的瀏覽器會忽略） -->
+    <script is:inline type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":["/search/*","/pagefind/*","/*.pdf","/api/*","/fb","/fb/","/ig","/ig/","/th","/th/"]}},{"not":{"selector_matches":["[rel~=nofollow]","[target=_blank]","[download]"]}}]},"eagerness":"moderate"}]}</script>
     <meta name="color-scheme" content="light" />
     <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
