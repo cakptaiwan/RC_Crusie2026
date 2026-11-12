@@ -13,9 +13,11 @@ interface Props {
   ovl: string;
   intro: string;
   path: string;
+  /** false：不顯示畫面上的導言段落；intro 仍用來產生 meta／og／twitter description（預設 true） */
+  showIntro?: boolean;
 }
 
-const { title, ovl, intro, path } = Astro.props;
+const { title, ovl, intro, path, showIntro = true } = Astro.props;
 const pageDescription = categoryMetaDescription(intro);
 /* 畫面麵包屑：首頁/旅人手記/標題；「旅人手記」沒有獨立網址，JSON-LD 不列 */
 const breadcrumbJsonLdItems = [
@@ -43,7 +45,7 @@ const hasContent = Astro.slots.has('default');
           <h1 class="a-h2 srf">{title}</h1>
         </div>
       </div>
-      <p class="a-ex rev" style="margin:0 0 32px">{intro}</p>
+      {showIntro && <p class="a-ex rev" style="margin:0 0 32px">{intro}</p>}
       {hasContent ? <slot /> : <p class="a-ex" style="margin-top:24px">內容籌備中</p>}
     </div>
     <CategoryPageSidebar />
