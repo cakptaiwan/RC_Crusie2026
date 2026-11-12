@@ -19,17 +19,40 @@ import SidebarPillForm from './SidebarPillForm.astro';
   </div>
 </div>
 
-<link rel="stylesheet" href="/pagefind/pagefind-ui.css" />
-<script src="/pagefind/pagefind-ui.js" data-pagefind-ui is:inline></script>
 <script is:inline>
+  // Pagefind UI 延後載入：第一次互動搜尋框（或頁面載入後閒置）才插入 CSS／JS，只載入一次
+  window.rcLoadPagefindUI =
+    window.rcLoadPagefindUI ||
+    function () {
+      if (window.rcPagefindUIPromise) return window.rcPagefindUIPromise;
+      const add = (el) =>
+        new Promise((resolve, reject) => {
+          el.addEventListener('load', resolve, { once: true });
+          el.addEventListener('error', reject, { once: true });
+          document.head.appendChild(el);
+        });
+      const css = document.createElement('link');
+      css.rel = 'stylesheet';
+      css.href = '/pagefind/pagefind-ui.css';
+      const js = document.createElement('script');
+      js.src = '/pagefind/pagefind-ui.js';
+      window.rcPagefindUIPromise = Promise.all([add(css).catch(() => {}), add(js)]);
+      return window.rcPagefindUIPromise;
+    };
+
   function initPagefindSearch() {
     if (!window.PagefindUI) return false;
     const root = document.getElementById('search');
     if (!root || root.dataset.pagefindInit === '1') return true;
 
+    // 保留載入前在備用表單輸入的字與焦點
+    const fallbackInput = root.querySelector('input');
+    const typed = fallbackInput ? fallbackInput.value.trim() : '';
+    const hadFocus = !!fallbackInput && document.activeElement === fallbackInput;
+
     // 清空容器內原本的備用表單（SidebarPillForm），避免兩者同時顯示
     root.innerHTML = '';
-    new window.PagefindUI({
+    const ui = new window.PagefindUI({
       element: '#search',
       showImages: false,
       translations: {
@@ -38,20 +61,33 @@ import SidebarPillForm from './SidebarPillForm.astro';
       },
     });
     root.dataset.pagefindInit = '1';
+    const input = root.querySelector('.pagefind-ui__search-input');
+    if (input && hadFocus) input.focus();
+    if (typed) ui.triggerSearch(typed);
     return true;
   }
 
   function bootPagefindSearch() {
     if (initPagefindSearch()) return;
+    const root = document.getElementById('search');
+    if (!root || root.dataset.pagefindBound === '1') return;
+    root.dataset.pagefindBound = '1';
 
-    const script = document.querySelector('script[data-pagefind-ui]');
-    if (!script || script.dataset.bound === '1') return;
-    script.dataset.bound = '1';
-
-    script.addEventListener('load', () => initPagefindSearch());
-    script.addEventListener('error', () => {
-      /* Pagefind 未部署或 dev 環境：保留 GET /search 表單 */
-    });
+    let started = false;
+    const start = () => {
+      if (started) return;
+      started = true;
+      window.rcLoadPagefindUI().then(initPagefindSearch, () => {
+        /* Pagefind 未部署或 dev 環境：保留 GET /search 表單 */
+      });
+    };
+    ['focusin', 'pointerenter', 'touchstart'].forEach((type) =>
+      root.addEventListener(type, start, { once: true, passive: true })
+    );
+    const idle = () =>
+      'requestIdleCallback' in window ? requestIdleCallback(start, { timeout: 3000 }) : setTimeout(start, 1500);
+    if (document.readyState === 'complete') idle();
+    else window.addEventListener('load', idle, { once: true });
   }
 
   if (document.readyState === 'loading') {
