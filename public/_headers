@@ -1,2 +1,11 @@
 /*
   X-Frame-Options: SAMEORIGIN
+
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/assets/*
+  Cache-Control: public, max-age=604800
+
+/reveal/*
+  Cache-Control: public, max-age=86400
