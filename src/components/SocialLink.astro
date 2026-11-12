@@ -1,8 +1,8 @@
 ---
 /**
  * 社群連結（圓角方框 40×40 可點區＋線條圖示＋hover 效果）。全站頁首、頁尾、舊版導覽列共用，樣式只在這裡。
- * variant：light＝淺色底（頁首，hover 藍字淺藍底）；dark＝深色底（頁尾、舊版導覽列，hover 白字淡白底，藍字對比不足）。
- * 顏色沿用所在區塊的文字色（light 繼承、dark 白）；href／target／rel／aria-label 與原連結相同。
+ * variant：light＝淺色底頁首（深藍底 #0B2A4A 白線條，hover 變 #2A628F）；dark＝深色底（頁尾、舊版導覽列，透明底白線條，hover 白字淡白底）。
+ * href／target／rel／aria-label 與原連結相同。
  */
 import SocialIcon from './SocialIcon.astro';
 
@@ -40,10 +40,10 @@ const { platform, href, label, variant = 'light', class: className, size } = Ast
     height: 40px;
     min-width: 40px;
     min-height: 40px;
-    border: 1px solid #C9D9E8;
+    border: 1px solid #0B2A4A;
     border-radius: 10px;
-    background: transparent;
-    color: inherit;
+    background: #0B2A4A;
+    color: #fff;
     text-decoration: none;
     transition: color 200ms ease, background-color 200ms ease, border-color 200ms ease;
   }
@@ -53,13 +53,14 @@ const { platform, href, label, variant = 'light', class: className, size } = Ast
   }
   .soc-link--dark {
     border-color: rgba(255, 255, 255, .28);
+    background: transparent;
     color: #fff;
   }
   .soc-link:hover,
   .soc-link:focus-visible {
-    color: #2A628F;
+    color: #fff;
     border-color: #2A628F;
-    background-color: #EDF4FA;
+    background-color: #2A628F;
   }
   .soc-link--dark:hover,
   .soc-link--dark:focus-visible {
