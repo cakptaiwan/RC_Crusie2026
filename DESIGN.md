@@ -130,13 +130,13 @@
 
 ### Hero（`HomeHero.astro`）
 - 兩欄：左欄文字與按鈕、右欄圓角圖片；文字集中在檔案頂端常數區，方便修改
-- 文案：小字「郵輪旅人 · CRUISE TRAVELER」；標題「陪你準備每一趟郵輪旅程」（見下方「標語打字效果」）；簡介「有感於中文郵輪資訊的稀缺，「郵輪旅人」是第一個以郵輪研究為主題的中文網站，分享國內外論壇與部落格的郵輪知識與心得資訊。」
+- 文案：小字「郵輪旅人 · CRUISE TRAVELER」；標題「陪你準備每一趟旅程」（見下方「標語打字效果」）；簡介「有感於中文郵輪資訊的稀缺，「郵輪旅人」是第一個以郵輪研究為主題的中文網站，分享國內外論壇與部落格的郵輪知識與心得資訊。」
 - 按鈕：主要「新手入門」→ 郵輪學堂新手入門分類（不可見時退回 /guide/）；次要「最新資訊」→ 最新資訊分區首頁（由 `getNavBrandMenus` 取得；分區不可見則不渲染該按鈕）。連結都由 `brand-nav` 產生，不寫死
 - 版面：桌機左右 52fr／48fr，欄距 48px，外距 56px 56px 48px；≤900px 單欄，欄距 32px，外距 32px 24px 40px；右欄圖片 4:3、圓角 16px
 - 圖片：目前是紙雕橫幅（`hero-banner`）的裁切放樣圖，暫當佔位，之後由老大重做（A16）；`<picture>` 的 webp `srcset`／`sizes` 與頁首 LCP 預載的 `imagesrcset`／`imagesizes`（`NewLayout` 的 `lcpImageSrcset`、`lcpImageSizes`）必須一致（A10）
 
 ### 標語打字效果（`HomeHero.astro`）
-- 標語文字「陪你準備每一趟郵輪旅程」
+- 標語文字「陪你準備每一趟旅程」
 - 效果參考 React Bits TextType，用原生 JS＋CSS 實作（不使用 React 或 GSAP）：打字 90ms／字（`TYPING_SPEED`）、刪除 40ms／字（`DELETING_SPEED`）、打滿後停 2000ms（`PAUSE_DURATION`）、刪光後停 400ms（寫在 script 內）、循環、閃爍游標「|」（`.hh-cursor`，0.5s）。字級、粗細、字型沿用原標語樣式（`.hh-h1`）
 - SEO／無障礙：完整句子放在 `.hh-sr`（sr-only，搜尋引擎與螢幕閱讀器讀得到）；動畫區塊 `.hh-type` 為 `aria-hidden`；偏好減少動態（`prefers-reduced-motion`）或禁用 JS 時不啟動動畫，直接顯示完整句子（`.hh-type-ghost::before` 讀 `data-text`）
 - 避免跳版：`.hh-type-ghost`（隱形的完整句子）與 `.hh-type-live`（動畫文字）疊在同一個 grid 格，ghost 撐住標語高度，打字與刪除不推動下方內容
