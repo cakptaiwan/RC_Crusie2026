@@ -1,4 +1,4 @@
-# 郵輪旅人 DESIGN.md（v0.5.8）
+# 郵輪旅人 DESIGN.md（v0.5.9）
 
 本文件是「郵輪旅人」新站版面的設計規範，供人與 Claude Code 共同遵守。
 更新日期：2026-11-10。資料依據：程式碼與 git 紀錄（任務 A～A13、B、N1、C1、F35、學堂分類頁補強、分類頁導言擴寫、首頁標語打字效果、社群圖示改版與清理、SEO 環境變數）。實作時若與現況矛盾，以現況程式碼為準並回報，不自行猜測。
@@ -304,3 +304,4 @@
 | 移除 Hero 按鈕（A） | e8941e0 | 刪除首頁 Hero 左欄兩顆按鈕「新手入門」「最新資訊」及其 CSS 與只為按鈕存在的程式（`HomeHero.astro` 不再讀 Notion）；按鈕距離規則改為簡介下緣距離規則；各視窗 Hero 高：1920 寬 680、1440 寬 558.4、1024 寬 408.6、390 寬 511.8；DESIGN v0.5.6 |
 | 字距小尾巴（B） | （本次） | 依「標籤字距上限 .14em」規則：`BrandCategoryPage.astro` 的「共 N 篇文章」行內字距 .18em→.1em、`NewLayout.astro` 的 `.tmain .tkhd` 字距 .16em→.1em；DESIGN v0.5.7 |
 | 旅人故事刪導言 | （本次） | `/stories/` 畫面不再顯示導言段落：`FixedContentPage.astro` 新增選填 prop `showIntro`（預設 true，其他頁面行為不變），`stories/index.astro` 傳 false；`categoryIntros['traveler-stories']` 保留，仍產生 meta description／og:description／twitter:description；標題到內容的間距沿用標題區塊的下方間距；DESIGN v0.5.8 |
+| 作者簡介更新 | （本次） | `site-author.ts` 的 `bio` 換成老大定稿的新簡介（無可救藥愛上郵輪的台灣旅人…環遊世界）；同一欄位供首頁側欄、分類頁側欄、舊版 `Sidebar.astro`（/search/）、文章頁作者卡共用，旅人故事頁「關於我」段落是獨立內容不受影響；DESIGN v0.5.9 |
