@@ -48,6 +48,9 @@ const breadcrumbJsonLdItems = [
   { name: '首頁', url: absoluteSiteUrl('/') },
   { name: section.label, url: pageUrl },
 ];
+
+/** 品牌首頁標題下方的小字英文（純裝飾，不放進 h1）；參照頁首 .wm-stack／.wm2 的風格 */
+const brandEnglishTitles: Record<string, string> = { royal: 'Royal Caribbean', princess: 'Princess Cruises' };
 ---
 
 <NewLayout
@@ -68,16 +71,19 @@ const breadcrumbJsonLdItems = [
           <div class="sec-h1-row">
             <img
               class="sec-mark"
-              src={`/assets/brand/${section.key}-mark.webp`}
-              srcset={`/assets/brand/${section.key}-mark.webp 1x, /assets/brand/${section.key}-mark-2x.webp 2x`}
+              src={`/assets/brand/${section.key}-mark-sq.webp`}
+              srcset={`/assets/brand/${section.key}-mark-sq.webp 1x, /assets/brand/${section.key}-mark-sq-2x.webp 2x`}
               alt=""
               aria-hidden="true"
-              width="167"
+              width="192"
               height="192"
               loading="eager"
               decoding="async"
             />
-            <h1 class="a-h2 srf">{section.label}</h1>
+            <div class="sec-title-stack">
+              <h1 class="a-h2 srf">{section.label}</h1>
+              <span class="sec-title-en srf" aria-hidden="true">{brandEnglishTitles[section.key]}</span>
+            </div>
           </div>
         ) : (
           <h1 class="a-h2 srf">{section.label}</h1>
@@ -101,26 +107,48 @@ const breadcrumbJsonLdItems = [
 </NewLayout>
 
 <style>
-  /* 標題列：品牌標記（皇家、公主）與標題文字同列、垂直置中；h1 的上外距移到列上，避免置中時整列偏移 */
+  /* 標題列＝圖示＋文字堆疊（大標＋小字英文）。圖示邊長由同一組變數算出文字堆疊高度（行高固定為 1.1），
+     所以圖示與文字堆疊等高、垂直置中；字級手機 30px、桌機 42px（同 .a-h2），小字英文為大標的 40%，字距 .14em（上限） */
   .sec-h1-row {
+    --h1fs: 30px;
+    --subfs: calc(var(--h1fs) * 0.4);
+    --stack-gap: 2px;
+    --stack-h: calc(var(--h1fs) * 1.1 + var(--stack-gap) + var(--subfs) * 1.1);
     display: flex;
     align-items: center;
     gap: 12px;
     margin-top: 12px;
   }
-  .sec-h1-row h1 {
-    min-width: 0;
-    margin: 0;
+  @media (min-width: 901px) {
+    .sec-h1-row {
+      --h1fs: 42px;
+    }
   }
   .sec-mark {
-    height: 48px;
-    width: auto;
+    width: var(--stack-h);
+    height: var(--stack-h);
     flex-shrink: 0;
     display: block;
   }
-  @media (min-width: 901px) {
-    .sec-mark {
-      height: 64px;
-    }
+  .sec-title-stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--stack-gap);
+    min-width: 0;
+  }
+  .sec-title-stack h1 {
+    margin: 0;
+    font-size: var(--h1fs);
+    line-height: 1.1;
+    min-width: 0;
+  }
+  .sec-title-en {
+    font-size: var(--subfs);
+    line-height: 1.1;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    opacity: 0.65;
+    color: #0B2A4A;
   }
 </style>
