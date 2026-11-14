@@ -19,7 +19,7 @@ const formatDate = (date: string) => (date ? date.slice(0, 10) : '');
       <ul class="bsl">
         {posts.map((post) => (
           <li>
-            <a class="bsl-a" href={newArticleUrl(post.id)}>
+            <a class="bsl-a" href={newArticleUrl(post.id)} title={post.title}>
               <span class="bsl-t">{post.title}</span>
               <span class="a-date">{formatDate(post.date)}</span>
             </a>
@@ -31,22 +31,20 @@ const formatDate = (date: string) => (date ? date.slice(0, 10) : '');
 }
 
 <style>
-  .bsl-card {
-    padding: 0;
-    overflow: hidden;
-  }
+  /* 卡片內距、邊框、圓角沿用 .bs3-card（變數）；標題無底色，16px／700，下方 1px 細線 */
   .bsl-h {
     margin: 0;
-    padding: 14px 24px;
-    background: #EAF3FA;
-    border-bottom: 1px solid rgba(11, 42, 74, .16);
+    padding: 0 0 10px;
+    border-bottom: 1px solid var(--card-border);
     color: #0B2A4A;
+    font-size: 16px;
     font-weight: 700;
+    line-height: 1.4;
   }
   .bsl {
     list-style: none;
     margin: 0;
-    padding: 4px 24px 12px;
+    padding: 0;
   }
   .bsl li + li {
     border-top: 1px solid rgba(11, 42, 74, .1);
@@ -55,14 +53,23 @@ const formatDate = (date: string) => (date ? date.slice(0, 10) : '');
     display: flex;
     flex-direction: column;
     gap: 4px;
-    padding: 12px 0;
+    padding: 10px 0;
     text-decoration: none;
   }
+  /* 標題最多 2 行（完整標題仍在 DOM，並放在 title 屬性） */
   .bsl-t {
-    font-size: 15px;
-    font-weight: 700;
-    line-height: 1.55;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    font-size: 14.5px;
+    font-weight: 600;
+    line-height: 1.5;
     color: #0B2A4A;
     overflow-wrap: anywhere;
+  }
+  .bsl-a .a-date {
+    font-size: 12px;
+    color: var(--text-muted);
   }
 </style>
