@@ -1,4 +1,4 @@
-# 郵輪旅人 DESIGN.md（v0.5.17）
+# 郵輪旅人 DESIGN.md（v0.5.18）
 
 本文件是「郵輪旅人」新站版面的設計規範，供人與 Claude Code 共同遵守。
 更新日期：2026-11-10。資料依據：程式碼與 git 紀錄（任務 A～A13、B、N1、C1、F35、學堂分類頁補強、分類頁導言擴寫、首頁標語打字效果、社群圖示改版與清理、SEO 環境變數）。實作時若與現況矛盾，以現況程式碼為準並回報，不自行猜測。
@@ -164,7 +164,7 @@
 
 ### Hero（`HomeHero.astro`）
 - 左欄文字（小字、主標題、副標題；沒有簡介、沒有按鈕）、右側紙雕插畫（白底版，見下方「Hero 白底版」）；文字集中在檔案頂端常數區，方便修改
-- 文案：小字「郵輪旅人 · CRUISE TRAVELER」；主標題「全方位的郵輪資訊站」（打字效果，見下方「標語打字效果」）；副標題「陪你準備每一趟旅程」（`.hh-sub`，靜態 `<p>`，不參與打字；手機 18px、桌機 22px、字重 600、行高 1.4、顏色 `var(--text-muted)`＝#566E82，對白底對比 5.32；與主標題間距 10px，下方不留額外間距）；簡介已移除（老大 2026-11-15 決定，原文與來源 3030203 記在文末版本紀錄）
+- 文案：小字「郵輪旅人 · CRUISE TRAVELER」；主標題「全方位的郵輪資訊站」（`h1.hh-h1`，靜態，h1 內直接是文字）；副標題「陪你準備每一趟旅程」（`p.hh-sub`，打字效果，見下方「副標題打字效果」；手機 18px、桌機 22px、字重 600、行高 1.4、顏色 `var(--text-muted)`＝#566E82，對白底對比 5.32；與主標題間距 10px，下方不留額外間距）；簡介已移除（老大 2026-11-15 決定，原文與來源 3030203 記在文末版本紀錄）
 - （舊圖，已不使用，檔案保留）版面：桌機左右 52fr／48fr，欄距 48px，外距 56px 56px 48px；≤900px 單欄，欄距 32px，外距 32px 24px 40px；右欄圖片 4:3、圓角 16px
 - （舊圖，已不使用，檔案保留）圖片：目前是紙雕橫幅（`hero-banner`）的裁切放樣圖，暫當佔位，之後由老大重做（A16）；`<picture>` 的 webp `srcset`／`sizes` 與頁首 LCP 預載的 `imagesrcset`／`imagesizes`（`NewLayout` 的 `lcpImageSrcset`、`lcpImageSizes`）必須一致（A10）
 
@@ -186,11 +186,11 @@
   - 效能：畫布解析度＝顯示尺寸 × min(devicePixelRatio, 1.5)；上限 30 fps；頁籤隱藏或圖片區離開視窗（IntersectionObserver）時暫停
 
 
-### 標語打字效果（`HomeHero.astro`）
-- 標語文字「全方位的郵輪資訊站」（副標題「陪你準備每一趟旅程」是靜態文字，不打字、不隨游標動，打字過程位置不變）
-- 效果參考 React Bits TextType，用原生 JS＋CSS 實作（不使用 React 或 GSAP）：打字 90ms／字（`TYPING_SPEED`）、刪除 40ms／字（`DELETING_SPEED`）、打滿後停 2000ms（`PAUSE_DURATION`）、刪光後停 400ms（寫在 script 內）、循環、閃爍游標「|」（`.hh-cursor`，0.5s）。字級、粗細、字型沿用原標語樣式（`.hh-h1`）
-- SEO／無障礙：完整句子放在 `.hh-sr`（sr-only，搜尋引擎與螢幕閱讀器讀得到）；動畫區塊 `.hh-type` 為 `aria-hidden`；偏好減少動態（`prefers-reduced-motion`）或禁用 JS 時不啟動動畫，直接顯示完整句子（`.hh-type-ghost::before` 讀 `data-text`）
-- 避免跳版：`.hh-type-ghost`（隱形的完整句子）與 `.hh-type-live`（動畫文字）疊在同一個 grid 格，ghost 撐住標語高度，打字與刪除不推動下方內容
+### 副標題打字效果（`HomeHero.astro`）
+- 打字效果在副標題「陪你準備每一趟旅程」（`p.hh-sub`）；主標題「全方位的郵輪資訊站」是靜態文字，h1 內直接有實際文字，不靠 `::before`／`data-text`；打字過程中主標題、小字與副標題位置不變（2026-11-15 由主標題對調到副標題）
+- 效果參考 React Bits TextType，用原生 JS＋CSS 實作（不使用 React 或 GSAP）：打字 90ms／字（`TYPING_SPEED`）、刪除 40ms／字（`DELETING_SPEED`）、打滿後停 2000ms（`PAUSE_DURATION`）、刪光後停 400ms（寫在 script 內）、循環、閃爍游標「|」（`.hh-cursor`，0.5s）。字級、粗細、顏色沿用副標題樣式（`.hh-sub`）；腳本放在 `<p class="hh-sub">` 之後，以 `previousElementSibling` 取得副標題
+- SEO／無障礙：完整句子放在副標題內的 `.hh-sr`（sr-only，搜尋引擎與螢幕閱讀器讀得到，朗讀一次）；動畫區塊 `.hh-type`、`.hh-type-ghost`、`.hh-type-live` 皆 `aria-hidden="true"`；偏好減少動態（`prefers-reduced-motion`）或禁用 JS 時不啟動動畫，直接顯示完整句子（`.hh-type-ghost::before` 讀 `data-text`）
+- 避免跳版：`.hh-type-ghost`（隱形的完整句子）與 `.hh-type-live`（動畫文字）疊在同一個 grid 格，ghost 撐住副標題寬高，打字與刪除不推動下方內容
 - 腳本為 `is:inline`，緊接在 `<h1>` 之後，只存在首頁，不影響其他頁面的 JS
 - 依賴的 class 名稱不得更動：`.hh-type`、`.hh-type-ghost`、`.hh-type-live`、`.hh-type-t`、`.hh-cursor`、`.hh-sr`
 
@@ -365,3 +365,4 @@
 | 作者卡簡介依品牌、公主簡介改寫 | ada093f、a36ee38 | 皇家、公主文章作者卡簡介各用品牌文案（`brandBios`）；公主旅人簡介換成新文案並合併長短兩段；DESIGN v0.5.15（第 4 節） |
 | 公主簡介完成式文案 | 2937482 | 公主旅人簡介改為完成式文案，移除「持續施工中」「慢慢補齊」等過渡說法；新增「簡介不得含過渡狀態用語」規則；DESIGN v0.5.16（第 4 節） |
 | 首頁 Hero 主副標題、移除簡介 | （本次） | 主標題改「全方位的郵輪資訊站」（打字），新增靜態副標題「陪你準備每一趟旅程」（`.hh-sub`）；移除簡介段落與其 CSS。被移除的簡介原文：「有感於中文郵輪資訊的稀缺，「郵輪旅人」是第一個以郵輪研究為主題的中文網站，分享國內外論壇與部落格的郵輪知識與心得資訊。」，來源 3030203（2026-11-07），可由該 commit 還原；各視窗 Hero 高：1920 寬 680、1440 寬 558.4、1024 寬 408.6、390 寬 432.7；DESIGN v0.5.17（第 5 節） |
+| 打字效果對調到副標題 | （本次） | 主標題 h1 改為靜態（內有實際文字，移除 h1 內 `.hh-type` 結構）；打字效果（ghost／live／cursor、腳本、速度與循環不變）改到 `p.hh-sub`，副標題內另放 `.hh-sr` 完整句子，打字結構 `aria-hidden`；Hero 版面量測與改前相同（差 0px）；DESIGN v0.5.18（第 5 節） |
