@@ -16,6 +16,10 @@ interface Props {
 const { post } = Astro.props;
 /** Brand＝新聞的文章，標籤顯示新分類（皇家快訊、一般資訊…）；其他文章維持舊分類標籤 */
 const newsBrand = getBrandSection('news').brand;
+const royalBrand = getBrandSection('royal').brand;
+const princessBrand = getBrandSection('princess').brand;
+/** 作者卡圖示：皇家、公主文章用各自的品牌標記；其他品牌維持錨點 logo */
+const authorMark = post.brand === royalBrand ? 'royal' : post.brand === princessBrand ? 'princess' : null;
 const mappedBody = mapArticleBodyHtml(post.body, post.title);
 const heading2Count = countArticleHeading2(post.body);
 const showTOC = post.showTOC || heading2Count >= 6;
@@ -88,13 +92,28 @@ const relatedPosts = allPosts
   </div>
 
   <div class="authbox rev">
-    <span class="avat">
-      <img src="/icon-192.png" alt="郵輪旅人 Cruise Traveler" width="56" height="56" loading="lazy" />
-    </span>
-    <span>
+    <div class="auth-row">
+      <span class="avat">
+        {
+          authorMark ? (
+            <img
+              src={`/assets/brand/${authorMark}-mark.webp`}
+              srcset={`/assets/brand/${authorMark}-mark.webp 1x, /assets/brand/${authorMark}-mark-2x.webp 2x`}
+              alt=""
+              aria-hidden="true"
+              width="167"
+              height="192"
+              loading="lazy"
+              decoding="async"
+            />
+          ) : (
+            <img src="/icon-192.png" alt="" aria-hidden="true" width="192" height="192" loading="lazy" decoding="async" />
+          )
+        }
+      </span>
       <span class="fw7 fs15 navy">{getAuthorLabel(post) || siteAuthor.name} · {siteAuthor.tagline}</span>
-      <span class="sbp" style="display:block;margin-top:8px">{siteAuthor.bio}</span>
-    </span>
+    </div>
+    <span class="sbp auth-bio">{siteAuthor.bio}</span>
   </div>
 
   {
