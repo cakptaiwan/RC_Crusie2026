@@ -1,7 +1,7 @@
 ---
 import { siteAuthor } from '../data/site-author';
 import { getPostCrumbs } from '../lib/post-breadcrumb';
-import { getAuthorLabel, getBrandSection } from '../data/brand-nav';
+import { brandEnglishTitles, defaultEnglishTitle, getAuthorLabel, getBrandSection } from '../data/brand-nav';
 import { mapArticleBodyHtml, estimateReadMinutes, countArticleHeading2 } from '../lib/map-article-body';
 import { postImage } from '../lib/cloudinary-image';
 import { newArticleUrl, newHomeUrl } from '../lib/new-article-url';
@@ -20,6 +20,8 @@ const royalBrand = getBrandSection('royal').brand;
 const princessBrand = getBrandSection('princess').brand;
 /** 作者卡圖示：皇家、公主文章用各自的品牌標記；其他品牌維持錨點 logo */
 const authorMark = post.brand === royalBrand ? 'royal' : post.brand === princessBrand ? 'princess' : null;
+/** 作者卡中文標題下方的小字英文（裝飾）：皇家、公主用各自字樣，其他文章 Cruise Traveler */
+const authorEnglish = authorMark ? brandEnglishTitles[authorMark] : defaultEnglishTitle;
 const mappedBody = mapArticleBodyHtml(post.body, post.title);
 const heading2Count = countArticleHeading2(post.body);
 const showTOC = post.showTOC || heading2Count >= 6;
@@ -111,7 +113,10 @@ const relatedPosts = allPosts
           )
         }
       </span>
-      <span class="fw7 fs15 navy">{getAuthorLabel(post) || siteAuthor.name} · {siteAuthor.tagline}</span>
+      <span class="auth-text">
+        <span class="fw7 fs15 navy">{getAuthorLabel(post) || siteAuthor.name} · {siteAuthor.tagline}</span>
+        <span class="auth-en" aria-hidden="true">{authorEnglish}</span>
+      </span>
     </div>
     <span class="sbp auth-bio">{siteAuthor.bio}</span>
   </div>

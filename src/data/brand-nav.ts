@@ -61,6 +61,13 @@ const cruiseLineCategories: readonly BrandCategory[] = [
   { slug: 'routes', label: '航線部署', newCategory: '航線部署' },
 ];
 
+/**
+ * 品牌小字英文（純裝飾，aria-hidden，不放進標題；以 CSS 轉大寫顯示）。品牌首頁標題與文章頁作者卡共用。
+ * 鍵為分區 key（royal、princess）；沒有對應品牌的文章與分區用 defaultEnglishTitle。
+ */
+export const brandEnglishTitles: Record<string, string> = { royal: 'Royal Caribbean', princess: 'Princess Cruises' };
+export const defaultEnglishTitle = 'Cruise Traveler';
+
 export const brandSections: readonly BrandSection[] = [
   {
     key: 'guide',

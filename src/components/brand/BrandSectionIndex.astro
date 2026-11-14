@@ -9,6 +9,7 @@ import BrandPostCard from './BrandPostCard.astro';
 import { furtherReadingPosts } from './side-posts';
 import {
   BRAND_SECTIONS_INDEXABLE,
+  brandEnglishTitles,
   brandSectionHref,
   getSectionPosts,
   getVisibleCategories,
@@ -49,8 +50,7 @@ const breadcrumbJsonLdItems = [
   { name: section.label, url: pageUrl },
 ];
 
-/** 品牌首頁標題下方的小字英文（純裝飾，不放進 h1）；參照頁首 .wm-stack／.wm2 的風格 */
-const brandEnglishTitles: Record<string, string> = { royal: 'Royal Caribbean', princess: 'Princess Cruises' };
+/** 品牌首頁標題下方的小字英文（純裝飾，不放進 h1）：字樣見 brand-nav.ts 的 brandEnglishTitles；參照頁首 .wm-stack／.wm2 的風格 */
 ---
 
 <NewLayout
