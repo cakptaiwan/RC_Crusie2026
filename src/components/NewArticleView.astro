@@ -1,5 +1,5 @@
 ---
-import { siteAuthor } from '../data/site-author';
+import { brandBios, siteAuthor } from '../data/site-author';
 import { getPostCrumbs } from '../lib/post-breadcrumb';
 import { brandEnglishTitles, defaultEnglishTitle, getAuthorLabel, getBrandSection } from '../data/brand-nav';
 import { mapArticleBodyHtml, estimateReadMinutes, countArticleHeading2 } from '../lib/map-article-body';
@@ -118,7 +118,7 @@ const relatedPosts = allPosts
         <span class="auth-en" aria-hidden="true">{authorEnglish}</span>
       </span>
     </div>
-    <span class="sbp auth-bio">{siteAuthor.bio}</span>
+    <span class="sbp auth-bio">{(authorMark && brandBios[authorMark]) || siteAuthor.bio}</span>
   </div>
 
   {

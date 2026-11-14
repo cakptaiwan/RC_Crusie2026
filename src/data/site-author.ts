@@ -5,3 +5,11 @@ export const siteAuthor = {
   avatar: '/logo.png',
   aboutUrl: '/stories/',
 } as const;
+
+/** 皇家、公主文章作者卡簡介（品牌死忠粉視角，老大定稿，逐字使用）；其他品牌的文章用 siteAuthor.bio。側邊欄「關於我」仍用 siteAuthor.bio */
+export const brandBios: Record<string, string> = {
+  royal:
+    '皇家加勒比的死忠粉。第一次上船，泳池樂隊加霜淇淋就讓我投降，從此下船第一件事是查下一艘。這裡整理皇家加勒比的船隊、活動與航線，幫你少踩雷，也幫我自己找藉口再上船。',
+  princess:
+    '公主郵輪的死忠粉，信仰是優雅、從容、不趕行程。這裡整理公主郵輪的船隊、艙房與航線，先替你做好功課。我的小小夢想，是哪天住進聖殿系列客艙，睡到自然醒。',
+};
