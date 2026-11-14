@@ -1,4 +1,4 @@
-# 郵輪旅人 DESIGN.md（v0.5.9）
+# 郵輪旅人 DESIGN.md（v0.5.10）
 
 本文件是「郵輪旅人」新站版面的設計規範，供人與 Claude Code 共同遵守。
 更新日期：2026-11-10。資料依據：程式碼與 git 紀錄（任務 A～A13、B、N1、C1、F35、學堂分類頁補強、分類頁導言擴寫、首頁標語打字效果、社群圖示改版與清理、SEO 環境變數）。實作時若與現況矛盾，以現況程式碼為準並回報，不自行猜測。
@@ -68,6 +68,14 @@
 ## 4. 分區頁三欄（已實作）
 
 適用：`/guide/`、`/royal/`、`/princess/`、`/news/` 首頁與各分類頁。四區共用 `BrandSectionIndex.astro`、`BrandCategoryPage.astro`。
+
+### 品牌標記（皇家旅人、公主旅人）
+- 來源：老大提供的圖（兩個圓角方塊圖示並排：ROYAL CARIBBEAN、PRINCESS；深藍底、白色舵輪、藍色海浪），沿深藍圓角方塊外緣各自裁切，圓角外轉為透明（邊緣羽化約 1px），保持原比例（約 0.87，不拉伸）
+- 檔案（`public/assets/brand/`，WebP、含透明通道、品質 90、單檔 ≤ 200 KB）：`royal-mark.webp` 9.8 KB（167×192）、`royal-mark-2x.webp` 15.9 KB（250×288）、`princess-mark.webp` 9.2 KB（167×192）、`princess-mark-2x.webp` 14.8 KB（250×288）；`srcset` 為 1x／2x
+- 用法一：`/royal/`、`/princess/` 首頁標題旁（`BrandSectionIndex.astro`，`.sec-h1-row`）：`display:flex; align-items:center; gap:12px`，圖示高度手機（≤900px）48px、桌機 64px，寬度自動；`alt=""`、`aria-hidden="true"`、`loading="eager"`、`width`／`height` 167／192；h1 的外距移到列上（`margin-top:12px`），避免置中時偏移。`/guide/`、`/news/` 沒有標記，版面不變。分類頁（`BrandCategoryPage.astro`）只有標題文字、沒有圖示結構，不處理
+- 用法二：文章頁作者卡（見第 7 節）
+- 舊的 `princess-sub.svg`（原公主首頁標題圖示，40×40）已不使用，檔案保留
+- 圖示內英文字可讀程度：桌機 64px 下「PRINCESS」清楚、「ROYAL CARIBBEAN」勉強清楚（兩行小字）；手機 48／44px 下「PRINCESS」仍清楚、「ROYAL CARIBBEAN」勉強。未調整設計
 
 ### 新元件（`src/components/brand/`）
 `BrandThreeCol`（容器）、`BrandSideIntro`（左欄）、`BrandTabs`（頁籤）、`BrandPostCard`（文章卡）、`BrandSideList`（右欄清單卡）；另有 `side-posts.ts` 取文函式。
@@ -192,6 +200,8 @@
 - 封面與文字欄左右緣切齊：手機版（≤900px）兩者皆 24px 內縮；桌機版（≥901px）封面容器與文字欄（`.abody`、`.ah`）同為最大寬 980px、左右內縮 56px，封面圖片寬隨文字欄（1440px 下為 868px），比例由圖片本身維持 3:2（`NewLayout.astro` 的 `@media (min-width:901px)` 區塊）；六個視窗寬度（1440、1200、1024、900、768、390）實測封面與文字左右緣差距皆為 0
 - 相關文章列縮圖 132×88（寬 132px、比例 3:2、`object-fit: cover`、圓角 12px），與文字欄等高，標籤頂對齊縮圖頂、日期底對齊縮圖底（A6，取代 A3 的 96px、contain 規格）；首頁共用的 `.l-thumb` 不動
 - 文章封面（`.aheroimg`）不套用 hover 放大
+- 作者卡（`.authbox`，`NewArticleView.astro`）：第一列 `.auth-row`＝圖示在左、標題文字（作者名 · 郵輪旅遊部落格）在右，同列 `align-items:center`、`gap:12px`；簡介（`.auth-bio`）在下方整行，左緣與第一列對齊；圖示高度手機 44px、桌機 52px，寬度自動，`alt=""`、`aria-hidden="true"`、`loading="lazy"`
+- 作者卡圖示依文章 Brand：皇家 → `royal-mark`；公主 → `princess-mark`；其他品牌（郵輪學堂、新聞等）維持錨點 logo（`/icon-192.png`），排版相同
 - 文章頁封面圖 srcset 800／1200：`sizes` 為「(min-width: 901px) 868px, calc(100vw - 48px)」，手機取 800 版、桌機取 1200 版；`src` 仍為 1200 版，`width`／`height` 由建置時依該圖尺寸補上（`NewArticleView.astro`）；封面沒有 preload
 
 ## 8. 老大已定的設計決定（原樣記錄）
@@ -305,3 +315,6 @@
 | 字距小尾巴（B） | （本次） | 依「標籤字距上限 .14em」規則：`BrandCategoryPage.astro` 的「共 N 篇文章」行內字距 .18em→.1em、`NewLayout.astro` 的 `.tmain .tkhd` 字距 .16em→.1em；DESIGN v0.5.7 |
 | 旅人故事刪導言 | （本次） | `/stories/` 畫面不再顯示導言段落：`FixedContentPage.astro` 新增選填 prop `showIntro`（預設 true，其他頁面行為不變），`stories/index.astro` 傳 false；`categoryIntros['traveler-stories']` 保留，仍產生 meta description／og:description／twitter:description；標題到內容的間距沿用標題區塊的下方間距；DESIGN v0.5.8 |
 | 作者簡介更新 | （本次） | `site-author.ts` 的 `bio` 換成老大定稿的新簡介（無可救藥愛上郵輪的台灣旅人…環遊世界）；同一欄位供首頁側欄、分類頁側欄、舊版 `Sidebar.astro`（/search/）、文章頁作者卡共用，旅人故事頁「關於我」段落是獨立內容不受影響；DESIGN v0.5.9 |
+| 品牌標記圖（A） | b1ac68d | `public/assets/brand/` 新增皇家、公主標記 WebP（1x／2x，單檔 ≤ 16 KB）（第 4 節） |
+| 品牌首頁標題標記（B） | 2394a43 | `/royal/`、`/princess/` 標題旁改用新標記，與標題文字同列垂直置中；舊 `princess-sub.svg` 不再使用（第 4 節） |
+| 作者卡新排版（C） | dd113b5 | 文章頁作者卡改為圖示在左、標題在右同列置中、簡介在下；皇家、公主文章用各自標記，其他品牌維持錨點 logo；DESIGN v0.5.10（第 7 節） |
