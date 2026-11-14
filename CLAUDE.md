@@ -45,7 +45,7 @@ Cloudinary。建置時由 `src/lib/cloudinary-image.ts` 補上 `f_auto,q_auto` �
 
 ## 導覽結構
 
-- 舊版導覽以 src/data/nav-pages.ts 為準（NavStrip、Footer、側欄共用）。
+- 舊版導覽（main）以 `src/data/nav-pages.ts` 為準。預覽分支中，`nav-pages` 只剩 `src/data/sub-pages.ts`（標示 deprecated 的相容轉出）匯入，而 `sub-pages.ts` 目前沒有任何檔案匯入；`NavStrip.astro`、`Footer.astro`、`SiteFooter.astro`、`NewLayout.astro` 匯入的是 `brand-nav`（另有 `src/components/brand/`、`src/pages/` 各分區頁等也匯入 `brand-nav`）；`Sidebar.astro` 不直接匯入這兩者（它經由 `lib/sidebar-categories` → `lib/category-counts` 間接用到 `brand-nav`）。
 - 新版分區（郵輪學堂、皇家旅人、公主旅人）以 src/data/brand-nav.ts 為準，分類依 Notion 的 Brand＋新分類兩欄。
 - 分類唯一依據：舊分類為 Notion 的 Subpage 欄位（值須與 nav-pages.ts 的 name 完全一致）；新分區為 Brand＋新分類（值須與 brand-nav.ts 一致）。
 - 新版分區完整清單（`brand-nav.ts`）：郵輪學堂、皇家旅人、公主旅人、最新資訊（Brand＝新聞；分類：一般資訊、皇家快訊、公主快訊）、旅人手記（旅人故事、資源推薦）。迪士尼分區已定義但未啟用。預覽分支（`feat/brand-sections`）用新導覽；main 沒有 `brand-nav.ts`，用舊導覽，直到換版。
@@ -59,3 +59,4 @@ Cloudinary。建置時由 `src/lib/cloudinary-image.ts` 補上 `f_auto,q_auto` �
 - 搜尋：Pagefind UI 於第一次互動搜尋框或頁面閒置時才載入（`HomePageSidebar.astro`、`SidebarSearch.astro`）。所有頁面 `<html lang>` 必須一致（目前 `NewLayout.astro` 與 `BaseLayout.astro` 都是 `zh-Hant`），否則 Pagefind 會分成多個語言索引，`/search` 只搜到少數頁。
 - Speculation Rules 在 `NewLayout.astro` 與 `BaseLayout.astro` 的 `<head>`（兩處內容相同）。排除的路徑：`/search/*`、`/pagefind/*`、`/*.pdf`、`/api/*`、`/fb`、`/fb/`、`/ig`、`/ig/`、`/th`、`/th/`；另排除 `[rel~=nofollow]`、`[target=_blank]`、`[download]` 的連結。新增有副作用的 GET 路由時，要同步加入排除清單。
 - `public/_headers` 的快取設定：`/*` 加 `X-Frame-Options: SAMEORIGIN`；`/_astro/*` 為 `public, max-age=31536000, immutable`；`/assets/*` 為 `public, max-age=604800`（7 天）；`/reveal/*` 為 `public, max-age=86400`。`/assets` 檔名不帶雜湊，改圖要改檔名才會立即生效。
+- `.astro` 內的內嵌腳本，`is:inline` 要放在屬性最前面（現行寫法：`<script is:inline type="…">`，`NewLayout.astro` 與 `BaseLayout.astro` 都是如此）。把 `is:inline` 放在最後、緊貼 `>{` 內容時，Tailwind 會把它誤讀成 class，讓 CSS 多出 `.inline` 規則並改變 CSS 雜湊；新增或修改內嵌腳本後，build 前後要比對 CSS 檔名雜湊有沒有變。
