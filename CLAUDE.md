@@ -35,7 +35,6 @@ Cloudinary。建置時由 `src/lib/cloudinary-image.ts` 補上 `f_auto,q_auto` �
 - push 到 main 由 Cloudflare Pages 建置
 - 文章發布後的網站重建由蝦仔 `rebuild_watch.py` 負責（Make 5334339 已停用）
 - 預覽分支 push 會建置預覽站（全站 noindex、不公開）；noindex 設定以 Cloudflare 後台為準，repo 內查不到
-- 改動前先確認不會在 Make 排程跑的時候造成連續建置
 
 ## 內容格式規則（與 Agent 端一致）
 
