@@ -1,4 +1,4 @@
-# 郵輪旅人 DESIGN.md（v0.5.11）
+# 郵輪旅人 DESIGN.md（v0.5.12）
 
 本文件是「郵輪旅人」新站版面的設計規範，供人與 Claude Code 共同遵守。
 更新日期：2026-11-10。資料依據：程式碼與 git 紀錄（任務 A～A13、B、N1、C1、F35、學堂分類頁補強、分類頁導言擴寫、首頁標語打字效果、社群圖示改版與清理、SEO 環境變數）。實作時若與現況矛盾，以現況程式碼為準並回報，不自行猜測。
@@ -187,6 +187,15 @@
 - 卡片內圖片圓角 12px；hover 時圖片微放大 1.05（`transition: .3s ease`），只在有 hover 的指標裝置且沒有「減少動態」設定時生效；文章封面、橫幅、logo 不放大
 - 手機版左右留白統一 24px（≤900px：頂部列、`.main2`、麵包屑、文章標題區與內文、頁尾、首頁區塊標題）
 
+### 側邊欄「文章分類」（依分區分組、可收合）
+- 資料：`src/lib/category-counts.ts` 的 `getCategoryGroups(allPosts)`，與 `getCategoryCounts` 同源（`getNavBrandMenus`），回傳依主選單順序的分組 `[{ section: { slug, label, href }, categories: [{ slug, label, href, count }] }]`（郵輪學堂、皇家旅人、公主旅人、最新資訊）；沒有可見分類（count 為 0）的分區略過。`getCategoryCounts` 保留不變；每個分類的 slug（「分區/分類」）、label、href、count 與改前逐項相同（首頁 13 筆：5＋5＋1＋2）。分組的目的：原本是 13 行平面清單，沒有分區標題，同名「品牌船隊」出現兩次看不出品牌
+- 元件：首頁、分類頁／靜態頁側欄共用 `SidebarCategoryGroups.astro`；舊版 `Sidebar.astro`（只有 /search/ 使用）有自己的分組標記（`.sbgrp`），結構相容 BaseLayout 的 `hideZeroCountCategories`（仍以 `[data-sidebar-categories]`、`.sidebar-section-title`、`ul > li[data-category-count]` 運作）
+- 結構：每個分區一個原生 `<details class="catgrp">`，`<summary>` 顯示分區名稱（14px、粗體、字距 .04em）與右側箭頭（內嵌 SVG，`aria-hidden="true"`，展開時旋轉 90 度）；內容沿用 `.catrow`／`.catn`，縮排 14px 並加左側細線，與分區標題形成層級；分隔線沿用虛線。**不使用 JavaScript**（無 JS 也能展開收合）
+- 預設狀態：全部收合；若頁面傳入 `currentSlug`（「分區/分類」），包含該分類的分區預設展開（`open`）並維持目前頁標示（`aria-current`、粗體）。目前沒有頁面傳入 `currentSlug`（分類頁 `/royal/fleet/` 等是三欄版面，沒有這個側欄）
+- 互動與無障礙：summary 點擊區高度 ≥ 44px（實測 45px）；Enter／Space 可展開收合；`:focus-visible` 有 2px #2A628F 外框；不做展開動畫
+- 高度（首頁側欄「文章分類」區塊，1440／390 相同）：改前平面清單 687.4px；改後全收合 277.3px，展開一個分區約 508px
+- 使用位置：首頁（`HomePageSidebar`）、`/about/`、`/privacy/`、`/terms/`、`/stories/`、`/resources/`（`CategoryPageSidebar`，經 `FixedContentPage`）、`/search/`（舊 `Sidebar`）
+
 ## 6. 頁尾（`SiteFooter.astro`，A7、A8、A10～A12、N1）
 
 - 連結由 `brand-nav.ts` 產生（`getNavBrandMenus`、`journalSection`），不寫死；共五組：郵輪學堂、皇家旅人、公主旅人、最新資訊、旅人手記；分區標題為連結，旅人手記標題不是連結（沒有分區首頁）；最新資訊在沒有可見分類時不出現
@@ -326,3 +335,4 @@
 | 標題改圖示＋大標＋小字英文（B） | 7c2a1c8 | `/royal/`、`/princess/` 標題列改為正方形圖示＋文字堆疊（大標＋小字英文 Royal Caribbean／Princess Cruises），圖示邊長＝文字堆疊高度、垂直置中（第 4 節） |
 | 作者卡改用正方形（C） | 4a97291 | 皇家、公主文章作者卡圖示改用正方形標記（第 7 節） |
 | 皇家簡介（D） | 045b4a1 | 皇家旅人簡介換成老大定稿新文案，連動頁面簡介、左欄簡介卡、meta 與 JSON-LD；DESIGN v0.5.11（第 4 節） |
+| 側欄文章分類分組收合 | e39b61a、10ab4da | 側欄「文章分類」改依分區分組、原生 details 可收合（預設全部收合、無 JavaScript）；新增 `getCategoryGroups`；DESIGN v0.5.12（第 5 節） |
