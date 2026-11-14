@@ -1,14 +1,15 @@
 ---
 import { siteAuthor } from '../data/site-author';
 import { getAllPosts } from '../lib/notion';
-import { getCategoryCounts } from '../lib/category-counts';
+import { getCategoryGroups } from '../lib/category-counts';
+import SidebarCategoryGroups from './SidebarCategoryGroups.astro';
 
 interface Props {
   currentSlug?: string;
 }
 
 const { currentSlug } = Astro.props;
-const categoryCounts = getCategoryCounts(await getAllPosts()).filter((cat) => cat.count > 0);
+const categoryGroups = getCategoryGroups(await getAllPosts());
 ---
 
 <aside>
@@ -40,21 +41,7 @@ const categoryCounts = getCategoryCounts(await getAllPosts()).filter((cat) => ca
   </div>
   <div class="sb rev">
     <div class="sbh"><span class="sbt srf">文章分類</span><span class="ovl">Categories</span></div>
-    <div class="mt12">
-      {
-        categoryCounts.map(({ slug, label, href, count }) => (
-          <a
-            class="catrow"
-            href={href}
-            aria-current={slug === currentSlug ? 'page' : undefined}
-            style={slug === currentSlug ? 'color:#0B2A4A;font-weight:600' : undefined}
-          >
-            <span>{label}</span>
-            <span class="catn">{count}</span>
-          </a>
-        ))
-      }
-    </div>
+    <SidebarCategoryGroups groups={categoryGroups} currentSlug={currentSlug} />
   </div>
 </aside>
 

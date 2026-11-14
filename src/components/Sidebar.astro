@@ -1,12 +1,12 @@
 ---
 import { siteAuthor } from '../data/site-author';
 import { getAllPosts } from '../lib/notion';
-import { getSidebarCategories } from '../lib/sidebar-categories';
+import { getCategoryGroups } from '../lib/category-counts';
 import SidebarDiscussion from './SidebarDiscussion.astro';
 import SidebarNewsletter from './SidebarNewsletter.astro';
 import SidebarSearch from './SidebarSearch.astro';
 
-const categories = getSidebarCategories(await getAllPosts());
+const categoryGroups = getCategoryGroups(await getAllPosts());
 
 ---
 
@@ -37,31 +37,78 @@ const categories = getSidebarCategories(await getAllPosts());
   <SidebarNewsletter />
   <SidebarSearch />
 
-  <!-- 文章分類（僅顯示有文章的分類） -->
-  {categories.length > 0 && (
+  <!-- 文章分類（僅顯示有文章的分類）：依分區分組、原生 details 可收合，預設全部收合。
+       BaseLayout 的 hideZeroCountCategories 仍以 [data-sidebar-categories]、.sidebar-section-title、ul > li[data-category-count] 運作，結構保持相容 -->
+  {categoryGroups.length > 0 && (
     <div class="sidebar-widget" data-sidebar-categories>
       <div class="sidebar-section-header">
         <span class="sidebar-section-title">文章分類</span>
       </div>
-      <ul class="space-y-0.5">
-        {categories.map(({ name, count, href }) => (
-          <li data-category-count={count}>
-            <a
-              href={href}
-              class="group flex items-center justify-between border-b border-canvas-ceramic py-2 text-[14px] font-medium text-ink-soft transition-colors hover:text-blue-accent"
-            >
-              <span>{name}</span>
-              <span
-                class="flex h-5 w-5 items-center justify-center rounded-full bg-blue-light text-[10px] font-bold text-blue-brand transition-colors group-hover:bg-blue-accent group-hover:text-onDark"
-                data-count={count}
-              >
-                {count}
-              </span>
-            </a>
-          </li>
-        ))}
-      </ul>
+      {categoryGroups.map((group) => (
+        <details class="sbgrp">
+          <summary class="sbgrp-sum">
+            <span>{group.section.label}</span>
+            <svg class="sbgrp-arrow" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+              <path d="M9 6l6 6-6 6" />
+            </svg>
+          </summary>
+          <ul class="space-y-0.5 sbgrp-list">
+            {group.categories.map(({ label, count, href }) => (
+              <li data-category-count={count}>
+                <a
+                  href={href}
+                  class="group flex items-center justify-between border-b border-canvas-ceramic py-2 text-[14px] font-medium text-ink-soft transition-colors hover:text-blue-accent"
+                >
+                  <span>{label}</span>
+                  <span
+                    class="flex h-5 w-5 items-center justify-center rounded-full bg-blue-light text-[10px] font-bold text-blue-brand transition-colors group-hover:bg-blue-accent group-hover:text-onDark"
+                    data-count={count}
+                  >
+                    {count}
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </details>
+      ))}
     </div>
   )}
 
 </aside>
+
+<style>
+  .sbgrp-sum {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 44px;
+    border-bottom: 1px solid rgba(11, 42, 74, 0.12);
+    color: #0b2a4a;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    list-style: none;
+  }
+  .sbgrp-sum::-webkit-details-marker {
+    display: none;
+  }
+  .sbgrp-sum::marker {
+    content: '';
+  }
+  .sbgrp-sum:focus-visible {
+    outline: 2px solid #2a628f;
+    outline-offset: 2px;
+  }
+  .sbgrp-arrow {
+    flex: none;
+    color: #8aa3b9;
+  }
+  .sbgrp[open] > .sbgrp-sum .sbgrp-arrow {
+    transform: rotate(90deg);
+  }
+  .sbgrp-list {
+    padding-left: 14px;
+  }
+</style>

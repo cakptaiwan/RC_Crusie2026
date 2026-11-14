@@ -1,0 +1,88 @@
+---
+/**
+ * 側欄「文章分類」依分區分組、可收合（首頁、分類頁側欄共用）。
+ * 原生 <details>／<summary>，不使用 JavaScript；箭頭是內嵌 SVG（裝飾，aria-hidden），展開時旋轉 90 度。
+ * 預設全部收合；currentSlug（「分區/分類」）所在的分區預設展開（加 open）。
+ */
+import type { CategoryGroup } from '../lib/category-counts';
+
+interface Props {
+  groups: CategoryGroup[];
+  currentSlug?: string;
+}
+
+const { groups, currentSlug } = Astro.props;
+---
+
+<div class="catgroups mt12">
+  {
+    groups.map((group) => (
+      <details class="catgrp" open={currentSlug ? group.categories.some((c) => c.slug === currentSlug) : undefined}>
+        <summary class="catgrp-sum">
+          <span class="catgrp-name">{group.section.label}</span>
+          <svg class="catgrp-arrow" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+            <path d="M9 6l6 6-6 6" />
+          </svg>
+        </summary>
+        <div class="catgrp-list">
+          {group.categories.map(({ slug, label, href, count }) => (
+            <a
+              class="catrow"
+              href={href}
+              aria-current={slug === currentSlug ? 'page' : undefined}
+              style={slug === currentSlug ? 'color:#0B2A4A;font-weight:600' : undefined}
+            >
+              <span>{label}</span>
+              <span class="catn">{count}</span>
+            </a>
+          ))}
+        </div>
+      </details>
+    ))
+  }
+</div>
+
+<style>
+  .catgrp-sum {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 44px;
+    padding: 0 2px;
+    border-bottom: 1px dashed rgba(11, 42, 74, 0.2);
+    color: #0b2a4a;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    list-style: none;
+    user-select: none;
+  }
+  .catgrp-sum::-webkit-details-marker {
+    display: none;
+  }
+  .catgrp-sum::marker {
+    content: '';
+  }
+  .catgrp-sum:hover {
+    color: #2a628f;
+  }
+  .catgrp-sum:focus-visible {
+    outline: 2px solid #2a628f;
+    outline-offset: 2px;
+  }
+  .catgrp-arrow {
+    flex: none;
+    color: #8aa3b9;
+  }
+  .catgrp[open] > .catgrp-sum .catgrp-arrow {
+    transform: rotate(90deg);
+  }
+  /* 展開後的分類列：縮排、字重較輕，與分區標題形成層級 */
+  .catgrp-list {
+    padding-left: 14px;
+    border-left: 2px solid rgba(11, 42, 74, 0.1);
+    margin: 0 0 4px 2px;
+  }
+</style>
