@@ -90,6 +90,10 @@ const brandEnglishTitles: Record<string, string> = { royal: 'Royal Caribbean', p
         )
       }
       <p class="a-ex" style="margin:12px 0 0">{visibleIntro}</p>
+      <div class="sec-stats-m">
+        <span><b>{sectionPosts.length}</b> 篇文章</span>
+        <span><b>{categories.length}</b> 個分類</span>
+      </div>
     </div>
     <BrandTabs section={section} categories={categories} />
     {latestPosts.map((post, index) => <BrandPostCard post={post} eager={index === 0} />)}
@@ -107,6 +111,23 @@ const brandEnglishTitles: Record<string, string> = { royal: 'Royal Caribbean', p
 </NewLayout>
 
 <style>
+  /* 統計一行：只在 ≤900px 顯示（桌機左欄簡介卡已有）；樣式沿用簡介卡統計（.bsi-stats） */
+  .sec-stats-m {
+    display: none;
+    gap: 16px;
+    margin-top: 12px;
+    font-size: 13px;
+    color: #51677C;
+  }
+  .sec-stats-m b {
+    color: #0B2A4A;
+    font-size: 16px;
+  }
+  @media (max-width: 900px) {
+    .sec-stats-m {
+      display: flex;
+    }
+  }
   /* 標題列＝圖示＋文字堆疊（大標＋小字英文）。圖示邊長由同一組變數算出文字堆疊高度（行高固定為 1.1），
      所以圖示與文字堆疊等高、垂直置中；字級手機 30px、桌機 42px（同 .a-h2），小字英文為大標的 40%，字距 .14em（上限） */
   .sec-h1-row {
