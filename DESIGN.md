@@ -1,4 +1,4 @@
-# 郵輪旅人 DESIGN.md（v0.5.14）
+# 郵輪旅人 DESIGN.md（v0.5.15）
 
 本文件是「郵輪旅人」新站版面的設計規範，供人與 Claude Code 共同遵守。
 更新日期：2026-11-10。資料依據：程式碼與 git 紀錄（任務 A～A13、B、N1、C1、F35、學堂分類頁補強、分類頁導言擴寫、首頁標語打字效果、社群圖示改版與清理、SEO 環境變數）。實作時若與現況矛盾，以現況程式碼為準並回報，不自行猜測。
@@ -91,6 +91,15 @@
 ### 皇家旅人簡介（`brand-category-intros.ts` 的 `brandSectionIntros.royal`，老大定稿，逐字使用）
 - 全文：「想搭皇家加勒比，又怕訂票前被各種方案、費用、航線搞到頭昏？這裡把船隊、船上活動、餐廳美食、費用方案與航線部署一次整理好，先做功課，上船才能安心吃喝玩。」（75 字）
 - 同一段同時用在：`/royal/` 頁面可見簡介、左欄簡介卡（含皇家五個分類頁的左欄）、meta description／og:description／twitter:description（三處皆 75 字）與 CollectionPage JSON-LD 的 description。公主旅人與其他分區不動
+
+### 公主旅人簡介（`brand-category-intros.ts` 的 `brandSectionIntros.princess`，老大定稿，逐字使用）
+- 全文：「公主郵輪的死忠粉持續施工中。目前先從船隊看起，艙房、餐廳與航線會隨著文章累積慢慢補齊。想比較不同郵輪品牌、或正在考慮公主的你，先來坐一下，慢慢逛，不趕行程。」（78 字）。原本公主有「短句＋長句」兩段（`brandSectionIntros` 與 `brandSectionLongIntros`），現在合併為這一段，`brandSectionLongIntros` 不再有 princess（仍有 news）
+- 用在：`/princess/` 頁面可見簡介、左欄簡介卡（含 `/princess/fleet/` 左欄）、meta description／og:description／twitter:description 與 JSON-LD。meta 經 `categoryMetaDescription` 取前兩句（第一句只有 13 字，不足 20 字，會併入第二句），實際為「公主郵輪的死忠粉持續施工中。目前先從船隊看起，艙房、餐廳與航線會隨著文章累積慢慢補齊。」（43 字）
+
+### 文章頁作者卡簡介依品牌（`site-author.ts` 的 `brandBios`）
+- 皇家文章、公主文章的作者卡簡介各用品牌死忠粉視角的文案（老大定稿，逐字使用）：`brandBios.royal`（81 字）、`brandBios.princess`（74 字）；其他品牌（郵輪學堂、最新資訊等）仍用 `siteAuthor.bio`。`NewArticleView.astro` 以 `authorMark`（皇家→royal、公主→princess）取用，沒有對應就退回 `siteAuthor.bio`；排版不動（`.sbp .auth-bio`）
+- 側邊欄「關於我」（`HomePageSidebar`、`CategoryPageSidebar`、舊 `Sidebar`）仍用 `siteAuthor.bio`；`siteAuthor.bio` 沒有被文章頁的 JSON-LD 或 meta 使用
+- 實測作者卡簡介行數：手機 390 皇家 4 行、公主 4 行（卡片高 183px）、郵輪學堂 5 行（206px）；桌機 1440 都是 2 行（153.9px）
 
 ### 新元件（`src/components/brand/`）
 `BrandThreeCol`（容器）、`BrandSideIntro`（左欄）、`BrandTabs`（頁籤）、`BrandPostCard`（文章卡）、`BrandSideList`（右欄清單卡）；另有 `side-posts.ts` 取文函式。
@@ -352,3 +361,4 @@
 | 清單卡（C） | b8d3f3c | `BrandSideList` 標題帶改無底色加細線、標題 2 行截斷、日期用 `--text-muted` |
 | 簡介卡與分類卡（D） | 7832264 | 手機隱藏簡介卡並於頁首卡加統計行；分類卡標題加細線、列高縮小；DESIGN v0.5.13 |
 | 作者卡小字英文 | e8d7a2a | 作者卡中文標題下方加小字英文（Royal Caribbean／Princess Cruises／Cruise Traveler），品牌英文字樣收斂為共用常數；DESIGN v0.5.14（第 2 節） |
+| 作者卡簡介依品牌、公主簡介改寫 | ada093f、a36ee38 | 皇家、公主文章作者卡簡介各用品牌文案（`brandBios`）；公主旅人簡介換成新文案並合併長短兩段；DESIGN v0.5.15（第 4 節） |
