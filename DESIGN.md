@@ -1,4 +1,4 @@
-# 郵輪旅人 DESIGN.md（v0.5.10）
+# 郵輪旅人 DESIGN.md（v0.5.11）
 
 本文件是「郵輪旅人」新站版面的設計規範，供人與 Claude Code 共同遵守。
 更新日期：2026-11-10。資料依據：程式碼與 git 紀錄（任務 A～A13、B、N1、C1、F35、學堂分類頁補強、分類頁導言擴寫、首頁標語打字效果、社群圖示改版與清理、SEO 環境變數）。實作時若與現況矛盾，以現況程式碼為準並回報，不自行猜測。
@@ -70,12 +70,16 @@
 適用：`/guide/`、`/royal/`、`/princess/`、`/news/` 首頁與各分類頁。四區共用 `BrandSectionIndex.astro`、`BrandCategoryPage.astro`。
 
 ### 品牌標記（皇家旅人、公主旅人）
-- 來源：老大提供的圖（兩個圓角方塊圖示並排：ROYAL CARIBBEAN、PRINCESS；深藍底、白色舵輪、藍色海浪），沿深藍圓角方塊外緣各自裁切，圓角外轉為透明（邊緣羽化約 1px），保持原比例（約 0.87，不拉伸）
-- 檔案（`public/assets/brand/`，WebP、含透明通道、品質 90、單檔 ≤ 200 KB）：`royal-mark.webp` 9.8 KB（167×192）、`royal-mark-2x.webp` 15.9 KB（250×288）、`princess-mark.webp` 9.2 KB（167×192）、`princess-mark-2x.webp` 14.8 KB（250×288）；`srcset` 為 1x／2x
-- 用法一：`/royal/`、`/princess/` 首頁標題旁（`BrandSectionIndex.astro`，`.sec-h1-row`）：`display:flex; align-items:center; gap:12px`，圖示高度手機（≤900px）48px、桌機 64px，寬度自動；`alt=""`、`aria-hidden="true"`、`loading="eager"`、`width`／`height` 167／192；h1 的外距移到列上（`margin-top:12px`），避免置中時偏移。`/guide/`、`/news/` 沒有標記，版面不變。分類頁（`BrandCategoryPage.astro`）只有標題文字、沒有圖示結構，不處理
+- 來源：老大提供的圖（兩個圓角方塊圖示並排：ROYAL CARIBBEAN、PRINCESS；深藍底、白色舵輪、藍色海浪）。現行標記為**正方形、不含英文字**：每個圖示以英文字列上緣再往上 2px 為下緣，裁出水平置中的正方形，再以圓角遮罩（半徑為邊長的 22%、1px 抗鋸齒）重做圓角，圓角外透明；皇家（邊長 496px）與公主（556px）都縮成相同的 384px。皇家下方把手尖端完整（距底約 16 原圖像素），沒有被裁掉；成品沒有英文字殘留
+- 檔案（`public/assets/brand/`，WebP、含透明通道、品質 90、單檔 ≤ 200 KB）：`royal-mark-sq.webp` 8.4 KB（192×192）、`royal-mark-sq-2x.webp` 15.4 KB（384×384）、`princess-mark-sq.webp` 8.3 KB、`princess-mark-sq-2x.webp` 15.6 KB；`srcset` 為 1x／2x
+- 品牌首頁標題（`BrandSectionIndex.astro`，`/royal/`、`/princess/`）：一列＝正方形圖示＋文字堆疊（上：h1 大標「皇家旅人」「公主旅人」；下：小字英文「Royal Caribbean」「Princess Cruises」，大寫、`aria-hidden="true"`，**不放進 h1**）。小字英文參照頁首 `.wm2`：字級＝大標 40%、字重 600、字距 .14em（字距上限）、不透明度 .65。字級手機 30px、桌機 42px（同 `.a-h2`），兩行行高固定 1.1、行距 2px；圖示邊長由同一組變數算出文字堆疊高度（手機約 48px、桌機約 66.7px，正方形），所以圖示與文字堆疊等高、垂直置中（`align-items:center`，gap 12px）；h1 外距移到列上（`margin-top:12px`）。`alt=""`、`aria-hidden="true"`、`loading="eager"`、`width`／`height` 192。`/guide/`、`/news/` 沒有標記，版面不變；分類頁沒有圖示結構，不處理
+- 實測（手機 390／桌機 1440）：圖示寬＝高，圖示與文字堆疊高度差 0、垂直中心差 0、圖示上緣與大標方塊上緣差 0（大標字形頂端比圖示上緣低約 6–8px，是行高留白，非對齊誤差）
 - 用法二：文章頁作者卡（見第 7 節）
-- 舊的 `princess-sub.svg`（原公主首頁標題圖示，40×40）已不使用，檔案保留
-- 圖示內英文字可讀程度：桌機 64px 下「PRINCESS」清楚、「ROYAL CARIBBEAN」勉強清楚（兩行小字）；手機 48／44px 下「PRINCESS」仍清楚、「ROYAL CARIBBEAN」勉強。未調整設計
+- 舊的長方形標記 `royal-mark.webp`、`royal-mark-2x.webp`、`princess-mark.webp`、`princess-mark-2x.webp`（含英文字，167×192）已不使用，檔案保留；`princess-sub.svg` 同樣已不使用，檔案保留
+
+### 皇家旅人簡介（`brand-category-intros.ts` 的 `brandSectionIntros.royal`，老大定稿，逐字使用）
+- 全文：「想搭皇家加勒比，又怕訂票前被各種方案、費用、航線搞到頭昏？這裡把船隊、船上活動、餐廳美食、費用方案與航線部署一次整理好，先做功課，上船才能安心吃喝玩。」（75 字）
+- 同一段同時用在：`/royal/` 頁面可見簡介、左欄簡介卡（含皇家五個分類頁的左欄）、meta description／og:description／twitter:description（三處皆 75 字）與 CollectionPage JSON-LD 的 description。公主旅人與其他分區不動
 
 ### 新元件（`src/components/brand/`）
 `BrandThreeCol`（容器）、`BrandSideIntro`（左欄）、`BrandTabs`（頁籤）、`BrandPostCard`（文章卡）、`BrandSideList`（右欄清單卡）；另有 `side-posts.ts` 取文函式。
@@ -201,7 +205,7 @@
 - 相關文章列縮圖 132×88（寬 132px、比例 3:2、`object-fit: cover`、圓角 12px），與文字欄等高，標籤頂對齊縮圖頂、日期底對齊縮圖底（A6，取代 A3 的 96px、contain 規格）；首頁共用的 `.l-thumb` 不動
 - 文章封面（`.aheroimg`）不套用 hover 放大
 - 作者卡（`.authbox`，`NewArticleView.astro`）：第一列 `.auth-row`＝圖示在左、標題文字（作者名 · 郵輪旅遊部落格）在右，同列 `align-items:center`、`gap:12px`；簡介（`.auth-bio`）在下方整行，左緣與第一列對齊；圖示高度手機 44px、桌機 52px，寬度自動，`alt=""`、`aria-hidden="true"`、`loading="lazy"`
-- 作者卡圖示依文章 Brand：皇家 → `royal-mark`；公主 → `princess-mark`；其他品牌（郵輪學堂、新聞等）維持錨點 logo（`/icon-192.png`），排版相同
+- 作者卡圖示依文章 Brand：皇家 → `royal-mark-sq`；公主 → `princess-mark-sq`（正方形，桌機 52px、手機 44px）；其他品牌（郵輪學堂、新聞等）維持錨點 logo（`/icon-192.png`），排版相同
 - 文章頁封面圖 srcset 800／1200：`sizes` 為「(min-width: 901px) 868px, calc(100vw - 48px)」，手機取 800 版、桌機取 1200 版；`src` 仍為 1200 版，`width`／`height` 由建置時依該圖尺寸補上（`NewArticleView.astro`）；封面沒有 preload
 
 ## 8. 老大已定的設計決定（原樣記錄）
@@ -318,3 +322,7 @@
 | 品牌標記圖（A） | b1ac68d | `public/assets/brand/` 新增皇家、公主標記 WebP（1x／2x，單檔 ≤ 16 KB）（第 4 節） |
 | 品牌首頁標題標記（B） | 2394a43 | `/royal/`、`/princess/` 標題旁改用新標記，與標題文字同列垂直置中；舊 `princess-sub.svg` 不再使用（第 4 節） |
 | 作者卡新排版（C） | dd113b5 | 文章頁作者卡改為圖示在左、標題在右同列置中、簡介在下；皇家、公主文章用各自標記，其他品牌維持錨點 logo；DESIGN v0.5.10（第 7 節） |
+| 正方形標記（A） | 02f7180 | 品牌標記改為正方形、無英文字（`royal-mark-sq`／`princess-mark-sq`，192／384px，單檔 ≤ 16 KB）；舊長方形標記不再使用，檔案保留（第 4 節） |
+| 標題改圖示＋大標＋小字英文（B） | 7c2a1c8 | `/royal/`、`/princess/` 標題列改為正方形圖示＋文字堆疊（大標＋小字英文 Royal Caribbean／Princess Cruises），圖示邊長＝文字堆疊高度、垂直置中（第 4 節） |
+| 作者卡改用正方形（C） | 4a97291 | 皇家、公主文章作者卡圖示改用正方形標記（第 7 節） |
+| 皇家簡介（D） | 045b4a1 | 皇家旅人簡介換成老大定稿新文案，連動頁面簡介、左欄簡介卡、meta 與 JSON-LD；DESIGN v0.5.11（第 4 節） |
