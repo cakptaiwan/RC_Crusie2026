@@ -69,6 +69,8 @@ const isActiveSection = (key: string) => key === activeSectionKey || key === nav
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;800;900&display=swap"></noscript>
 <link rel="stylesheet" href="/reveal/reveal-animation.css">
 <style is:global>
+/* 卡片設計變數（第一批：作者卡、品牌頁清單卡、簡介卡、分類卡、頁首卡；第二批元件之後沿用同一組） */
+:root{--card-radius:14px;--card-border:rgba(11,42,74,.16);--card-pad-m:18px;--card-pad-d:24px;--card-gap-m:16px;--card-gap-d:20px;--text-muted:#566E82}
 body{margin:0;background:#EDF4FA;font-family:'Noto Sans TC',sans-serif}
 .srf{font-family:'Noto Sans TC',sans-serif}
 .a-h2,.a-h3,.a-rt,.sbt,.bph1,.wm1{font-family:'Noto Sans TC',sans-serif}
