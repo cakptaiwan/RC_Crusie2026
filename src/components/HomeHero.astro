@@ -1,18 +1,17 @@
 ---
 /**
- * 首頁 Hero（白底版）：左欄文字（小字、標語、簡介）；右側紙雕插畫靠右滿版、底緣貼齊 Hero 底部；左欄底部延伸海浪帶（桌機）。
+ * 首頁 Hero（白底版）：左欄文字（小字、標語、副標題）；右側紙雕插畫靠右滿版、底緣貼齊 Hero 底部；左欄底部延伸海浪帶（桌機）。
  * 動態（海鷗＋海浪）只在 window load 後、閒置時才載入；減少動態、省流量、無 JS 或無 WebGL 時維持靜態圖，且不請求動態資源。
  * 圖檔在 public/assets/hero/（hero-w-*）；舊的 hero-banner 系列已不使用，檔案保留。
  */
 // ── 文字（集中在這裡，方便修改）──────────────────────────────
 const EYEBROW = '郵輪旅人 · CRUISE TRAVELER';
-const TITLE = '陪你準備每一趟旅程';
+const TITLE = '全方位的郵輪資訊站';
+const SUBTITLE = '陪你準備每一趟旅程';
 // 標語打字效果（參照 React Bits TextType 預設值）
 const TYPING_SPEED = 90;
 const DELETING_SPEED = 40;
 const PAUSE_DURATION = 2000;
-const INTRO =
-  '有感於中文郵輪資訊的稀缺，「郵輪旅人」是第一個以郵輪研究為主題的中文網站，分享國內外論壇與部落格的郵輪知識與心得資訊。';
 // ─────────────────────────────────────────────────────────
 ---
 
@@ -65,7 +64,7 @@ const INTRO =
           setTimeout(tick, typing);
         })();
       </script>
-      <p class="hh-intro">{INTRO}</p>
+      <p class="hh-sub">{SUBTITLE}</p>
     </div>
     <div class="hh-img" id="hh-stage">
       <div class="hh-layer">
@@ -272,12 +271,13 @@ const INTRO =
     from { opacity: 1; }
     to { opacity: 0; }
   }
-  .hh-intro {
-    font-size: 1.1875rem;
-    line-height: 1.85;
-    color: #33506B;
-    max-width: 34em;
-    margin: 20px 0 0;
+  /* 副標題：靜態文字（不參與打字腳本），h1 下 10px */
+  .hh-sub {
+    font-size: 22px;
+    line-height: 1.4;
+    font-weight: 600;
+    color: var(--text-muted, #566E82);
+    margin: 10px 0 0;
   }
   /* ── 白底版：圖片靠右滿版、底緣貼齊 Hero 底部；3:2（原圖比例，不裁切）；無圓角、無陰影 ── */
   .hh {
@@ -438,8 +438,8 @@ const INTRO =
     .hh-h1 {
       font-size: 2.125rem;
     }
-    .hh-intro {
-      font-size: 1.0625rem;
+    .hh-sub {
+      font-size: 18px;
     }
     .hh-txt {
       max-width: none;
