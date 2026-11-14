@@ -1,4 +1,4 @@
-# 郵輪旅人 DESIGN.md（v0.5.13）
+# 郵輪旅人 DESIGN.md（v0.5.14）
 
 本文件是「郵輪旅人」新站版面的設計規範，供人與 Claude Code 共同遵守。
 更新日期：2026-11-10。資料依據：程式碼與 git 紀錄（任務 A～A13、B、N1、C1、F35、學堂分類頁補強、分類頁導言擴寫、首頁標語打字效果、社群圖示改版與清理、SEO 環境變數）。實作時若與現況矛盾，以現況程式碼為準並回報，不自行猜測。
@@ -50,6 +50,8 @@
 - 卡片：1px 細邊框、圓角 14px；內距手機 18px、桌機 24px；卡片標題 16px／700，下方 1px 細線，不再使用淺藍標題帶；清單列：列上下內距 10px、標題 14.5px／600、最多 2 行（`line-clamp`，完整標題在 DOM 與 `title` 屬性）、日期 12px、列間分隔線沿用
 - 已處理（第一批）：`.bs3-card` 基底（頁首卡、簡介卡、分類卡、清單卡）與 `BrandThreeCol` 的卡片間距；文章頁作者卡（`.authbox`）；`BrandSideList`（最新文章／更多文章／延伸閱讀）；`BrandSideIntro`（簡介卡、分類卡）。`BrandPostCard` 沿用自己的樣式（圓角 16px、內距 20px），本批未動，與新卡片並排時差異不明顯
 - 作者卡細節：背景維持 #F4F9FD，1px 邊框、圓角 14px；內部間距 10px；圖示手機 40px／桌機 48px（正方形）；簡介行高 1.75、上緣間距 0；與上方標籤列 32px、與下方「相關文章」標題 44px。圖示曾被 `.abody img{margin:20px 0}`（文章內文圖片規則）與 8px 圓角誤套，造成圖示上下各多 20px；現以 `.authbox img` 覆寫（外距 0、圓角 0，品牌標記與錨點 logo 本身已是圓角圖）
+- 作者卡第一列結構：圖示在左；右側為垂直堆疊的文字塊 `.auth-text`——上：中文標題 span（`getAuthorLabel(post) || siteAuthor.name · siteAuthor.tagline`，內容與 class 不變）；下：小字英文 `.auth-en`（`aria-hidden="true"`，裝飾，不入標題）。圖示與整個文字塊垂直置中（`align-items:center`，標題換行時圖示相對文字塊置中、不貼頂；實測中心差 0）。小字英文樣式：11px、字重 600、大寫（`text-transform:uppercase`）、字距 .12em（≤ .14em 上限）、行高 1.3、顏色 `--text-muted`（對 #F4F9FD 5.02）、與中文標題間距 2px
+- 小字英文字樣（共用常數 `brand-nav.ts` 的 `brandEnglishTitles`、`defaultEnglishTitle`，品牌首頁標題與作者卡共用）：皇家文章／皇家旅人 → Royal Caribbean；公主文章／公主旅人 → Princess Cruises；其他文章（郵輪學堂、最新資訊等）→ Cruise Traveler
 - 手機（≤900px）隱藏品牌頁左欄簡介卡（`.bsi-intro-card`，內容仍在 DOM）；品牌首頁（`BrandSectionIndex`）頁首卡內簡介之後新增一行統計「N 篇文章　M 個分類」（`.sec-stats-m`，只在 ≤900px 顯示，資料與簡介卡同一份）；分類頁（`BrandCategoryPage`）頁首卡本來就有「共 N 篇文章」，不新增。分類卡手機仍顯示：標題 16px／700 加細線、列上下內距 7px、字級 14.5px、文章數用 `--text-muted`，目前分類高亮樣式不變
 - 第二批待處理：首頁與固定頁側欄方塊（`HomePageSidebar`、`CategoryPageSidebar`、舊 `Sidebar`）、文章頁底相關文章與標籤列、首頁最新文章區塊、頁尾連結欄
 
@@ -349,3 +351,4 @@
 | 作者卡（B） | b61a8e9 | 作者卡細邊框圓角、內距與間距依規格；消除內文圖片規則誤套到圖示 |
 | 清單卡（C） | b8d3f3c | `BrandSideList` 標題帶改無底色加細線、標題 2 行截斷、日期用 `--text-muted` |
 | 簡介卡與分類卡（D） | 7832264 | 手機隱藏簡介卡並於頁首卡加統計行；分類卡標題加細線、列高縮小；DESIGN v0.5.13 |
+| 作者卡小字英文 | e8d7a2a | 作者卡中文標題下方加小字英文（Royal Caribbean／Princess Cruises／Cruise Traveler），品牌英文字樣收斂為共用常數；DESIGN v0.5.14（第 2 節） |
