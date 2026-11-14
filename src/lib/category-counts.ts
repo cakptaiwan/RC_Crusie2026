@@ -22,3 +22,28 @@ export function getCategoryCounts(allPosts: Post[]): CategoryCount[] {
     })),
   );
 }
+
+export type CategoryGroup = {
+  section: { slug: string; label: string; href: string };
+  categories: CategoryCount[];
+};
+
+/**
+ * 側欄「文章分類」依分區分組：資料與 getCategoryCounts 同源（getNavBrandMenus），順序與主選單相同；
+ * 沒有可見分類（count 為 0）的分區略過。每個分類的 slug（「分區/分類」）、label、href、count 與 getCategoryCounts 逐項相同。
+ */
+export function getCategoryGroups(allPosts: Post[]): CategoryGroup[] {
+  return getNavBrandMenus(allPosts)
+    .map((menu) => ({
+      section: { slug: menu.section.slug, label: menu.section.label, href: menu.href },
+      categories: menu.categories
+        .filter((category) => category.count > 0)
+        .map((category) => ({
+          slug: `${menu.section.slug}/${category.slug}`,
+          label: category.label,
+          href: category.href,
+          count: category.count,
+        })),
+    }))
+    .filter((group) => group.categories.length > 0);
+}
