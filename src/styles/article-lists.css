@@ -60,6 +60,32 @@
 }
 
 /*
+ * 內文清單與一般段落一致（樣式修正）：NewLayout 的 .kli／.abody ol li 把 li 設為 15px，
+ * 上面的 li 規則又把行距收成 1.45，使清單字比段落小、行距較緊；ul.kul 另有 margin:0，清單後的段落沒有間距。
+ * 這裡讓 li 繼承段落的字級與行距、清單後補上與段落相同的 1.2em 間距；「本文重點」框（.kbox）內的清單維持原樣。
+ */
+.abody ul.kul > li,
+.abody ol:not(.toclist) > li {
+  font-size: inherit;
+  line-height: inherit;
+}
+.abody ul.kul,
+.abody ol:not(.toclist) {
+  margin-bottom: 1.2em;
+}
+.abody li > ul,
+.abody li > ol {
+  margin-bottom: 0;
+}
+.abody .kbox ul.kul {
+  margin-bottom: 0;
+}
+.abody .kbox ul.kul > li {
+  font-size: 15px;
+  line-height: 1.45;
+}
+
+/*
  * 內文標題字重 500（Noto Sans TC 已載入 500）。只限文章內文的章節標題（.bh2／.bh3／h4），
  * 「相關文章」的 .a-h2、TOC 標號、KEY POINTS 的 .kh 都不在選擇器內。
  * 字級、顏色、間距沿用 NewLayout 的 .bh2／.bh3，這裡只改字重。
