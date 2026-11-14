@@ -9,7 +9,7 @@ import { brandSections } from './brand-nav';
 export const brandSectionIntros: Record<string, string> = {
   guide: '第一次搭郵輪不知道從哪開始？從挑艙房、行前打包到靠港下船，這裡整理不分品牌都用得上的郵輪基本功。',
   royal: '想搭皇家加勒比，又怕訂票前被各種方案、費用、航線搞到頭昏？這裡把船隊、船上活動、餐廳美食、費用方案與航線部署一次整理好，先做功課，上船才能安心吃喝玩。',
-  princess: '公主郵輪的船隊介紹與最新動態陸續整理中，適合想比較不同郵輪品牌的你。',
+  princess: '公主郵輪的死忠粉持續施工中。目前先從船隊看起，艙房、餐廳與航線會隨著文章累積慢慢補齊。想比較不同郵輪品牌、或正在考慮公主的你，先來坐一下，慢慢逛，不趕行程。',
   news: '郵輪產業與各品牌的最新動態，整理成中文重點，讓你快速掌握。',
 };
 
@@ -73,8 +73,6 @@ export const brandCategoryLongIntros: Record<string, string> = {
 
 /** 分區首頁頂端可見導言的長版（以分區 key 為鍵）；左欄簡介卡與 meta 仍用 brandSectionIntros 的一句 */
 export const brandSectionLongIntros: Record<string, string> = {
-  princess:
-    '公主郵輪的船隊介紹與最新動態陸續整理中。想比較不同郵輪品牌、或正在考慮公主的你，可以先從船隊看起，內容會隨文章累積持續擴充。',
   news: '郵輪產業與各品牌的最新動態，整理成中文重點。從官方新聞稿到港口與旅遊安全消息，都說明對華文圈旅客的實際影響，讓你快速掌握。',
 };
 
