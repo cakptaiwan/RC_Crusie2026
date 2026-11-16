@@ -41,6 +41,7 @@ import type {
 
 import { normalizeNavName } from './nav-name-compat';
 import { isStrictMode, readEnv } from './build-mode';
+import { buildStatusFilter, includeCommunityDrafts } from './community-drafts';
 import { registerBuildTimePosts } from './seo/sitemap-lastmod';
 
 type NotionClient = Client;
@@ -616,8 +617,15 @@ async function queryDatabasePages(
 ): Promise<QueryResult> {
   const dataSourceId = await resolveDataSourceId(notion, databaseId);
 
+  /*
+   * 社群草稿預覽模式（INCLUDE_COMMUNITY_DRAFTS=1，見 community-drafts.ts）只作用於「全部文章」查詢；
+   * 精選（featuredOnly）與首頁（ShowOnHome）查詢一律只讀已發布，也讓巢狀條件維持在兩層以內。
+   * 模式關閉時 buildStatusFilter(false) 與原本的 { Status equals 已發布 } 完全相同。
+   */
+  const withCommunityDrafts =
+    includeCommunityDrafts() && !options?.featuredOnly && options?.pageFilter !== 'HOME';
   const filters: DataSourceFilter[] = [
-    { property: 'Status', select: { equals: '已發布' } },
+    buildStatusFilter(withCommunityDrafts) as DataSourceFilter,
   ];
   if (options?.pageFilter === 'HOME') {
     filters.push({ property: 'ShowOnHome', checkbox: { equals: true } });

@@ -18,6 +18,8 @@ export const brandAuthorLabels: Readonly<Record<string, string>> = {
   '公主': '公主旅人',
   '迪士尼': '迪士尼旅人',
   '新聞': '郵輪旅人',
+  /** 社群聲音為跨品牌分區，署名比照新聞 */
+  '社群': '郵輪旅人',
 };
 
 export type BrandSection = {
@@ -120,6 +122,20 @@ export const brandSections: readonly BrandSection[] = [
     ],
   },
   {
+    key: 'community',
+    slug: 'community',
+    label: '社群聲音',
+    brand: '社群',
+    enabled: true,
+    /** 比照最新資訊：有 1 篇就顯示該分類；所有分類都不可見時整個分區不進選單與頁尾 */
+    minArticles: 1,
+    categories: [
+      { slug: 'royal', label: '皇家網友說', newCategory: '皇家網友說' },
+      { slug: 'princess', label: '公主網友說', newCategory: '公主網友說' },
+      { slug: 'general', label: '一般網友說', newCategory: '一般網友說' },
+    ],
+  },
+  {
     key: 'disney',
     slug: 'disney',
     label: '迪士尼',
@@ -141,9 +157,12 @@ export function getBrandSection(key: string): BrandSection {
   return section;
 }
 
-/** 頂部選單與頁尾顯示的分區（順序即顯示順序） */
+/** 頂部選單與頁尾顯示的分區（順序即顯示順序；旅人手記由各元件另外接在最後） */
 export const navBrandSections = (): BrandSection[] =>
-  ['guide', 'royal', ...(PRINCESS_IN_NAV ? ['princess'] : []), 'news'].map(getBrandSection);
+  ['guide', 'royal', ...(PRINCESS_IN_NAV ? ['princess'] : []), 'news', 'community'].map(getBrandSection);
+
+/** 這些分區沒有任何可見分類時，整項不進選單與頁尾 */
+const HIDE_WHEN_EMPTY_SECTION_KEYS: ReadonlySet<string> = new Set(['news', 'community']);
 
 const byDateDesc = (a: BrandPostLike, b: BrandPostLike) => (b.date || '').localeCompare(a.date || '');
 
@@ -180,7 +199,36 @@ export function getNavBrandMenus(posts: BrandPostLike[]) {
         href: brandCategoryHref(section, category),
       })),
     }))
-    .filter((menu) => menu.section.key !== 'news' || menu.categories.length > 0);
+    .filter((menu) => !HIDE_WHEN_EMPTY_SECTION_KEYS.has(menu.section.key) || menu.categories.length > 0);
+}
+
+/**
+ * 社群聲音的 Brand＋新分類組合檢查（建置時呼叫，不合法就拋錯讓 build 失敗）：
+ * 三個社群新分類只能搭配 Brand＝社群；Brand＝社群的文章，新分類必須是這三個之一（不可空白）。
+ * 回傳不合法的文章說明（空陣列表示全部合法），由 assertCommunityCombos 拋錯。
+ */
+export function findIllegalCommunityCombos(
+  posts: Array<Pick<Post, 'id' | 'title' | 'brand' | 'newCategory'>>,
+): string[] {
+  const community = getBrandSection('community');
+  const allowed = new Set(community.categories.map((c) => c.newCategory));
+  const problems: string[] = [];
+  for (const post of posts) {
+    const label = `「${post.title}」（${post.id}）`;
+    if (allowed.has(post.newCategory) && post.brand !== community.brand) {
+      problems.push(`${label}新分類＝${post.newCategory}，但 Brand＝${post.brand || '（空白）'}；社群新分類只能搭配 Brand＝${community.brand}`);
+    } else if (post.brand === community.brand && !allowed.has(post.newCategory)) {
+      problems.push(`${label}Brand＝${community.brand}，但新分類＝${post.newCategory || '（空白）'}；只能是 ${[...allowed].join('／')}`);
+    }
+  }
+  return problems;
+}
+
+export function assertCommunityCombos(posts: Array<Pick<Post, 'id' | 'title' | 'brand' | 'newCategory'>>): void {
+  const problems = findIllegalCommunityCombos(posts);
+  if (problems.length > 0) {
+    throw new Error(`[brand-nav] 社群聲音的 Brand＋新分類組合不合法，共 ${problems.length} 篇：\n- ${problems.join('\n- ')}`);
+  }
 }
 
 /**

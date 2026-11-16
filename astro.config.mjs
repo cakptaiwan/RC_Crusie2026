@@ -5,6 +5,7 @@ import sitemap from '@astrojs/sitemap';
 import cloudflare from '@astrojs/cloudflare';
 import { sitemapLastmodPatchIntegration } from './src/integrations/sitemap-lastmod-patch.ts';
 import { imageDimensionsIntegration } from './src/integrations/image-dimensions.ts';
+import { communityDraftsIntegration } from './src/integrations/community-drafts.ts';
 import { BRAND_SECTIONS_INDEXABLE } from './src/data/brand-nav.ts';
 
 /** 品牌分區（BRAND_SECTIONS_INDEXABLE 為 false 時 noindex）不列入 sitemap */
@@ -16,6 +17,8 @@ const BRAND_SECTION_PREFIXES = [
   'https://royal-cruiser.com/stories/',
   'https://royal-cruiser.com/news/',
   'https://royal-cruiser.com/resources/',
+  /* 社群聲音分區 /community/（前綴涵蓋其底下分類頁；與其他分區一起由 BRAND_SECTIONS_INDEXABLE 打開） */
+  'https://royal-cruiser.com/community/',
 ];
 
 export default defineConfig({
@@ -53,6 +56,8 @@ export default defineConfig({
     }),
     sitemapLastmodPatchIntegration(),
     imageDimensionsIntegration(),
+    /* 社群草稿預覽模式（INCLUDE_COMMUNITY_DRAFTS=1）的警示與 build 後檢查；模式關閉時不做任何事 */
+    communityDraftsIntegration(),
   ],
   image: {
     /* Allow Astro Image to process external images from these hosts at build time */

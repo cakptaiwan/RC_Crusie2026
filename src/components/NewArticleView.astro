@@ -7,6 +7,7 @@ import { postImage } from '../lib/cloudinary-image';
 import { newArticleUrl, newHomeUrl } from '../lib/new-article-url';
 import { getAllPosts, getPosts } from '../lib/notion';
 import type { Post } from '../lib/notion';
+import { DRAFT_STATUS } from '../lib/community-drafts';
 import '../styles/article-lists.css';
 
 interface Props {
@@ -14,8 +15,15 @@ interface Props {
 }
 
 const { post } = Astro.props;
-/** Brand＝新聞的文章，標籤顯示新分類（皇家快訊、一般資訊…）；其他文章維持舊分類標籤 */
+/** Brand＝新聞或社群的文章，標籤顯示新分類（皇家快訊、皇家網友說…）；其他文章維持舊分類標籤 */
 const newsBrand = getBrandSection('news').brand;
+const communityBrand = getBrandSection('community').brand;
+const stampLabel =
+  (post.brand === newsBrand || post.brand === communityBrand) && post.newCategory
+    ? post.newCategory
+    : post.subPage || post.category;
+/** 草稿預覽：只有預覽站草稿模式（INCLUDE_COMMUNITY_DRAFTS=1）會讀到 Status＝草稿的文章；屬性值為 Brand，供 build 後檢查 */
+const isDraftPreview = post.status === DRAFT_STATUS;
 const royalBrand = getBrandSection('royal').brand;
 const princessBrand = getBrandSection('princess').brand;
 /** 作者卡圖示：皇家、公主文章用各自的品牌標記；其他品牌維持錨點 logo */
@@ -50,8 +58,8 @@ const relatedPosts = allPosts
   <span class="crumb-title">{post.title}</span>
 </div>
 
-<div class="ah rise d1">
-  <span class="stamp">{post.brand === newsBrand && post.newCategory ? post.newCategory : post.subPage || post.category}</span>
+{isDraftPreview && <p class="stamp" data-draft-preview={post.brand}>草稿預覽</p>}<div class="ah rise d1">
+  <span class="stamp">{stampLabel}</span>
   <h1 class="ah1">{post.title}</h1>
   <div class="ameta">
     <span>{formattedDate}</span><span>·</span>
@@ -90,7 +98,7 @@ const relatedPosts = allPosts
 
   <div class="tagrow rev">
     <span class="ovl" style="font-size:11px">Tags</span>
-    <span class="stamp">{post.brand === newsBrand && post.newCategory ? post.newCategory : post.subPage || post.category}</span>
+    <span class="stamp">{stampLabel}</span>
   </div>
 
   <div class="authbox rev">

@@ -3,7 +3,7 @@ import NewLayout from '../layouts/NewLayout.astro';
 import HomePageSidebar from '../components/HomePageSidebar.astro';
 import HomeHero from '../components/HomeHero.astro';
 import { getCategoryHrefBySubPage } from '../data/new-layout-nav';
-import { getPostBrandCategory } from '../data/brand-nav';
+import { getBrandSection, getPostBrandCategory } from '../data/brand-nav';
 import { newArticleUrl } from '../lib/new-article-url';
 import { postImage } from '../lib/cloudinary-image';
 import { getAllPosts } from '../lib/notion';
@@ -25,8 +25,16 @@ const featuredRows: Post[] = featuredSeq.slice(2, 6);
 const trendingLead: Post | undefined = featuredSeq[1];
 const trendingCells: Post[] = featuredSeq.slice(6, 10);
 
-/** 最新：全站已發布依 Date 新到舊取前 4（含 Brand＝新聞），與上兩區不去重 */
+/** 最新：全站已發布依 Date 新到舊取前 4（含 Brand＝新聞、Brand＝社群），與上兩區不去重 */
 const latestPosts = allPosts.slice(0, 4);
+
+/**
+ * 卡片分類標籤：Brand＝社群的文章沒有舊 Subpage，改顯示新分類（皇家網友說…），避免顯示「未分類」；
+ * 其他文章維持舊分類標籤（與改版前相同）。
+ */
+const communityBrand = getBrandSection('community').brand;
+const cardLabel = (post: Post) =>
+  post.brand === communityBrand && post.newCategory ? post.newCategory : post.subPage || post.category;
 
 /** 「查看全部」優先指向新分類頁；文章沒有 Brand／新分類（或分類未達顯示門檻）時退回舊 /category/ */
 const featuredViewAll = featuredLead
@@ -71,7 +79,7 @@ const padNum = (n: number) => String(n).padStart(2, '0');
             </div>
             <div class="lead-body rev">
               <div class="fx ac gap12">
-                <span class="a-cat">{featuredLead.subPage || featuredLead.category}</span>
+                <span class="a-cat">{cardLabel(featuredLead)}</span>
                 <span class="a-date">{formatDate(featuredLead.date)}</span>
               </div>
               <h3 class="a-h3 srf">{featuredLead.title}</h3>
@@ -85,7 +93,7 @@ const padNum = (n: number) => String(n).padStart(2, '0');
                 <a class="a-row pcard" href={newArticleUrl(post.id)}>
                   <span class="a-num srf">{padNum(index + 1)}</span>
                   <span>
-                    <span class="a-cat">{post.subPage || post.category}</span>
+                    <span class="a-cat">{cardLabel(post)}</span>
                     <span class="a-rt srf" style="display:block">{post.title}</span>
                     <span class="a-date">{formatDate(post.date)}</span>
                   </span>
@@ -121,7 +129,7 @@ const padNum = (n: number) => String(n).padStart(2, '0');
               </span>
               <span class="lead-body rev">
                 <span class="fx ac gap12">
-                  <span class="a-cat">Trending · {trendingLead.subPage || trendingLead.category}</span>
+                  <span class="a-cat">Trending · {cardLabel(trendingLead)}</span>
                   <span class="a-date">{formatDate(trendingLead.date)}</span>
                 </span>
                 <span class="a-h3 srf" style="display:block;font-size:25px">{trendingLead.title}</span>
@@ -136,7 +144,7 @@ const padNum = (n: number) => String(n).padStart(2, '0');
                     trendingCells.map((post) => (
                       <a class="t-cell pcard" href={newArticleUrl(post.id)}>
                         <span>
-                          <span class="a-cat">{post.subPage || post.category}</span>
+                          <span class="a-cat">{cardLabel(post)}</span>
                           <span class="l-t">{post.title}</span>
                           <span class="a-date">{formatDate(post.date)}</span>
                         </span>
@@ -172,7 +180,7 @@ const padNum = (n: number) => String(n).padStart(2, '0');
                     <img class="ph" src={postImage(post.image, 'thumb')} alt={post.title} loading="lazy" />
                   </span>
                   <span>
-                    <span class="a-cat">{post.subPage || post.category}</span>
+                    <span class="a-cat">{cardLabel(post)}</span>
                     <span class="l-t">{post.title}</span>
                     <span class="a-date">{formatDate(post.date)}</span>
                   </span>

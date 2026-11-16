@@ -11,6 +11,8 @@ export const brandSectionIntros: Record<string, string> = {
   royal: '想搭皇家加勒比，又怕訂票前被各種方案、費用、航線搞到頭昏？這裡把船隊、船上活動、餐廳美食、費用方案與航線部署一次整理好，先做功課，上船才能安心吃喝玩。',
   princess: '公主郵輪的死忠粉，把船隊、艙房、餐廳與航線一次整理好，讓你上船只管優雅地慢慢享受。想比較不同郵輪品牌、或正在考慮公主的你，先來坐一下，慢慢逛，功課我先替你做好。',
   news: '郵輪產業與各品牌的最新動態，整理成中文重點，讓你快速掌握。',
+  /** 暫定，待老大定稿（W2 為了讓頁面能建置先填入，未經老大確認） */
+  community: '各地郵輪旅客在網路社群分享的真實經驗與意見，整理成中文重點，出發前先聽聽過來人怎麼說。',
 };
 
 /** 最新資訊（/news/）導言 */
@@ -93,8 +95,16 @@ const newsCategoryIntros: Record<string, string> = {
   'news/princess': '公主郵輪的官方新聞稿與業界動態，整理成中文重點與對華文圈旅客的影響。',
 };
 
+/** 社群聲音分區（Brand＝社群）分類導言；暫定，待老大定稿（W2 為了讓頁面能建置先填入，未經老大確認） */
+const communityCategoryIntros: Record<string, string> = {
+  'community/royal': '皇家加勒比旅客在網路社群的經驗分享與正反意見，整理成中文重點。',
+  'community/princess': '公主郵輪旅客在網路社群的經驗分享與正反意見，整理成中文重點。',
+  'community/general': '不分品牌的郵輪話題，彙整網路社群旅客的經驗與意見。',
+};
+
 export const brandCategoryIntros: Record<string, string> = {
   ...newsCategoryIntros,
+  ...communityCategoryIntros,
   ...Object.fromEntries(Object.entries(guideCategoryIntros).map(([slug, intro]) => [`guide/${slug}`, intro])),
   ...Object.fromEntries(
     brandSections

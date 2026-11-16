@@ -1,0 +1,9 @@
+---
+import BrandSectionIndex from '../../components/brand/BrandSectionIndex.astro';
+import { getBrandSection } from '../../data/brand-nav';
+
+/** 社群聲音分區首頁：比照 /news/，沿用品牌分區首頁版型 */
+const section = getBrandSection('community');
+---
+
+<BrandSectionIndex section={section} />
