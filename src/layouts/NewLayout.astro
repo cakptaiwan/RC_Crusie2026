@@ -37,6 +37,8 @@ const { pathname } = Astro.url;
 const activeSectionKey =
   navMenus.find((menu) => pathname === menu.href.replace(/\/$/, '') || pathname.startsWith(menu.href))?.section.key ?? '';
 const isActiveSection = (key: string) => key === activeSectionKey || key === navActive;
+/** 手機抽屜預設展開的群組：目前所在區塊（旅人手記由其項目網址判斷）；首頁、單篇文章等其他頁全部收合 */
+const journalActive = isActiveSection(journalSection.key) || journalSection.items.some((item) => pathname.startsWith(item.href));
 ---
 <!DOCTYPE html>
 <html lang="zh-Hant">
@@ -265,11 +267,20 @@ a:hover{opacity:.75}
 .nav-burger span{display:block;height:2px;background:#0B2A4A;border-radius:1px;transition:transform .25s}
 .nav-mobile{position:fixed;top:0;left:0;bottom:0;width:50%;max-width:320px;box-sizing:border-box;background:#fff;box-shadow:4px 0 24px rgba(11,42,74,.18);padding:76px 20px 20px;z-index:30;overflow-y:auto;transform:translateX(-100%);transition:transform .32s ease}
 .nav-scrim{display:none;position:fixed;inset:0;background:rgba(11,42,74,.35);z-index:29;border:0;padding:0;margin:0;cursor:pointer}
-.nav-m-sec{padding:14px 0;border-bottom:1px solid rgba(11,42,74,.1)}
+.nav-m-sec{padding:4px 0;border-bottom:1px solid rgba(11,42,74,.1)}
 .nav-m-sec:last-child{border-bottom:none}
 .nav-m-hd{font-size:15px;font-weight:700;color:#3E6C97;margin-bottom:8px}
 .nav-m-link{display:block;padding:9px 0 9px 14px;font-size:15px;font-weight:400;color:#33506B;text-decoration:none}
 .nav-m-link:hover{color:#0B2A4A}
+.nav-m-h{margin:0;font:inherit}
+.nav-m-btn{display:flex;align-items:center;justify-content:space-between;gap:12px;box-sizing:border-box;width:100%;min-height:44px;padding:0 2px;margin:0;border:0;background:transparent;font:inherit;font-size:15px;font-weight:700;color:#3E6C97;text-align:left;cursor:pointer}
+.nav-m-btn:hover{color:#2A628F}
+.nav-m-btn:focus-visible{outline:2px solid #2A628F;outline-offset:2px}
+.nav-m-arrow{flex:none;color:#8AA3B9}
+.nav-m-btn[aria-expanded="true"] .nav-m-arrow{transform:rotate(90deg)}
+.nav-m-panel{margin:0 0 6px 2px;border-left:2px solid rgba(11,42,74,.1)}
+.nav-m-panel[hidden]{display:none}
+.nav-m-all{font-weight:600;color:#0B2A4A}
 .nav-search{display:flex;align-items:center;margin:0}
 .nav-search-in{box-sizing:border-box;width:168px;min-width:0;height:34px;padding:0 10px;border:1px solid rgba(11,42,74,.25);border-right:0;border-radius:8px 0 0 8px;background:#fff;color:#0B2A4A;font:inherit;font-size:14px;-webkit-appearance:none;appearance:none}
 .nav-search-in::placeholder{color:#8AA3B9}
@@ -472,22 +483,63 @@ a.pcard{padding:14px}
 ))}
 </div>
 {SHOW_DONATE && <a class="nav-donate nav-donate-m" href="/donate">贊助</a>}
+<div class="nav-m-acc" id="nav-m-acc">
 {
   navMenus.map((menu) => (
-    <div class="nav-m-sec">
-      <a class="nav-m-hd" href={menu.href} style="display:block;text-decoration:none">{menu.section.label}</a>
-      {menu.categories.map((category) => (
-        <a class="nav-m-link" href={category.href}>{category.label}</a>
-      ))}
-    </div>
+    menu.categories.length > 0 ? (
+      <div class="nav-m-sec" data-nav-acc data-active={isActiveSection(menu.section.key) ? '' : undefined}>
+        <h3 class="nav-m-h">
+          <button type="button" class="nav-m-btn" id={`nav-m-b-${menu.section.key}`} aria-expanded="true" aria-controls={`nav-m-p-${menu.section.key}`}>
+            <span>{menu.section.label}</span>
+            <svg class="nav-m-arrow" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9 6l6 6-6 6" /></svg>
+          </button>
+        </h3>
+        <div class="nav-m-panel" id={`nav-m-p-${menu.section.key}`} role="region" aria-labelledby={`nav-m-b-${menu.section.key}`}>
+          <a class="nav-m-link nav-m-all" href={menu.href}>全部{menu.section.label}</a>
+          {menu.categories.map((category) => (
+            <a class="nav-m-link" href={category.href}>{category.label}</a>
+          ))}
+        </div>
+      </div>
+    ) : (
+      <div class="nav-m-sec">
+        <a class="nav-m-btn" href={menu.href} style="text-decoration:none">{menu.section.label}</a>
+      </div>
+    )
   ))
 }
-<div class="nav-m-sec">
-  <div class="nav-m-hd">{journalSection.label}</div>
-  {journalSection.items.map((item) => (
-    <a class="nav-m-link" href={item.href}>{item.label}</a>
-  ))}
+<div class="nav-m-sec" data-nav-acc data-active={journalActive ? '' : undefined}>
+  <h3 class="nav-m-h">
+    <button type="button" class="nav-m-btn" id={`nav-m-b-${journalSection.key}`} aria-expanded="true" aria-controls={`nav-m-p-${journalSection.key}`}>
+      <span>{journalSection.label}</span>
+      <svg class="nav-m-arrow" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9 6l6 6-6 6" /></svg>
+    </button>
+  </h3>
+  <div class="nav-m-panel" id={`nav-m-p-${journalSection.key}`} role="region" aria-labelledby={`nav-m-b-${journalSection.key}`}>
+    {journalSection.items.map((item) => (
+      <a class="nav-m-link" href={item.href}>{item.label}</a>
+    ))}
+  </div>
 </div>
+</div>
+<!-- 手風琴：沒有 JS 時所有群組維持展開（導覽不隱藏）；有 JS 時預設只展開目前區塊，一次只展開一組 -->
+<script is:inline>
+(function () {
+  var secs = document.querySelectorAll('#nav-m-acc [data-nav-acc]');
+  function setOpen(sec, open) {
+    sec.querySelector('.nav-m-btn').setAttribute('aria-expanded', open ? 'true' : 'false');
+    sec.querySelector('.nav-m-panel').hidden = !open;
+  }
+  secs.forEach(function (sec) {
+    setOpen(sec, sec.hasAttribute('data-active'));
+    sec.querySelector('.nav-m-btn').addEventListener('click', function () {
+      var willOpen = this.getAttribute('aria-expanded') !== 'true';
+      secs.forEach(function (other) { setOpen(other, false); });
+      if (willOpen) setOpen(sec, true);
+    });
+  });
+})();
+</script>
 </div>
 <label for="nav-toggle" class="nav-scrim" aria-hidden="true"></label>
 </nav>
