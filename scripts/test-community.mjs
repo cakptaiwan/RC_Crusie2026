@@ -1,7 +1,8 @@
 // 社群聲音分區（W2）的離線單元測試（假資料夾具＋mock Notion client，不連線 Notion）。
 //   node scripts/test-community.mjs
 // 涵蓋：三個分區頁、選單隱藏邏輯（無社群文章五項／有社群文章六項）、非法組合報錯、
-//       草稿模式開／關兩種結果（實際送給 Notion 的查詢條件）、build 後草稿檢查。
+//       草稿模式開／關兩種結果（實際送給 Notion 的查詢條件）、build 後草稿檢查、
+//       草稿模式只在非 main 建置分支生效（查詢、build 警示、dist 檢查三處判斷一致）。
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { createServer } from 'vite';
@@ -13,6 +14,7 @@ const intros = await load('/src/data/brand-category-intros.ts');
 const drafts = await load('/src/lib/community-drafts.ts');
 const mode = await load('/src/lib/build-mode.ts');
 const notion = await load('/src/lib/notion.ts');
+const guard = await load('/src/integrations/community-drafts.ts');
 
 let passed = 0;
 const t = async (name, fn) => {
@@ -219,6 +221,73 @@ await t('sitemap：/community/ 在品牌分區前綴內（預覽站不列入 sit
   const config = fs.readFileSync('astro.config.mjs', 'utf8');
   assert.ok(config.includes("'https://royal-cruiser.com/community/'"));
   assert.ok(config.includes('communityDraftsIntegration()'));
+});
+
+/** 同時設定 INCLUDE_COMMUNITY_DRAFTS 與 CF_PAGES_BRANCH（undefined＝未設），結束後兩者都清除 */
+const withEnv = async (value, branch, fn) => {
+  const set = (k, v) => { if (v === undefined) delete process.env[k]; else process.env[k] = v; };
+  set('INCLUDE_COMMUNITY_DRAFTS', value);
+  set('CF_PAGES_BRANCH', branch);
+  try { return await fn(); } finally { delete process.env.INCLUDE_COMMUNITY_DRAFTS; delete process.env.CF_PAGES_BRANCH; }
+};
+/** [說明, INCLUDE_COMMUNITY_DRAFTS, CF_PAGES_BRANCH, 預期是否開啟] */
+const BRANCH_CASES = [
+  ['未設變數', undefined, undefined, false],
+  ['變數＝1、CF_PAGES_BRANCH 未設（本機）', '1', undefined, true],
+  ['變數＝1、CF_PAGES_BRANCH＝feat/brand-sections', '1', 'feat/brand-sections', true],
+  ['變數＝1、CF_PAGES_BRANCH＝main', '1', 'main', false],
+  ['變數＝0', '0', undefined, false],
+  ['變數＝空字串', '', undefined, false],
+  ['變數＝0、CF_PAGES_BRANCH＝feat/brand-sections', '0', 'feat/brand-sections', false],
+];
+
+for (const [label, value, branch, expected] of BRANCH_CASES) {
+  await t(`草稿模式判斷 isCommunityDraftModeOn：${label} → ${expected ? '開' : '關'}`, async () => {
+    await withEnv(value, branch, () => assert.equal(drafts.isCommunityDraftModeOn(), expected));
+  });
+}
+
+await t('build 警示行：開啟時含建置分支（未設寫「本機」）；main 時改為「草稿模式已忽略」提示；關閉時不輸出', async () => {
+  await withEnv('1', undefined, () => {
+    const line = drafts.communityDraftsBuildNotice();
+    assert.match(line, /^⚠️ \[community-drafts\]/);
+    assert.ok(line.includes('建置分支：本機'), line);
+  });
+  await withEnv('1', 'feat/brand-sections', () => {
+    assert.ok(drafts.communityDraftsBuildNotice().includes('建置分支：feat/brand-sections'));
+  });
+  await withEnv('1', 'main', () => {
+    const line = drafts.communityDraftsBuildNotice();
+    assert.ok(line.includes('草稿模式已忽略：建置分支為 main'), line);
+    assert.ok(!line.startsWith('⚠️'), line);
+  });
+  for (const v of [undefined, '0', '']) await withEnv(v, undefined, () => assert.equal(drafts.communityDraftsBuildNotice(), null));
+  await withEnv(undefined, 'main', () => assert.equal(drafts.communityDraftsBuildNotice(), null));
+});
+
+await t('三處判斷一致：同一組環境變數下，Notion 查詢、build 警示、build 後 dist 檢查與 isCommunityDraftModeOn 結果相同', async () => {
+  const integration = guard.communityDraftsIntegration();
+  const badDist = new URL('./fixtures/community-drafts/', import.meta.url);
+  for (const [label, value, branch, expected] of BRANCH_CASES) {
+    await withEnv(value, branch, async () => {
+      assert.equal(drafts.isCommunityDraftModeOn(), expected, label);
+      // 1. 查詢：全部文章查詢是否多讀社群草稿
+      const client = mkClient(PAGES);
+      notion.__setNotionTestOverrides({ client, token: 'ntn_TEST', databaseId: 'db-1' });
+      await quietRun(() => notion.getAllPosts());
+      assert.deepEqual(client.filters, [drafts.buildStatusFilter(expected)], `查詢：${label}`);
+      // 2. 警示：build 開始時是否輸出含建置分支的警示
+      const warned = [];
+      const keep = console.warn;
+      console.warn = (msg) => warned.push(String(msg));
+      try { integration.hooks['astro:build:start']({}); } finally { console.warn = keep; }
+      assert.equal(warned.some((m) => m.startsWith('⚠️ [community-drafts]')), expected, `警示：${label}`);
+      // 3. dist 檢查：夾具含非社群草稿標示，開啟時必須擋下，關閉時不檢查
+      const run = () => quietRun(async () => integration.hooks['astro:build:done']({ dir: badDist }));
+      if (expected) await assert.rejects(run, /非社群的草稿文章 1 頁/, `dist 檢查：${label}`);
+      else await assert.doesNotReject(run, `dist 檢查：${label}`);
+    });
+  }
 });
 
 mode.__setProdForTest(null);

@@ -5,6 +5,8 @@
  * 未設或不是 1 時，查詢條件與加入此功能之前完全相同（預設關閉）。
  * 只讀 Status 恰好等於「草稿」的文章：「草稿（不合格）」「已歸檔」不讀；其他 Brand 的草稿一律不讀。
  * 只給預覽站用；正式站（Cloudflare Pages Production）不得設定此變數。
+ * 保險：Cloudflare 建置分支 CF_PAGES_BRANCH＝main 時，即使設了變數也一律視為關閉（後台無法確認 Production／Preview 變數是否分開）。
+ * 開關的判斷只有 isCommunityDraftModeOn() 一處；Notion 查詢、build 警示、build 後 dist 檢查都呼叫它，環境變數一律經 readEnv 讀取。
  *
  * 本檔是純函式與常數，不依賴 Notion 與 Astro，可直接離線測試；不 import brand-nav.ts（避免與 notion.ts 循環引用），
  * 社群的 Brand 值與 brand-nav.ts 的社群分區一致性由 scripts/test-community.mjs 檢查。
@@ -19,16 +21,37 @@ export const DRAFT_STATUS = '草稿';
 /** 文章頁草稿標示的 HTML 屬性名；值為該文章的 Brand，供 build 後檢查 */
 export const DRAFT_MARKER_ATTR = 'data-draft-preview';
 
-export const COMMUNITY_DRAFTS_WARNING =
-  `⚠️ [community-drafts] ${COMMUNITY_DRAFTS_ENV}=1：草稿預覽模式開啟，本次 build 會包含「Brand＝社群 且 Status＝草稿」的文章，只能用於預覽站，不得部署到正式站。`;
+/** Cloudflare Pages 建置分支的環境變數；值等於 PRODUCTION_BRANCH 時草稿模式一律關閉 */
+export const BUILD_BRANCH_ENV = 'CF_PAGES_BRANCH';
+export const PRODUCTION_BRANCH = 'main';
+
+/** 草稿模式開啟時的 build 警示；branch 未設（本機 build）寫「本機」 */
+export function communityDraftsWarning(branch: string | undefined): string {
+  return `⚠️ [community-drafts] ${COMMUNITY_DRAFTS_ENV}=1：草稿預覽模式開啟（建置分支：${branch ?? '本機'}），本次 build 會包含「Brand＝社群 且 Status＝草稿」的文章，只能用於預覽站，不得部署到正式站。`;
+}
+
+export const COMMUNITY_DRAFTS_IGNORED_ON_MAIN =
+  `[community-drafts] 草稿模式已忽略：建置分支為 ${PRODUCTION_BRANCH}（${COMMUNITY_DRAFTS_ENV}=1 不生效）`;
 
 /** 值必須恰好是字串 "1" 才開啟；未設、空白或其他值一律關閉 */
 export function isCommunityDraftsValue(value: string | undefined | null): boolean {
   return typeof value === 'string' && value.trim() === '1';
 }
 
-export function includeCommunityDrafts(): boolean {
-  return isCommunityDraftsValue(readEnv(COMMUNITY_DRAFTS_ENV));
+/**
+ * 草稿模式是否生效（唯一的判斷）：INCLUDE_COMMUNITY_DRAFTS 去空白後等於 "1"，且 CF_PAGES_BRANCH 不是 main。
+ * CF_PAGES_BRANCH 未設（本機）或為其他分支名時可啟用。
+ */
+export function isCommunityDraftModeOn(): boolean {
+  if (!isCommunityDraftsValue(readEnv(COMMUNITY_DRAFTS_ENV))) return false;
+  return readEnv(BUILD_BRANCH_ENV) !== PRODUCTION_BRANCH;
+}
+
+/** build 開始時要輸出的一行：生效 → 警示（含建置分支）；設了 1 但分支為 main → 已忽略提示；其他 → null */
+export function communityDraftsBuildNotice(): string | null {
+  if (isCommunityDraftModeOn()) return communityDraftsWarning(readEnv(BUILD_BRANCH_ENV));
+  if (isCommunityDraftsValue(readEnv(COMMUNITY_DRAFTS_ENV))) return COMMUNITY_DRAFTS_IGNORED_ON_MAIN;
+  return null;
 }
 
 type SelectEquals = { property: string; select: { equals: string } };

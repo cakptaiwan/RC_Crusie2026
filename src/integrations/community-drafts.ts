@@ -3,11 +3,10 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
-  COMMUNITY_DRAFTS_ENV,
-  COMMUNITY_DRAFTS_WARNING,
+  communityDraftsBuildNotice,
   findDraftMarkers,
   findNonCommunityDrafts,
-  isCommunityDraftsValue,
+  isCommunityDraftModeOn,
   type DraftMarker,
 } from '../lib/community-drafts';
 
@@ -23,20 +22,20 @@ function listHtmlFiles(dir: string): string[] {
 
 /**
  * 社群草稿預覽模式的防呆（見 src/lib/community-drafts.ts）：
- * - build 開始時，模式開啟就輸出一行明確警示；
+ * - build 開始時，模式開啟就輸出一行明確警示（含建置分支）；設了 1 但建置分支為 main 時輸出「已忽略」提示；
  * - build 完成後，模式開啟時掃描 dist 的草稿標示，出現 Brand 不是社群的草稿文章就讓 build 失敗。
- * 模式關閉時兩者都不做任何事。只讀 shell／Cloudflare 的環境變數（process.env），不讀任何設定檔。
+ * 模式關閉時 dist 檢查不做任何事。開關一律由 isCommunityDraftModeOn() 判斷，不在這裡自行讀環境變數。
  */
 export function communityDraftsIntegration(): AstroIntegration {
-  const enabled = () => isCommunityDraftsValue(process.env[COMMUNITY_DRAFTS_ENV]);
   return {
     name: 'community-drafts-guard',
     hooks: {
       'astro:build:start': () => {
-        if (enabled()) console.warn(COMMUNITY_DRAFTS_WARNING);
+        const notice = communityDraftsBuildNotice();
+        if (notice) console.warn(notice);
       },
       'astro:build:done': ({ dir }) => {
-        if (!enabled()) return;
+        if (!isCommunityDraftModeOn()) return;
         const outDir = fileURLToPath(dir);
         const markers: DraftMarker[] = listHtmlFiles(outDir).flatMap((file) =>
           findDraftMarkers(fs.readFileSync(file, 'utf8')).map((brand) => ({
