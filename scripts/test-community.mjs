@@ -290,6 +290,54 @@ await t('三處判斷一致：同一組環境變數下，Notion 查詢、build �
   }
 });
 
+await t('build 診斷行：格式正確（開關皆印、單行、固定前綴）；任何情況都不含 NOTION_TOKEN 的值', async () => {
+  const SECRET = 'ntn_SECRET_TEST_VALUE_123456';
+  const keep = process.env.NOTION_TOKEN;
+  const keepCf = process.env.CF_PAGES;
+  try {
+    process.env.NOTION_TOKEN = SECRET;
+    process.env.CF_PAGES = '1';
+    for (const [label, value, branch, expected] of BRANCH_CASES) {
+      await withEnv(value, branch, () => {
+        const line = drafts.communityDraftsDiagnosticLine();
+        assert.ok(line.startsWith('[community-drafts] 偵測：'), line);
+        assert.ok(!line.includes('\n'), label);
+        assert.ok(!line.includes(SECRET) && !line.includes('SECRET_TEST'), `含 token 值：${label}`);
+        assert.ok(line.includes('NOTION_TOKEN=有設'), line);
+        assert.ok(line.includes(`INCLUDE_COMMUNITY_DRAFTS process.env=${value?.trim() ? value.trim() : '未設'} readEnv=${value?.trim() ? value.trim() : '未設'}`), line);
+        assert.ok(line.includes(`CF_PAGES_BRANCH=${branch ?? '未設'}`), line);
+        assert.ok(line.includes('CF_PAGES=1'), line);
+        assert.ok(line.endsWith(`判斷結果=${expected ? '開' : '關'}`), `${label}：${line}`);
+      });
+    }
+    delete process.env.NOTION_TOKEN;
+    delete process.env.CF_PAGES;
+    await withEnv(undefined, undefined, () => {
+      const line = drafts.communityDraftsDiagnosticLine();
+      assert.equal(
+        line,
+        '[community-drafts] 偵測：INCLUDE_COMMUNITY_DRAFTS process.env=未設 readEnv=未設；CF_PAGES_BRANCH=未設；CF_PAGES=未設；NOTION_TOKEN=未設；判斷結果=關',
+      );
+    });
+    // integration 在最早的 hook（config:setup）無論開關都印出這一行
+    const printed = [];
+    const keepLog = console.log;
+    console.log = (m) => printed.push(String(m));
+    process.env.NOTION_TOKEN = SECRET;
+    try {
+      await withEnv('1', 'main', () => guard.communityDraftsIntegration().hooks['astro:config:setup']({}));
+      await withEnv(undefined, undefined, () => guard.communityDraftsIntegration().hooks['astro:config:setup']({}));
+    } finally { console.log = keepLog; }
+    assert.equal(printed.length, 2);
+    assert.ok(printed.every((l) => l.startsWith('[community-drafts] 偵測：') && !l.includes(SECRET)));
+    // 既有的已忽略提示維持不變
+    await withEnv('1', 'main', () => assert.ok(drafts.communityDraftsBuildNotice().includes('草稿模式已忽略：建置分支為 main')));
+  } finally {
+    if (keep === undefined) delete process.env.NOTION_TOKEN; else process.env.NOTION_TOKEN = keep;
+    if (keepCf === undefined) delete process.env.CF_PAGES; else process.env.CF_PAGES = keepCf;
+  }
+});
+
 mode.__setProdForTest(null);
 notion.__setNotionTestOverrides(null);
 await server.close();

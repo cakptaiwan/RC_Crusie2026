@@ -54,6 +54,24 @@ export function communityDraftsBuildNotice(): string | null {
   return null;
 }
 
+/** 診斷行用：有值印原值，未設印「未設」（只用於非機密變數） */
+const showValue = (v: string | undefined | null): string => (typeof v === 'string' && v.trim() ? v.trim() : '未設');
+
+/**
+ * 每次 build 都印的單行診斷（草稿模式開關皆印），用來區分「變數沒到 build」與「程式沒讀到」。
+ * INCLUDE_COMMUNITY_DRAFTS 分別印 process.env 與 readEnv 的值；CF_PAGES_BRANCH、CF_PAGES 印值；
+ * NOTION_TOKEN 只印有設／未設（readEnv 與 notion.ts 讀法相同），絕不印值。
+ */
+export function communityDraftsDiagnosticLine(): string {
+  const proc = typeof process !== 'undefined' ? process.env : {};
+  const token = readEnv('NOTION_TOKEN') !== undefined ? '有設' : '未設';
+  return (
+    `[community-drafts] 偵測：${COMMUNITY_DRAFTS_ENV} process.env=${showValue(proc[COMMUNITY_DRAFTS_ENV])} ` +
+    `readEnv=${showValue(readEnv(COMMUNITY_DRAFTS_ENV))}；${BUILD_BRANCH_ENV}=${showValue(proc[BUILD_BRANCH_ENV])}；` +
+    `CF_PAGES=${showValue(proc.CF_PAGES)}；NOTION_TOKEN=${token}；判斷結果=${isCommunityDraftModeOn() ? '開' : '關'}`
+  );
+}
+
 type SelectEquals = { property: string; select: { equals: string } };
 export type StatusFilter =
   | SelectEquals

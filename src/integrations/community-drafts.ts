@@ -4,6 +4,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
   communityDraftsBuildNotice,
+  communityDraftsDiagnosticLine,
   findDraftMarkers,
   findNonCommunityDrafts,
   isCommunityDraftModeOn,
@@ -30,6 +31,10 @@ export function communityDraftsIntegration(): AstroIntegration {
   return {
     name: 'community-drafts-guard',
     hooks: {
+      // 最早的 hook：無論草稿模式開關都印一行環境偵測（不含機密值）
+      'astro:config:setup': () => {
+        console.log(communityDraftsDiagnosticLine());
+      },
       'astro:build:start': () => {
         const notice = communityDraftsBuildNotice();
         if (notice) console.warn(notice);
