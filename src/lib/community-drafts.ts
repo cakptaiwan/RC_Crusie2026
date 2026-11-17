@@ -1,12 +1,15 @@
 /**
  * 社群聲音（Brand＝社群）的預覽站草稿模式。
  *
- * 環境變數 INCLUDE_COMMUNITY_DRAFTS＝1 時，Notion 查詢除了 Status＝已發布，另外多讀「Brand＝社群 且 Status＝草稿」的文章；
- * 未設或不是 1 時，查詢條件與加入此功能之前完全相同（預設關閉）。
+ * 開啟條件（優先順序，唯一判斷在 isCommunityDraftModeOn()）：
+ *   a. CF_PAGES_BRANCH＝main → 關（正式站永遠關閉，優先於一切）
+ *   b. INCLUDE_COMMUNITY_DRAFTS（去空白）＝0 → 關
+ *   c. INCLUDE_COMMUNITY_DRAFTS＝1 → 開（來源：環境變數）
+ *   d. CF_PAGES_BRANCH＝預覽分支名稱 COMMUNITY_DRAFT_PREVIEW_BRANCH → 開（來源：預覽分支名稱，不依賴 Cloudflare 變數）
+ *   e. 其他 → 關（預設關閉，查詢條件與加入此功能之前完全相同）
+ * 開啟時 Notion 查詢除了 Status＝已發布，另外多讀「Brand＝社群 且 Status＝草稿」的文章。
  * 只讀 Status 恰好等於「草稿」的文章：「草稿（不合格）」「已歸檔」不讀；其他 Brand 的草稿一律不讀。
- * 只給預覽站用；正式站（Cloudflare Pages Production）不得設定此變數。
- * 保險：Cloudflare 建置分支 CF_PAGES_BRANCH＝main 時，即使設了變數也一律視為關閉（後台無法確認 Production／Preview 變數是否分開）。
- * 開關的判斷只有 isCommunityDraftModeOn() 一處；Notion 查詢、build 警示、build 後 dist 檢查都呼叫它，環境變數一律經 readEnv 讀取。
+ * 只給預覽站用。Notion 查詢、build 警示、build 後 dist 檢查都呼叫 isCommunityDraftModeOn()，環境變數一律經 readEnv 讀取。
  *
  * 本檔是純函式與常數，不依賴 Notion 與 Astro，可直接離線測試；不 import brand-nav.ts（避免與 notion.ts 循環引用），
  * 社群的 Brand 值與 brand-nav.ts 的社群分區一致性由 scripts/test-community.mjs 檢查。
@@ -24,10 +27,17 @@ export const DRAFT_MARKER_ATTR = 'data-draft-preview';
 /** Cloudflare Pages 建置分支的環境變數；值等於 PRODUCTION_BRANCH 時草稿模式一律關閉 */
 export const BUILD_BRANCH_ENV = 'CF_PAGES_BRANCH';
 export const PRODUCTION_BRANCH = 'main';
+/**
+ * 草稿模式的預覽分支名稱：建置分支等於它時，不需任何環境變數就開啟草稿模式。
+ * 換版日（W7）預覽分支合併進 main 之後，此常數與 resolveCommunityDraftMode() 裡的分支判斷（規則 d）要一併移除。
+ */
+export const COMMUNITY_DRAFT_PREVIEW_BRANCH = 'feat/brand-sections';
 
-/** 草稿模式開啟時的 build 警示；branch 未設（本機 build）寫「本機」 */
-export function communityDraftsWarning(branch: string | undefined): string {
-  return `⚠️ [community-drafts] ${COMMUNITY_DRAFTS_ENV}=1：草稿預覽模式開啟（建置分支：${branch ?? '本機'}），本次 build 會包含「Brand＝社群 且 Status＝草稿」的文章，只能用於預覽站，不得部署到正式站。`;
+export type CommunityDraftSource = '環境變數' | '預覽分支名稱';
+
+/** 草稿模式開啟時的 build 警示；branch 未設（本機 build）寫「本機」；source 為開啟的依據 */
+export function communityDraftsWarning(branch: string | undefined, source: CommunityDraftSource): string {
+  return `⚠️ [community-drafts] 草稿預覽模式開啟（來源：${source}；建置分支：${branch ?? '本機'}），本次 build 會包含「Brand＝社群 且 Status＝草稿」的文章，只能用於預覽站，不得部署到正式站。`;
 }
 
 export const COMMUNITY_DRAFTS_IGNORED_ON_MAIN =
@@ -38,19 +48,29 @@ export function isCommunityDraftsValue(value: string | undefined | null): boolea
   return typeof value === 'string' && value.trim() === '1';
 }
 
-/**
- * 草稿模式是否生效（唯一的判斷）：INCLUDE_COMMUNITY_DRAFTS 去空白後等於 "1"，且 CF_PAGES_BRANCH 不是 main。
- * CF_PAGES_BRANCH 未設（本機）或為其他分支名時可啟用。
- */
-export function isCommunityDraftModeOn(): boolean {
-  if (!isCommunityDraftsValue(readEnv(COMMUNITY_DRAFTS_ENV))) return false;
-  return readEnv(BUILD_BRANCH_ENV) !== PRODUCTION_BRANCH;
+/** 草稿模式判斷與開啟來源（來源只在開啟時有值）。規則優先順序見檔案開頭，只有這一處實作 */
+function resolveCommunityDraftMode(): { on: boolean; source: CommunityDraftSource | null } {
+  const branch = readEnv(BUILD_BRANCH_ENV);
+  const flag = readEnv(COMMUNITY_DRAFTS_ENV);
+  if (branch === PRODUCTION_BRANCH) return { on: false, source: null };
+  if (flag === '0') return { on: false, source: null };
+  if (isCommunityDraftsValue(flag)) return { on: true, source: '環境變數' };
+  if (branch === COMMUNITY_DRAFT_PREVIEW_BRANCH) return { on: true, source: '預覽分支名稱' };
+  return { on: false, source: null };
 }
 
-/** build 開始時要輸出的一行：生效 → 警示（含建置分支）；設了 1 但分支為 main → 已忽略提示；其他 → null */
+/** 草稿模式是否生效（唯一的判斷，查詢、警示、dist 檢查都呼叫這個） */
+export function isCommunityDraftModeOn(): boolean {
+  return resolveCommunityDraftMode().on;
+}
+
+/** build 開始時要輸出的一行：生效 → 警示（含來源與建置分支）；設了 1 但分支為 main → 已忽略提示；其他 → null */
 export function communityDraftsBuildNotice(): string | null {
-  if (isCommunityDraftModeOn()) return communityDraftsWarning(readEnv(BUILD_BRANCH_ENV));
-  if (isCommunityDraftsValue(readEnv(COMMUNITY_DRAFTS_ENV))) return COMMUNITY_DRAFTS_IGNORED_ON_MAIN;
+  const { on, source } = resolveCommunityDraftMode();
+  if (on && source) return communityDraftsWarning(readEnv(BUILD_BRANCH_ENV), source);
+  if (isCommunityDraftsValue(readEnv(COMMUNITY_DRAFTS_ENV)) && readEnv(BUILD_BRANCH_ENV) === PRODUCTION_BRANCH) {
+    return COMMUNITY_DRAFTS_IGNORED_ON_MAIN;
+  }
   return null;
 }
 

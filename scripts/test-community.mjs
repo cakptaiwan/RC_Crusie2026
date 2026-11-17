@@ -239,6 +239,12 @@ const BRANCH_CASES = [
   ['變數＝0', '0', undefined, false],
   ['變數＝空字串', '', undefined, false],
   ['變數＝0、CF_PAGES_BRANCH＝feat/brand-sections', '0', 'feat/brand-sections', false],
+  ['變數未設、CF_PAGES_BRANCH＝main（main 一律關）', undefined, 'main', false],
+  ['變數未設、CF_PAGES_BRANCH＝feat/brand-sections（認預覽分支名稱）', undefined, 'feat/brand-sections', true],
+  ['變數未設、CF_PAGES_BRANCH＝feat/other', undefined, 'feat/other', false],
+  ['變數＝0、CF_PAGES_BRANCH＝feat/other', '0', 'feat/other', false],
+  ['變數＝1、CF_PAGES_BRANCH＝feat/other', '1', 'feat/other', true],
+  ['變數＝0、CF_PAGES_BRANCH＝main', '0', 'main', false],
 ];
 
 for (const [label, value, branch, expected] of BRANCH_CASES) {
@@ -263,6 +269,17 @@ await t('build 警示行：開啟時含建置分支（未設寫「本機」）�
   });
   for (const v of [undefined, '0', '']) await withEnv(v, undefined, () => assert.equal(drafts.communityDraftsBuildNotice(), null));
   await withEnv(undefined, 'main', () => assert.equal(drafts.communityDraftsBuildNotice(), null));
+});
+
+await t('草稿模式警示行含開啟來源：變數＝1 → 環境變數；只靠預覽分支名稱 → 預覽分支名稱；變數＝1 且為預覽分支 → 環境變數（c 優先於 d）', async () => {
+  assert.equal(drafts.COMMUNITY_DRAFT_PREVIEW_BRANCH, 'feat/brand-sections');
+  await withEnv('1', undefined, () => assert.ok(drafts.communityDraftsBuildNotice().includes('來源：環境變數；建置分支：本機')));
+  await withEnv(undefined, 'feat/brand-sections', () => assert.ok(drafts.communityDraftsBuildNotice().includes('來源：預覽分支名稱；建置分支：feat/brand-sections')));
+  await withEnv('1', 'feat/brand-sections', () => assert.ok(drafts.communityDraftsBuildNotice().includes('來源：環境變數')));
+  // 關閉的情況（含 main＋未設變數、預覽分支＋變數 0）不輸出警示；main＋變數 1 只輸出「已忽略」
+  await withEnv(undefined, 'main', () => assert.equal(drafts.communityDraftsBuildNotice(), null));
+  await withEnv('0', 'feat/brand-sections', () => assert.equal(drafts.communityDraftsBuildNotice(), null));
+  await withEnv(undefined, 'feat/other', () => assert.equal(drafts.communityDraftsBuildNotice(), null));
 });
 
 await t('三處判斷一致：同一組環境變數下，Notion 查詢、build 警示、build 後 dist 檢查與 isCommunityDraftModeOn 結果相同', async () => {
