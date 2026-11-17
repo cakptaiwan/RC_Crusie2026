@@ -618,7 +618,8 @@ async function queryDatabasePages(
   const dataSourceId = await resolveDataSourceId(notion, databaseId);
 
   /*
-   * 社群草稿預覽模式（INCLUDE_COMMUNITY_DRAFTS=1 且建置分支不是 main，判斷見 community-drafts.ts 的 isCommunityDraftModeOn）只作用於「全部文章」查詢；
+   * 社群草稿預覽模式（判斷見 community-drafts.ts 的 isCommunityDraftModeOn；優先序：建置分支 main→關；INCLUDE_COMMUNITY_DRAFTS=0→關；
+   * INCLUDE_COMMUNITY_DRAFTS=1→開；建置分支是預覽分支 feat/brand-sections→開；其餘→關）只作用於「全部文章」查詢；
    * 精選（featuredOnly）與首頁（ShowOnHome）查詢一律只讀已發布，也讓巢狀條件維持在兩層以內。
    * 模式關閉時 buildStatusFilter(false) 與原本的 { Status equals 已發布 } 完全相同。
    */
