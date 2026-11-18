@@ -67,6 +67,16 @@
 - ≤640px（A5）：社群圖示從頂部列移進抽屜（`.nav-soc-top` 隱藏、`.nav-soc-m` 顯示，間距 12px），頂部列強制單行（`flex-wrap: nowrap`）
 - 首頁頂部列無分割線（A9）：只有首頁傳 `headerSeamless`，下緣邊線改為 0，與緊接的 Hero 背景相接；其他頁面維持 1px 下緣邊線
 
+### 手機抽屜手風琴（`NewLayout.astro` 的 `.nav-mobile`，N1，f4a60e3、affaaf1）
+- 範圍：只有漢堡抽屜（≤1200px）；桌機頂部列的 `.nav-drop` 純 CSS 下拉不受影響
+- 結構：每個分區一組 `.nav-m-sec`，內含 `<h3 class="nav-m-h">` 包著 `<button type="button" class="nav-m-btn">`（分區名稱＋右側箭頭 SVG，`aria-hidden="true"`），以及內容區 `.nav-m-panel`（`role="region"`、`aria-labelledby` 指向按鈕）。內容區第一項固定為「全部{區塊名}」（`.nav-m-all`，600 粗細、#0B2A4A，連到分區首頁），之後才是各分類。旅人手記沒有分區首頁，故沒有「全部」這一項，只有旅人故事、資源推薦。沒有分類的分區（`categories` 為空）不做摺疊，只顯示為單純連結
+- 互動：一次只展開一組（點任一標題先收合全部，再展開被點的那組；點已展開的標題則全部收合）。依目前頁面（`isActiveSection`；旅人手記另加 `pathname.startsWith` 比對其項目）預設展開所在區塊，其餘頁面（首頁、搜尋、固定頁等）全部收合
+- 無障礙：按鈕有 `aria-expanded`、`aria-controls`（對應 `#nav-m-p-{區塊 key}`）；原生 `<button>`，Enter／Space 可操作；`:focus-visible` 為 2px #2A628F 外框、offset 2px
+- 無 JS 降級：標記預設 `aria-expanded="true"` 且內容區不帶 `hidden`，由 `is:inline` 腳本在載入後才收合；沒有 JS 時所有分區全部展開，導覽不會被藏起來
+- 視覺：標題點擊區高度 ≥ 44px（`min-height: 44px`），15px、粗體、#3E6C97；箭頭（`M9 6l6 6-6 6`，16px，#8AA3B9）展開時旋轉 90 度；不做展開動畫（不加 transition，與第 5 節一致）；內容區左側 2px 細線（rgba(11,42,74,.1)）、子項縮進 14px
+- 與第 5 節「文章分類」`<details>` 的差異：側欄各分區可獨立展開，原生 `<details>` 即可；抽屜需要「一次只展開一組」的互斥行為，且無 JS 時要全部展開（原生 `<details>` 無 `open` 就會收合，互斥則必須用 JS），因此改用 `<button>` ＋ `aria-expanded`，不用原生 `<details>`
+- 項目來源：沿用 `brand-nav.ts` 的 `navMenus`、`journalSection`；「社群聲音」「最新資訊」（`HIDE_WHEN_EMPTY_SECTION_KEYS`＝`news`、`community`）沒有文章時整項隱藏，抽屜不另外處理
+
 ### 社群圖示（`SocialIcon.astro`、`SocialLink.astro`）
 - 用在三處：頁首（桌機頂部列 `.nav-soc-top`、手機抽屜 `.nav-soc-m`，淺色底）、頁尾 `SiteFooter.astro`（深色底，#0B2A4A）、/search/ 舊導覽列 `NavStrip.astro`（深色底）。連結資料來自 `social-links.ts` 的 `socialLinks`（label、href、icon：`ig`／`fb`／`th`）
 - 圖示（`SocialIcon`）：Tabler 線條風格（Facebook、Instagram、Threads），顯示 20px（`size` 預設 20）、viewBox 24×24、`stroke-width` 1.75、`stroke="currentColor"`、round cap／join、`aria-hidden="true"`
