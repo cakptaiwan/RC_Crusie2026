@@ -1,0 +1,20 @@
+---
+import BrandSectionIndex from '../../components/brand/BrandSectionIndex.astro';
+import { getBrandSection, getSectionPosts } from '../../data/brand-nav';
+import { getAllPosts } from '../../lib/notion';
+
+/**
+ * 社群聲音分區首頁：比照 /news/，沿用品牌分區首頁版型。
+ * 用動態路由只產生 /community/ 本身（root＝undefined）；社群文章 0 篇（已套用草稿模式過濾）時不產頁，
+ * 比照分類頁 getStaticPaths 的門檻機制。分類頁 /community/<slug>/ 仍由 [slug].astro 產生。
+ */
+export async function getStaticPaths() {
+  const section = getBrandSection('community');
+  if (getSectionPosts(section, await getAllPosts()).length === 0) return [];
+  return [{ params: { root: undefined } }];
+}
+
+const section = getBrandSection('community');
+---
+
+<BrandSectionIndex section={section} />
